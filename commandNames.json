@@ -1,0 +1,322 @@
+{
+    "AAA": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "achievement": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "afk": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "announce": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "announceS": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "avatar": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "bigmoji": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "botCount": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "control": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "cursive": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "data": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "destroy": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "emoji": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "eval": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "exec": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "food": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "help": {
+        "enabled": true,
+        "guildOnly": false
+    },
+    "inrole": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "invite": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "kick": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "leave": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "lenny": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "listpokes": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "lockdown": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "math": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "members": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "mute": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "noli": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "nsfw": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "nsfwr": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "ping": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "pings": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "poke": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "procat": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "purge": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "reboot": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "reddit": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "reload": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "reverse": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "say": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "secret": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "serverinfo": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "serverpic": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "servers": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "setgame": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "setstatus": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "ship": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "shoot": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "slap": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "slave": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "stream": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "suggestion": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "test": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "tocm": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "unmute": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "uptime": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "userinfo": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "warn": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "youtube": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "votekick": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "urban": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "roles": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "color": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "league": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "sponge": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "owo": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "boop": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "listboops": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "send": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "reminder": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "roll": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "coinflip": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "twitch": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "twitchThighs": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "anoosBlock": {
+        "enabled": false,
+        "guildOnly": true
+    },
+    "emoteSteal": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "shesnotevenhot": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "bbqrice": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "when": {
+        "enabled": true,
+        "guildOnly": true
+    },
+    "deepai": {
+        "enabled": true,
+        "guildOnly": true
+    }
+}
