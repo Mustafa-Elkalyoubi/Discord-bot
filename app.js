@@ -3,6 +3,7 @@ const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 const settings = require("./settings.json");
+const tokens = require("./tokens.json");
 const fs = require("fs");
 const moment = require("moment");
 require("./util/eventLoader")(client);
@@ -92,4 +93,4 @@ client.on("error", (e) => {
 });
 client.on("warn", (e) => console.warn(e));
 
-client.login(process.env.token ?? tokens.token);
+client.login(tokens.token || process.env.token);
