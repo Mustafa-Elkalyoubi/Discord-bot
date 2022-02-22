@@ -21,13 +21,9 @@ client.aliases = new Collection();
 client.permLevels = new Collection();
 client.mutes = require("./mutes.json");
 client.lastReboot = require("./reboot.json");
-client.pairs = require("./pairs.json");
 client.afks = require("./afks.json");
-client.boops = require("./boops.json");
 client.last = require("./last.json");
 client.reminders = require("./reminders.json");
-client.pins = require("./pins.json");
-// client.voteKick = require("./voteKicks.json");
 client.champs = require("./champs.json");
 
 fs.readdir("./commands/", (err, files) => {
@@ -96,4 +92,4 @@ client.on("error", (e) => {
 });
 client.on("warn", (e) => console.warn(e));
 
-client.login(settings.token);
+client.login(process.env.token ?? tokens.token);
