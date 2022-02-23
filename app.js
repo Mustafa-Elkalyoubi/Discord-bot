@@ -97,4 +97,4 @@ client.on("error", (e) => {
 });
 client.on("warn", (e) => console.warn(e));
 
-client.login(tokens?.token || process.env.token);
+client.login(tokens ? tokens.token : process.env.token);
