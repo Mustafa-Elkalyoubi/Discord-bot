@@ -318,5 +318,9 @@
     "deepai": {
         "enabled": true,
         "guildOnly": true
+    },
+    "MMR": {
+        "enabled": true,
+        "guildOnly": true
     }
 }

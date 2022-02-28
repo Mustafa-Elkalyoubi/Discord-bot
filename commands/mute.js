@@ -2,7 +2,6 @@ const Discord = require("discord.js");
 const fs = require("fs");
 exports.run = async (client, message, args) => {
   let toMute = message.mentions.members.first();
-  console.log(toMute);
   if (!toMute) return await message.reply("who?");
   if (toMute.id === message.author.id)
     return await message.reply(`you cant mute yourself`);

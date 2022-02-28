@@ -32,6 +32,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.5.0",
     "async": "^3.2.0",
+    "axios": "^0.26.0",
     "deepai": "^1.0.17",
     "discord.js": "^13.1.0",
     "express-handlebars": "^5.3.2",
