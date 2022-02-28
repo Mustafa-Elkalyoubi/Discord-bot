@@ -7,9 +7,17 @@ exports.run = async function run(client, message, args) {
   )}`;
 
   if (args.length == 0) return message.reply("Put a name dumbass");
+  if (Date.now() - globalThis.lastRunTime >= 60000) {
+    globalThis.mmrLimiter = 0;
+    globalThis.lastRunTime = Date.now();
+  }
+  if (globalThis.mmrLimiter == 59)
+    return message.reply("Rate limit reached, please wait 1 minute");
+  console.log(globalThis.mmrLimiter);
   axios
     .get(requestURL)
     .then((res) => {
+      globalThis.mmrLimiter += 1;
       const data = res.data;
       const embed = new MessageEmbed()
         .setColor("#0099ff")
@@ -28,7 +36,9 @@ exports.run = async function run(client, message, args) {
           },
           {
             name: "Percentile",
-            value: `Top ${100 - data.ranked.percentile}%`,
+            value: !data.ranked.percentile
+              ? `Top ${100 - data.ranked.percentile}%`
+              : "null",
             inline: true,
           },
           { name: "ARAM MMR", value: `${data.ARAM.avg}` },
@@ -40,7 +50,10 @@ exports.run = async function run(client, message, args) {
           },
           {
             name: "Percentile",
-            value: `Top ${100 - data.ARAM.percentile}%`,
+            value:
+              data.ranked.percentile == null
+                ? `Top ${100 - data.ARAM.percentile}%`
+                : "null",
             inline: true,
           }
         )
@@ -54,7 +67,7 @@ exports.run = async function run(client, message, args) {
       message.reply({ embeds: [embed] });
     })
     .catch((error) => {
-      console.log(error);
+      console.log(`Probably the right error lol`);
       message.reply(`Play more games idoit`);
     });
 };

@@ -15,7 +15,8 @@ const log = (message) => {
   console.log(`[${moment().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
-const talkedRecently = new Set();
+globalThis.mmrLimiter = 0;
+globalThis.lastRunTime = Date.now();
 
 client.commands = new Collection();
 client.aliases = new Collection();
