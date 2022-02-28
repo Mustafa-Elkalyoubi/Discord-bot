@@ -3,11 +3,7 @@ const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 const settings = require("./settings.json");
-try {
-  const tokens = require("./tokens.json");
-} catch (e) {
-  console.log(e);
-}
+tokensIsIncluded("./tokens.json") ? (tokens = require("./tokens.json")) : {};
 const fs = require("fs");
 const moment = require("moment");
 require("./util/eventLoader")(client);
@@ -98,3 +94,12 @@ client.on("error", (e) => {
 client.on("warn", (e) => console.warn(e));
 
 client.login(typeof tokens != "undefined" ? tokens.token : process.env.token);
+
+function tokensIsIncluded(path) {
+  try {
+    require.resolve(path);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
