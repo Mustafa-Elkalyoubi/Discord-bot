@@ -18,6 +18,8 @@ exports.run = async function run(client, message, args) {
     .get(requestURL)
     .then((res) => {
       globalThis.mmrLimiter += 1;
+      console.log(res.status);
+      if (res.status === 100) return message.reply("Who that lol");
       const data = res.data;
       const embed = new MessageEmbed()
         .setColor("#0099ff")
@@ -26,37 +28,6 @@ exports.run = async function run(client, message, args) {
           iconURL: `${message.author.displayAvatarURL()}`,
           url: `${requestURL}`,
         })
-        .addFields(
-          { name: "\u200B", value: "\u200B" },
-          { name: "Ranked Solo MMR", value: `${data.ranked.avg}` },
-          {
-            name: "Closest Rank",
-            value: `${data.ranked.closestRank}`,
-            inline: true,
-          },
-          {
-            name: "Percentile",
-            value: !data.ranked.percentile
-              ? `Top ${100 - data.ranked.percentile}%`
-              : "null",
-            inline: true,
-          },
-          { name: "ARAM MMR", value: `${data.ARAM.avg}` },
-
-          {
-            name: "Closest Rank",
-            value: `${data.ARAM.closestRank}`,
-            inline: true,
-          },
-          {
-            name: "Percentile",
-            value:
-              data.ranked.percentile == null
-                ? `Top ${100 - data.ARAM.percentile}%`
-                : "null",
-            inline: true,
-          }
-        )
         .setTimestamp()
         .setFooter({
           text: "Data Retrieved from https://euw.whatismymmr.com",
@@ -64,11 +35,27 @@ exports.run = async function run(client, message, args) {
             "https://static.wikia.nocookie.net/leagueoflegends/images/0/07/League_of_Legends_icon.png/revision/latest?cb=20191018194326",
         });
 
+      data.ranked.avg != null
+        ? embed.addFields(
+            ...Object.values(embedBuilder(data.ranked, "Ranked Solo MMR"))
+          )
+        : embed.addField("Ranked", "Not enough games");
+      data.normal.avg != null
+        ? embed.addFields(
+            ...Object.values(embedBuilder(data.normal, "Normal MMR"))
+          )
+        : embed.addField("Normal", "Not enough games");
+      data.ARAM.avg != null
+        ? embed.addFields(...Object.values(embedBuilder(data.ARAM, "ARAM MMR")))
+        : embed.addField("ARAM", "Not enough games");
       message.reply({ embeds: [embed] });
     })
     .catch((error) => {
-      console.log(`Probably the right error lol`);
-      message.reply(`Play more games idoit`);
+      if (error.response.data.error.code == 101)
+        return message.reply("Play more games idoit");
+      if (error.response.data.error.code == 100)
+        return message.reply("Who that lol");
+      console.error(error.response.data);
     });
 };
 
@@ -82,3 +69,18 @@ exports.help = {
   description: "Get a summoner's MMR for ARAM and Ranked Solo",
   usage: "~MMR [Summoner Name]",
 };
+
+function embedBuilder(context, title) {
+  let fieldTitle = { name: `${title}`, value: `${context.avg}` };
+  let fieldRank = {
+    name: "Closest Rank",
+    value: `${context.closestRank}`,
+    inline: true,
+  };
+  let fieldPerc = {
+    name: "Percentile",
+    value: `Top ${100 - context.percentile}%`,
+    inline: true,
+  };
+  return { fieldTitle, fieldRank, fieldPerc };
+}
