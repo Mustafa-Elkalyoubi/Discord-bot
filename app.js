@@ -15,8 +15,7 @@ const log = (message) => {
   console.log(`[${moment().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
-globalThis.mmrLimiter = 0;
-globalThis.lastRunTime = Date.now();
+globalThis.mmrLimiter = [0, Date.now()];
 
 client.commands = new Collection();
 client.aliases = new Collection();
@@ -68,15 +67,6 @@ client.on("messageCreate", (message) => {});
 client.elevation = function (message) {
   let permlvl = 0;
   if (message.guild == null) return (permlvl = 0);
-  /*
-    let regular_role = message.guild.roles.find(x => x.id === `${settings.regrolename}`);
-    if(regular_role && message.member.roles.has(regular_role.id)) permlvl = 1;
-    let regular_role2 = message.guild.roles.find(x => x.id === `${settings.regrolename2}`);
-    if(regular_role2 && message.member.roles.has(regular_role2.id)) permlvl = 1;
-    let regular_role3 = message.guild.roles.find(x => x.id === `${settings.regrolename3}`);
-    if(regular_role3 && message.member.roles.has(regular_role3.id)) permlvl = 1;
-    let mod_role = message.guild.roles.find(x => x.id === `${settings.modid}`);
-    */
   if (
     message.member.permissions.has("MANAGE_ROLES") &&
     message.member.permissions.has("MANAGE_CHANNELS") &&

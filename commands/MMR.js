@@ -7,17 +7,16 @@ exports.run = async function run(client, message, args) {
   )}`;
 
   if (args.length == 0) return message.reply("Put a name dumbass");
-  if (Date.now() - globalThis.lastRunTime >= 60000) {
-    globalThis.mmrLimiter = 0;
-    globalThis.lastRunTime = Date.now();
+  if (Date.now() - globalThis.mmrLimiter[1] >= 60000) {
+    globalThis.mmrLimiter = [0, Date.now()];
   }
-  if (globalThis.mmrLimiter == 59)
+  if (globalThis.mmrLimiter[0] == 59)
     return message.reply("Rate limit reached, please wait 1 minute");
   console.log(globalThis.mmrLimiter);
   axios
     .get(requestURL)
     .then((res) => {
-      globalThis.mmrLimiter += 1;
+      globalThis.mmrLimiter[0] += 1;
       console.log(res.status);
       if (res.status === 100) return message.reply("Who that lol");
       const data = res.data;
