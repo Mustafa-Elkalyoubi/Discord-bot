@@ -44,7 +44,8 @@ exports.run = async function run(client, message, args) {
   if (args[0].includes(":")) {
     newTime = args[0].split(":");
     var timeToRemind =
-      Date.now() +
+      Date.now() -
+      4 * 60 * 60 * 1000 +
       (newTime[0] - today.getHours()) * 3600000 +
       43200000 +
       (newTime[1] - today.getMinutes()) * 60000;
