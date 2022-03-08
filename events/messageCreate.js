@@ -1,7 +1,7 @@
 const settings = require("../settings.json");
 const moment = require("moment");
 const talkedRecently = new Set();
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = (message) => {
   let client = message.client;
@@ -69,53 +69,28 @@ module.exports = (message) => {
 
   if (message.mentions.users.first()) {
     if (client.afks[message.mentions.users.first().id]) {
-      let sincems =
-        Date.now() - client.afks[message.mentions.users.first().id].since;
-      let since;
-      if (sincems >= 3.6e6 * 24) {
-        since = `${Math.floor(
-          sincems / (1000 * 60 * 60 * 24)
-        )} day(s), ${Math.floor(
-          (sincems / (1000 * 60 * 60)) % 24
-        )} hour(s), ${Math.floor(
-          (sincems / (1000 * 60)) % 60
-        )} minute(s), and ${Math.floor((sincems / 1000) % 60)} second(s)`;
-      } else if (sincems >= 3.6e6) {
-        since = `${Math.floor(
-          sincems / (1000 * 60 * 60)
-        )} hour(s), ${Math.floor(
-          (sincems / (1000 * 60)) % 60
-        )} minute(s), and ${Math.floor((sincems / 1000) % 60)} second(s)`;
-      } else if (sincems >= 60000) {
-        since = `${Math.floor(
-          sincems / (1000 * 60)
-        )} minute(s), and ${Math.floor((sincems / 1000) % 60)} second(s)`;
-      } else {
-        since = `${Math.floor(sincems / 1000)} seconds`;
-      }
-      var embed = new Discord.MessageEmbed()
-        .setAuthor(
-          `${
+      let sincems = client.afks[message.mentions.users.first().id].since;
+      var embed = new MessageEmbed()
+        .setAuthor({
+          name: `${
             client.afks[message.mentions.users.first().id].name
           } is currently AFK ${
             client.afks[message.mentions.users.first().id].description == ""
               ? ""
               : "with this message:"
           }`,
-          `${client.afks[message.mentions.users.first().id].pic}`
-        )
+          iconURL: `${client.afks[message.mentions.users.first().id].pic}`,
+        })
         .setDescription(
           `${
             client.afks[message.mentions.users.first().id].description
-          }\n\n\`${since} ago\``
+          }\n\n<t:${Math.floor(sincems / 1000)}:R>`
         )
-        .setFooter(
-          `${client.afks[message.mentions.users.first().id].time} (GMT+4)`
-        );
+        .setTimestamp();
 
       client.afks[message.mentions.users.first().id].messages[
         client.afks[message.mentions.users.first().id].numMessage
-      ] = `\`@${moment().format("DD-MM HH:mm:ss")} (GMT+4)\` **${
+      ] = `<t:${Math.floor(Date.now() / 1000)}:t> **${
         message.author.username
       }**: ${message.content}`;
       client.afks[message.mentions.users.first().id].numMessage += 1;

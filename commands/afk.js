@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const moment = require("moment");
 exports.run = async (client, message, args) => {
   let randomColor = "0x" + ((Math.random() * 0xffffff) << 0).toString(16);
@@ -14,17 +14,22 @@ exports.run = async (client, message, args) => {
 
     if (!args.join(" ") == "") {
       client.afks[message.author.id].description = args.join(" ");
-      var embed = new Discord.MessageEmbed()
-        .setAuthor(
-          `${message.author.username} is currently AFK ${
+      var embed = new MessageEmbed()
+        .setAuthor({
+          name: `${message.author.username} is currently AFK ${
             description == "" ? "" : "with this message:"
           }`,
-          `${pic}`
+          iconURL: `${message.author.displayAvatarURL()}`,
+        })
+        .setDescription(
+          `${args.join(" ")}\n\n<t:${Math.floor(
+            obj[message.author.id].since / 1000
+          )}:R>`
         )
-        .setDescription(`${args.join(" ")}`)
-        .setFooter(`AFK time: ${client.afks[message.author.id].time} (GMT+4)`);
-      return message.channel.send("Your AFK status has been updated: ", {
-        embed,
+        .setTimestamp();
+      return message.channel.send({
+        content: "Your AFK status has been updated: ",
+        embeds: [embed],
       });
     }
 
@@ -54,19 +59,20 @@ exports.run = async (client, message, args) => {
     messages: {},
   };
 
-  var embed = new Discord.MessageEmbed()
-    .setAuthor(
-      `${message.author.username} is currently AFK ${
+  var embed = new MessageEmbed()
+
+    .setAuthor({
+      name: `${message.author.username} is currently AFK ${
         description == "" ? "" : "with this message:"
       }`,
-      `${pic}`
-    )
-    .setDescription(`${description}`)
-    .setFooter(`AFK time: ${moment().format("YYYY-MM-DD HH:mm:ss")} (GMT+4)`);
-  message.channel.send(
-    `You are now AFK, this is the message that will send with any mention: `,
-    { embed }
-  );
+      iconURL: `${message.author.displayAvatarURL()}`,
+    })
+    .setDescription(`${description}\n\n<t:${Math.floor(Date.now() / 1000)}:R>`)
+    .setTimestamp();
+  message.channel.send({
+    content: `You are now AFK, this is the message that will send with any mention: `,
+    embeds: [embed],
+  });
 };
 
 exports.conf = {
