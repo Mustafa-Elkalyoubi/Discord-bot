@@ -11,13 +11,6 @@ exports.run = async function run(client, message, args) {
         n += 1;
         if (n == number) {
           delete client.reminders[i];
-          fs.writeFileSync(
-            "./reminders.json",
-            JSON.stringify(client.reminders, null, 4),
-            (err) => {
-              if (err) throw err;
-            }
-          );
           return message.channel.send(`Reminder ${n} deleted`);
         }
       }
@@ -82,14 +75,6 @@ exports.run = async function run(client, message, args) {
     channel: message.channel.id,
     user: message.author,
   };
-
-  fs.writeFile(
-    "./reminders.json",
-    JSON.stringify(client.reminders, null, 4),
-    (err) => {
-      if (err) throw err;
-    }
-  );
 
   timeLeft = (timeToRemind - Date.now()) / 3600000;
   if (timeLeft > 24) timeLeft = (timeLeft / 24).toFixed(2) + " days";

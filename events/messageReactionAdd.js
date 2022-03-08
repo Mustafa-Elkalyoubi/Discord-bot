@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const fs = require("fs");
 
 let pinEmote = "📌";
 
@@ -40,9 +39,6 @@ async function embedNew(messageReaction, user, pinChannel, client) {
     channelID: pinMessage.channel.id,
     messageID: pinMessage.id,
   };
-  fs.writeFile("./pins.json", JSON.stringify(client.pins, null, 4), (err) => {
-    if (err) throw err;
-  });
 }
 
 function embedBuild(messageReaction, user) {

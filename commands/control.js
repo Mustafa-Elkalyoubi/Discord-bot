@@ -1,4 +1,3 @@
-const fs = require("fs");
 exports.run = async (client, message, args) => {
   client.commandNames = require("../commandNames.json");
 
@@ -12,13 +11,6 @@ exports.run = async (client, message, args) => {
   if (message.content.includes("enable")) {
     if (message.content.includes(`randoms`)) {
       client.last.enabled = 1;
-      fs.writeFile(
-        "./last.json",
-        JSON.stringify(client.last, null, 4),
-        (err) => {
-          if (err) throw err;
-        }
-      );
       return message.channel.send(`Random messages has been enabled`);
     }
 
@@ -26,13 +18,6 @@ exports.run = async (client, message, args) => {
       for (var cmd in client.commandNames) {
         client.commandNames[cmd].enabled = true;
       }
-      fs.writeFile(
-        "./commandNames.json",
-        JSON.stringify(client.commandNames, null, 4),
-        (err) => {
-          if (err) throw err;
-        }
-      );
       return message.reply(`All commands have been enabled`);
     }
 
@@ -41,26 +26,12 @@ exports.run = async (client, message, args) => {
     if (client.commandNames[command].enabled === true)
       return message.reply(`command **${command}** is already enabled`);
     client.commandNames[command].enabled = true;
-    fs.writeFile(
-      "./commandNames.json",
-      JSON.stringify(client.commandNames, null, 4),
-      (err) => {
-        if (err) throw err;
-      }
-    );
     message.reply(`command **${args[0]}** has been enabled`);
   }
 
   if (message.content.includes("disable")) {
     if (message.content.includes(`randoms`)) {
       client.last.enabled = 0;
-      fs.writeFile(
-        "./last.json",
-        JSON.stringify(client.last, null, 4),
-        (err) => {
-          if (err) throw err;
-        }
-      );
       return message.channel.send(`Random messages has been disabled`);
     }
 
@@ -69,13 +40,6 @@ exports.run = async (client, message, args) => {
       for (var cmd in client.commandNames) {
         if (!neverDisable.includes(cmd))
           client.commandNames[cmd].enabled = false;
-        fs.writeFile(
-          "./commandNames.json",
-          JSON.stringify(client.commandNames, null, 4),
-          (err) => {
-            if (err) throw err;
-          }
-        );
       }
       return message.reply(`All commands have been disabled`);
     }
@@ -87,13 +51,6 @@ exports.run = async (client, message, args) => {
     if (client.commandNames[command].enabled === false)
       return message.reply(`command **${command}** is already disabled`);
     client.commandNames[command].enabled = false;
-    fs.writeFile(
-      "./commandNames.json",
-      JSON.stringify(client.commandNames, null, 4),
-      (err) => {
-        if (err) throw err;
-      }
-    );
     message.reply(`command **${command}** has been disabled`);
     return;
   }
@@ -106,13 +63,6 @@ exports.run = async (client, message, args) => {
         `command **${command}** is already available in dms`
       );
     client.commandNames[command].guildOnly = false;
-    fs.writeFile(
-      "./commandNames.json",
-      JSON.stringify(client.commandNames, null, 4),
-      (err) => {
-        if (err) throw err;
-      }
-    );
     message.reply(`command **${command}** now available in dms`);
   }
 
@@ -124,13 +74,6 @@ exports.run = async (client, message, args) => {
         `command **${command}** is already unavailable in dms`
       );
     client.commandNames[command].guildOnly = true;
-    fs.writeFile(
-      "./commandNames.json",
-      JSON.stringify(client.commandNames, null, 4),
-      (err) => {
-        if (err) throw err;
-      }
-    );
     message.reply(`command **${command}** no longer available in dms`);
   }
 };

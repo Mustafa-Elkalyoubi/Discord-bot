@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const fs = require("fs");
 exports.run = async (client, message) => {
   let toMute = message.mentions.members.first();
   if (!toMute) return message.reply("who?");
@@ -13,10 +12,6 @@ exports.run = async (client, message) => {
   await toMute.roles.remove(role);
   message.channel.send(`${toMute.user} has been unmuted.`);
   delete client.mutes[toMute.id];
-
-  fs.writeFile("./mutes.json", JSON.stringify(client.mutes, null, 4), (err) => {
-    if (err) throw err;
-  });
 };
 
 exports.conf = {

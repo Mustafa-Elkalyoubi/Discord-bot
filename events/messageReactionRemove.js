@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const fs = require("fs");
 
 let pinEmote = "📌";
 
@@ -16,13 +15,6 @@ module.exports = (messageReaction, user) => {
         let newEmbed = embedBuild(messageReaction, user);
         if (messageReaction.count == 0) {
           delete client.pins[message.id];
-          fs.writeFileSync(
-            "./pins.json",
-            JSON.stringify(client.pins, null, 4),
-            (err) => {
-              if (err) throw err;
-            }
-          );
           return pinnedMessage.delete();
         }
         return pinnedMessage.edit(newEmbed);

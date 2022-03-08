@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const fs = require("fs");
 exports.run = async (client, message, args) => {
   let toMute = message.mentions.members.first();
   if (!toMute) return await message.reply("who?");
@@ -65,11 +64,7 @@ exports.run = async (client, message, args) => {
   };
 
   await toMute.roles.add(role);
-
-  fs.writeFile("./mutes.json", JSON.stringify(client.mutes, null, 4), (err) => {
-    if (err) throw err;
-    message.channel.send(msg);
-  });
+  message.channel.send(msg);
 
   let randomColor = "0x" + ((Math.random() * 0xffffff) << 0).toString(16);
 };

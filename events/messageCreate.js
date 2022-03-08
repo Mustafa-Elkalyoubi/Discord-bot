@@ -1,5 +1,4 @@
 const settings = require("../settings.json");
-const fs = require("fs");
 const moment = require("moment");
 const talkedRecently = new Set();
 const Discord = require("discord.js");
@@ -120,14 +119,6 @@ module.exports = (message) => {
         message.author.username
       }**: ${message.content}`;
       client.afks[message.mentions.users.first().id].numMessage += 1;
-
-      fs.writeFile(
-        "./afks.json",
-        JSON.stringify(client.afks, null, 4),
-        (err) => {
-          if (err) throw err;
-        }
-      );
 
       message.channel.send({ embeds: [embed] });
     }
