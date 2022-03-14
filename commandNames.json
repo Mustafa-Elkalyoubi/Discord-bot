@@ -322,5 +322,9 @@
     "MMR": {
         "enabled": true,
         "guildOnly": true
+    },
+    "google": {
+        "enabled": true,
+        "guildOnly": true
     }
 }
