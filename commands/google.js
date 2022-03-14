@@ -103,7 +103,6 @@ exports.run = async function run(client, message, args, command) {
       result.examples.forEach(function (item, index) {
         embed.addField(`Example ${index + 1}`, item, false);
       });
-      log(result);
     }
     reply.edit({ embeds: [embed] });
   } catch (e) {
