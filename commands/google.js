@@ -3,7 +3,7 @@ const google = require("googlethis");
 exports.run = async function run(client, message, args, command) {
   const options = {
     page: 0,
-    safe: false,
+    safe: true,
     additional_params: {
       hl: "en",
     },
