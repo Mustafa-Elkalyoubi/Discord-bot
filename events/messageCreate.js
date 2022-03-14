@@ -127,7 +127,7 @@ module.exports = (message) => {
       return message.reply(
         "This command is disabled in direct messages, try again in a server"
       );
-    cmd.run(client, message, args, perms);
+    cmd.run(client, message, args, command, perms);
 
     if (talkedRecently.has(message.author.id)) return;
     talkedRecently.add(message.author.id);

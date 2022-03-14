@@ -1,5 +1,5 @@
 const settings = require("../settings.json");
-exports.run = async (client, message, args, perms) => {
+exports.run = async (client, message, args, command, perms) => {
   let cmd;
   let comds = [];
   let levelright = [];

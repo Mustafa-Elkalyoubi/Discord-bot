@@ -1,4 +1,4 @@
-exports.run = async function run(client, message, args) {};
+exports.run = async function run(client, message, args, command, perms) {};
 
 exports.conf = {
   aliases: [],
