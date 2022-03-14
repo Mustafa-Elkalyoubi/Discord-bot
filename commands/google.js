@@ -23,10 +23,12 @@ exports.run = async function run(client, message, args, command) {
   });
   let response, result;
 
-  var embed = new MessageEmbed().setAuthor({
-    name: message.author.username,
-    iconURL: message.author.displayAvatarURL(),
-  });
+  var embed = new MessageEmbed()
+    .setAuthor({
+      name: message.author.username,
+      iconURL: message.author.displayAvatarURL(),
+    })
+    .setTimestamp();
 
   try {
     if (command == "image" || command == "i") {
@@ -46,9 +48,8 @@ exports.run = async function run(client, message, args, command) {
         .setImage(search);
     }
 
-    response = await google.search(search, options);
-
     if (command == "google" || command == "search") {
+      response = await google.search(search, options);
       result = response.featured_snippet;
       if (result.title == "N/A") result = response.results[0];
       embed
@@ -57,6 +58,7 @@ exports.run = async function run(client, message, args, command) {
         .setURL(result.url)
         .setThumbnail(result.favicons.high_res);
     } else if (command == "person") {
+      response = await google.search(search, options);
       result = response.knowledge_panel;
       embed
         .setTitle(result.title)
@@ -74,9 +76,34 @@ exports.run = async function run(client, message, args, command) {
         )
         .setImage(result.images[0].url);
     } else if (command == "translate") {
+      response = await google.search(message.content.slice(1), options);
+      if (response == undefined)
+        return reply.edit({
+          embeds: [
+            new MessageEmbed.setDescription(
+              "Bruh u tryna translate from English?"
+            ),
+          ],
+        });
       result = response.translation;
-    } else if (command == "dictionary") {
+      embed
+        .setTitle("Translate")
+        .addFields(
+          { name: result.source_language, value: search },
+          { name: result.target_language, value: result.target_text }
+        );
+    } else if (command == "dictionary" || command == "define") {
+      response = await google.search(`define ${search}`, options);
       result = response.dictionary;
+      embed.setTitle(result.word);
+      embed.setDescription(result.definitions[0]);
+      result.definitions.forEach(function (item, index) {
+        if (index != 0) embed.addField(`Definition ${index + 1}`, item, false);
+      });
+      result.examples.forEach(function (item, index) {
+        embed.addField(`Example ${index + 1}`, item, false);
+      });
+      log(result);
     }
     reply.edit({ embeds: [embed] });
   } catch (e) {
@@ -103,6 +130,7 @@ exports.conf = {
     "translate",
     "reverse",
     "dictionary",
+    "define",
   ],
   permLevel: 0,
 };
