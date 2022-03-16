@@ -56,7 +56,7 @@ exports.run = async function run(client, message, args, command) {
         .setTitle(result.title)
         .setDescription(result.description)
         .setURL(result.url)
-        .setThumbnail(result.favicons.high_res);
+        .setThumbnail(results.favicons ? result.favicons.high_res : "");
     } else if (command == "person") {
       response = await google.search(search, options);
       result = response.knowledge_panel;
