@@ -114,7 +114,9 @@ exports.run = async function run(client, message, args, command) {
       });
     reply.edit({
       embeds: [
-        new MessageEmbed().setDescription("Error habben try again sir please"),
+        new MessageEmbed().setDescription(
+          `Error habben try again sir please ${e.message}`
+        ),
       ],
     });
   }
