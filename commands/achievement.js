@@ -13,7 +13,7 @@ exports.run = (client, message, args) => {
   if (args.join(" ").toLowerCase().includes("rules")) rnd = 2;
 
   if (title.length > 22 || contents.length > 22)
-    return message.channel.send("Max Length: 22 Characters. Soz.");
+    return message.channel.send("Max Length: 22 Characters");
   const url = `https://www.minecraftskinstealer.com/achievement/a.php?i=${rnd}&h=${encodeURIComponent(
     title
   )}&t=${encodeURIComponent(contents)}`;
