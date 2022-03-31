@@ -43,37 +43,7 @@ module.exports = async (client) => {
     );
   }
 
-  let whoAreThese = [
-    "290256656850354177",
-    "145568089491243008",
-    "209667763067682816",
-    "249972446734712842",
-    "195994587758723072",
-    "170922771272957953",
-  ];
-  let roleName = "These are ziad's friends";
-
   setInterval(async function () {
-    for (let i in whoAreThese) {
-      let guildID = "622767050359701514";
-      let bofi = client.guilds.cache.get(guildID);
-      let role;
-      role = await bofi.roles.cache.find((role) => role.name === roleName);
-      if (!role) {
-        role = await bofi.roles.create({
-          name: roleName,
-          color: "#797979",
-        });
-      }
-      for (let i in whoAreThese) {
-        who = await bofi.members.fetch(whoAreThese[i]);
-        who.roles.add(role).catch((e) => {
-          console.log(e);
-          roleName = "Bruh who tf is this";
-        });
-      }
-    }
-
     for (let i in client.mutes) {
       let time = client.mutes[i].time;
       let guild = client.guilds.cache.get(`${client.mutes[i].guild}`);
