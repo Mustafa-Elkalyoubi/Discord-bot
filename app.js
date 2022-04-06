@@ -1,6 +1,10 @@
 const { Client, Collection, Intents } = require("discord.js");
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+  ],
 });
 const settings = require("./settings.json");
 tokensIsIncluded("./tokens.json") ? (tokens = require("./tokens.json")) : {};
