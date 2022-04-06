@@ -19,4 +19,5 @@ module.exports = (client) => {
   client.on("messageReactionAdd", reqEvent("messageReactionAdd"));
   client.on("messageReactionRemove", reqEvent("messageReactionRemove"));
   client.on("interactionCreate", reqEvent("interactionCreate"));
+  client.on("voiceStateUpdate", reqEvent("voiceStateUpdate"));
 };
