@@ -4,3 +4,5 @@ tokens.json
 test.js
 reboot.json
 Archive
+reboot.json
+lastReboot.json
