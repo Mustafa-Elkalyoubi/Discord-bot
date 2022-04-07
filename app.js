@@ -20,6 +20,9 @@ const log = (message) => {
 };
 
 globalThis.mmrLimiter = [0, Date.now()];
+global.pickRandomArray = function pickRandomArray(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+};
 
 client.commands = new Collection();
 client.aliases = new Collection();

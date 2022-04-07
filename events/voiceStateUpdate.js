@@ -4,6 +4,13 @@ module.exports = (oldState, newState) => {
     newState.channelId !== null &&
     newState.member.user.id == "327921870567505921"
   ) {
-    oldState.member.user.send("Haha open blitz sir :)");
+    const msgs = [
+      "Haha open blitz sir :)",
+      "sir dont forget blitz",
+      "bing chilling",
+      "burger foot lettuce",
+    ];
+
+    oldState.member.user.send(global.pickRandomArray(msgs));
   }
 };
