@@ -10,7 +10,12 @@ module.exports = (oldState, newState) => {
       "bing chilling",
       "burger foot lettuce",
     ];
+    let hassan = oldState.member.user;
 
-    oldState.member.user.send(global.pickRandomArray(msgs));
+    hassan.send(global.pickRandomArray(msgs));
+
+    setTimeout(function () {
+      hassan.send("Yo you opened blitz right?");
+    }, 120000);
   }
 };
