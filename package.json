@@ -1,46 +1,32 @@
 {
-  "name": "discord_package",
+  "name": "ts-bot",
   "version": "1.0.0",
-  "description": "Cookie Bot for Discord",
-  "main": "app.js",
+  "description": "",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node --max-old-space-size=3072 app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --config nodemon.json src/index.ts",
+    "build": "tsc",
+    "start": "node ./dist/"
   },
-  "engines": {
-    "node": "^8.9.4",
-    "ffmpeg": "^0.0.4",
-    "ffmpeg-binaries": "^3.2.2-3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/senorcookie/cookie.git"
-  },
-  "keywords": [
-    "node",
-    "heroku"
-  ],
-  "author": "Mustafa",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/senorcookie/cookie-monster-test/issues/"
+  "devDependencies": {
+    "@types/luxon": "^3.3.0",
+    "@types/node": "^18.15.11",
+    "@types/ping": "^0.4.1",
+    "@types/url-file-size": "^1.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   },
-  "homepage": "https://github.com/senorcookie/cookie-monster-test#readme",
   "dependencies": {
-    "@discordjs/builders": "^0.12.0",
-    "axios": "^0.26.1",
-    "deepai": "^1.0.21",
-    "discord.js": "^13.6.0",
-    "googlethis": "^1.2.7",
-    "jimp": "^0.16.1",
-    "moment": "^2.29.1",
-    "ms": "^2.1.3",
-    "node": "^17.7.1",
-    "package.json": "^2.0.1",
-    "pm2": "^5.2.0",
-    "redwrap": "0.0.4",
-    "relevant-urban": "^2.0.0",
-    "request": "^2.88.2",
-    "snekfetch": "^4.0.4"
+    "axios": "^1.3.5",
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3",
+    "luxon": "^3.3.0",
+    "ping": "^0.4.4",
+    "puppeteer": "^19.8.5",
+    "sharp": "^0.32.1",
+    "url-file-size": "^1.0.5-1"
   }
 }
