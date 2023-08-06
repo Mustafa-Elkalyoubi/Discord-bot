@@ -23,7 +23,7 @@ export default class ExtendedClient extends Client {
   public reminderTimeouts: NodeJS.Timeout[];
   public osrsItems: Array<{ name: string; value: string }>;
   public aiEnabled: Boolean;
-  public aiQueue: string[];
+  public aiQueue: { userID: string; interactionID: string }[];
   public ownerID: string;
 
   private _reminderPath: string;

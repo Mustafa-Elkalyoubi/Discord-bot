@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, RESTJSONErrorCodes } from "discord.js";
+import {
+  SlashCommandBuilder,
+  ChatInputCommandInteraction,
+  RESTJSONErrorCodes,
+  AutocompleteInteraction,
+} from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 import ExtendedClient from "../utils/Client";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -9,10 +14,110 @@ interface responseJSON {
   info: string;
 }
 
+interface requestJSON {
+  enable_hr?: boolean;
+  denoising_strength?: number;
+  firstphase_width?: number;
+  firstphase_height?: number;
+  hr_scale?: number;
+  hr_upscaler?: string;
+  hr_second_pass_steps?: number;
+  hr_resize_x?: number;
+  hr_resize_y?: number;
+  prompt: string;
+  styles?: string[];
+  seed?: number;
+  subseed?: number;
+  subseed_strength?: number;
+  seed_resize_from_h?: number;
+  seed_resize_from_w?: number;
+  sampler_name?: string;
+  batch_size?: number;
+  n_iter?: number;
+  steps?: number;
+  cfg_scale?: number;
+  width?: number;
+  height?: number;
+  restore_faces?: boolean;
+  tiling?: boolean;
+  do_not_save_samples?: boolean;
+  do_not_save_grid?: boolean;
+  negative_prompt?: string;
+  eta?: number;
+  s_churn?: number;
+  s_tmax?: number;
+  s_tmin?: number;
+  s_noise?: number;
+  override_settings?: {};
+  override_settings_restore_afterwards?: boolean;
+  script_args?: any[];
+  sampler_index?: string;
+  script_name?: string;
+  send_images?: boolean;
+  save_images?: boolean;
+  alwayson_scripts?: {};
+}
+
+interface updateJSON {
+  progress: number;
+  eta_relative: number;
+  state: {
+    skipped: boolean;
+    interrupted: boolean;
+    job: string;
+    job_count: number;
+    job_timestamp: string;
+    job_no: number;
+    sampling_step: number;
+    sampling_steps: number;
+  };
+  current_image: string;
+  textinfo: string;
+}
+
 export default class Command extends BaseCommand {
   constructor() {
     super("text2img");
   }
+
+  LORAs: { name: string; fileName: string; trigger: string }[] = [
+    { name: "food", fileName: "foodphoto", trigger: "foodphoto" },
+    {
+      name: "Akali",
+      fileName: "akali_v2-000038",
+      trigger: "akali",
+    },
+    {
+      name: "Aatrox",
+      fileName: "Aatrox-03",
+      trigger: "GodKing",
+    },
+    { name: "Sett", fileName: "Sett", trigger: "Sett" },
+    { name: "Vi", fileName: "Vi Kangaxx", trigger: "vi_tpa" },
+    {
+      name: "Sylas",
+      fileName: "sylas_lol-000011",
+      trigger: "sylas (league of legends), 1boy, male focus, topless male, shackles, chain",
+    },
+    { name: "Jinx", fileName: "JinxLol", trigger: "jinxlol" },
+    { name: "Punk / Goth / Rock", fileName: "punk_v0.2", trigger: "punk" },
+    { name: "Lucy (Cyberpunk)", fileName: "lucy_offset", trigger: "lucy (cyberpunk)" },
+    {
+      name: "Ada Wong",
+      fileName: "AdaWong",
+      trigger: "",
+    },
+    { name: "Warframe", fileName: "warframe_v1-000012", trigger: "WARFRAME" },
+    { name: "Yasuo", fileName: "yspro", trigger: "ys,1boy, pectorals, ponytail" },
+    { name: "Samira", fileName: "samira-000033", trigger: "samira (league of legends)" },
+    { name: "Xayah", fileName: "xayah-000036", trigger: "xayah" },
+    { name: "Irelia", fileName: "ireliav2-000034", trigger: "irelia" },
+    { name: "Blitzcrank", fileName: "BlitzcrankV2-000024", trigger: "blitzcrank" },
+    { name: "Kindred", fileName: "Kindred", trigger: "kindred, lamb" },
+    { name: "Pantheon", fileName: "Pantheon-07", trigger: "pant" },
+    { name: "Illaoi", fileName: "illaoi-000008", trigger: "illaoi" },
+    { name: "Ahri", fileName: "ahri-000045", trigger: "ahri, ahri (league of legends)" },
+  ].sort((a, b) => a.name.localeCompare(b.name));
 
   getSlashCommandJSON() {
     return new SlashCommandBuilder()
@@ -35,6 +140,14 @@ export default class Command extends BaseCommand {
             { name: "768x512", value: "768x512" }
           )
       )
+      .addStringOption((option) => {
+        option.setName("lora").setDescription("Add a specific character");
+        if (this.LORAs.length <= 25)
+          return option.setChoices(
+            ...this.LORAs.map((lora) => ({ name: lora.name, value: lora.name }))
+          );
+        return option.setAutocomplete(true);
+      })
       .addStringOption((option) =>
         option.setName("negativeprompt").setDescription("Things you really dont want to include")
       )
@@ -65,6 +178,22 @@ export default class Command extends BaseCommand {
       .toJSON();
   }
 
+  async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
+    const focusedValue = interaction.options.getFocused() ?? "";
+    const filtered = this.LORAs.filter((lora) =>
+      lora.name.toLowerCase().includes(focusedValue.toLowerCase())
+    );
+
+    if (!filtered) return;
+
+    if (filtered.length <= 25)
+      return interaction.respond(filtered.map((lora) => ({ name: lora.name, value: lora.name })));
+
+    interaction.respond(
+      filtered.slice(0, 25).map((lora) => ({ name: lora.name, value: lora.name }))
+    );
+  }
+
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     if (!client.aiEnabled && interaction.user.id !== client.ownerID)
       return interaction.reply({
@@ -81,6 +210,17 @@ export default class Command extends BaseCommand {
     const hr_scale = parseFloat(interaction.options.getString("upscale") ?? "1");
     const res = interaction.options.getString("resolution") ?? "512x768";
     const [width, height] = res.split("x").map((n) => parseInt(n));
+    const inputLora = interaction.options.getString("lora");
+
+    var formattedLora = "";
+    if (inputLora) {
+      const selectedLora = this.LORAs.filter((_lora) =>
+        _lora.name.toLowerCase().includes(inputLora.toLowerCase())
+      )[0];
+      if (!selectedLora)
+        return interaction.editReply("Try selecting from the lora list, dont type it in manually");
+      formattedLora += `<lora:${selectedLora.fileName}:1> ${selectedLora.trigger}`;
+    }
 
     if (
       cfg_scale < 0 ||
@@ -91,7 +231,10 @@ export default class Command extends BaseCommand {
       hr_scale < 1
     )
       return interaction.reply({ content: "Fucking read the things idiot", ephemeral: true });
-    if (queue.includes(interaction.user.id) && interaction.user.id !== client.ownerID)
+    if (
+      queue.map((q) => q.userID).includes(interaction.user.id) &&
+      interaction.user.id !== client.ownerID
+    )
       return interaction.reply({
         content: "Wait for your previous thing to finish madge",
         ephemeral: true,
@@ -99,15 +242,15 @@ export default class Command extends BaseCommand {
 
     await interaction.deferReply();
 
-    const LORAs = "";
-
-    var data = {
+    var data: requestJSON = {
       enable_hr: true,
       hr_scale: hr_scale,
       hr_upscaler: "Latent",
       prompt:
         "(masterpiece, best quality, ultra-detailed, best shadow), (detailed background), high contrast, (best illumination), colorful, hyper detail, intricate details, (" +
         prompt +
+        ", " +
+        formattedLora +
         ")",
       negative_prompt: "(worst quality, low quality:1.4), monochrome, zombie," + negativePrompt,
       sampler_index: "DPM++ 2M Karras",
@@ -119,11 +262,13 @@ export default class Command extends BaseCommand {
       seed: seed,
     };
 
-    queue.push(interaction.user.id);
+    queue.push({ userID: interaction.user.id, interactionID: interaction.id });
 
-    var result: AxiosResponse | undefined;
+    const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
+
+    var result: Promise<AxiosResponse<responseJSON>> | undefined;
     try {
-      result = await axios.post("http://127.0.0.1:7861/sdapi/v1/txt2img", data, {
+      result = axios.post<responseJSON>(apiURL + "txt2img", data, {
         headers: { "Content-Type": "application/json" },
       });
     } catch (err: any) {
@@ -148,21 +293,49 @@ export default class Command extends BaseCommand {
       interaction.editReply("Sorry, something went wrong");
     }
 
+    if (queue[0].interactionID !== interaction.id) {
+      interaction.editReply("Waiting for your turn...");
+    }
+    while (queue[0].interactionID !== interaction.id) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+
+    const updater = setInterval(async () => {
+      const update = await axios.get<updateJSON>(apiURL + "progress", {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (update.data.current_image !== null) {
+        const stream = Buffer.from(update.data.current_image, "base64");
+        interaction.editReply({
+          content: `${
+            update.data.state.job_no === 1 ? "**Upscaling**\n" : "**Generating**\n"
+          }Progress: \`${Math.floor(update.data.progress * 100)}%\``,
+          files: [{ attachment: stream, name: "img.png" }],
+        });
+      }
+    }, 7000);
+
     if (!result) {
       queue.shift();
       return interaction.editReply(`An unknown error has occurred`);
     }
 
-    if (result.status !== 200) {
-      queue.shift();
-      return interaction.editReply(`Error code \`${result.status}\``);
-    }
+    await Promise.all([result]).then((_res) => {
+      clearInterval(updater);
+      const res = _res[0];
 
-    const stream = Buffer.from(result.data.images[0], "base64");
-    interaction.editReply({
-      content: `**Seed**: \`${JSON.parse(result.data.info).seed}\``,
-      files: [{ attachment: stream, name: "img.png" }],
+      if (res.status !== 200) {
+        queue.shift();
+        return interaction.editReply(`Error code \`${res.status}\``);
+      }
+
+      const stream = Buffer.from(res.data.images[0], "base64");
+      interaction.editReply({
+        content: `**Seed**: \`${JSON.parse(res.data.info).seed}\``,
+        files: [{ attachment: stream, name: "img.png" }],
+      });
+      queue.shift();
     });
-    queue.shift();
+    clearInterval(updater);
   }
 }
