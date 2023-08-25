@@ -85,7 +85,7 @@ export default class Command extends BaseCommand {
 
     const url = `https://prices.runescape.wiki/api/v1/osrs/${timeFrame[tf]}`;
     var config = {
-      headers: { "User-Agent": "Discord Bot - Jiggly Jelly#6009" },
+      headers: { "User-Agent": "Discord Bot - birbkiwi" },
       params: { id: itemID },
     };
 
