@@ -1,5 +1,6 @@
 import {
   ChatInputCommandInteraction,
+  DiscordAPIError,
   MessageContextMenuCommandInteraction,
   RESTJSONErrorCodes,
 } from "discord.js";
@@ -61,34 +62,58 @@ async function steal7TV(
 
   const emoteID = url.slice(url.indexOf("7tv.app")).split("/")[2];
   const apiURL = `https://7tv.io/v3/emotes/${emoteID}`;
-  const res = await axios.get(apiURL).catch((err) => {
-    console.error(err);
-  });
+  const res = await axios
+    .get<sevenTVResponse>(apiURL, { headers: { "User-Agent": "Discord Bot" } })
+    .catch((err) => {
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+        } else if (err.request) {
+          stepPrinter("7tv is being stupid");
+          // console.log("Here");
+          // console.log(err.request);
+        } else {
+          console.log("Error", err.message);
+        }
+        // console.log(err.toJSON());
+        return console.log(err.config);
+      }
+      console.error(err);
+    });
 
   if (!res) {
     return stepPrinter("Sorry, something went wrong");
   }
 
-  const emoteData: sevenTVResponse = res.data;
+  const emoteData = res.data;
 
   if (name === "") {
     stepPrinter("Requesting emote name");
 
     name = emoteData.name;
+  }
 
-    stepPrinter(`Name found: ${name}`);
-    if (name.length > 32)
-      return stepPrinter(
-        `Error: Name is too long; Max length is 32 characters (emote is ${name.length})`
-      );
-    if (name.length < 2) {
-      return stepPrinter(`Error: name is too short`);
-    }
+  if (name.length > 32)
+    return stepPrinter(
+      `Error: Name is too long; Max length is 32 characters (emote is ${name.length})`
+    );
+
+  if (name.length < 2) {
+    return stepPrinter(`Error: name is too short`);
+  }
+
+  stepPrinter(`Name ${name}`);
+  const nameReg = /[^\w\d_]/g;
+  const invalidReasons = Array.from(new Set(name.match(nameReg)));
+  if (invalidReasons.length > 0) {
+    return stepPrinter("Error: the name cannot include: " + invalidReasons.join(" | "));
   }
 
   stepPrinter(`Emote is ${emoteData.animated ? "" : "not "}animated`);
 
-  const emoteURL = "https:" + emoteData.host.url + `${emoteData.animated ? "/4x.gif" : "/4x.png"}`;
+  var emoteURL = "https:" + emoteData.host.url + `${emoteData.animated ? "/4x.gif" : "/4x.png"}`;
 
   stepPrinter("Grabbing highest res");
 
@@ -96,7 +121,7 @@ async function steal7TV(
     url = url.replace("4x.", `${size}x.`);
     var input: AxiosResponse<any, any> | null = null;
     try {
-      input = await axios.get(emoteURL, {
+      input = await axios.get(url, {
         responseType: "arraybuffer",
         timeout: 60000,
       });
@@ -138,15 +163,19 @@ async function steal7TV(
       var size;
       try {
         size = await ufs(emoteURL);
-        if (size < MAX_SIZE) break;
+        if (size < MAX_SIZE) {
+          imgBuffer = emoteURL;
+          break;
+        }
       } catch (e) {
         console.error(e);
       }
       if (i === 1) {
-        stepPrinter("Bro even 1x is bad, wtf kinda gif is this");
+        stepPrinter("Bro even 1x is too high, trying anyway...");
         break;
       }
       stepPrinter(`${i}x garbage quality is also too large, grabbing ${i - 1}x...`);
+      emoteURL = emoteURL.replace(`${i}x.`, `${i - 1}x.`);
     }
   }
 
@@ -158,15 +187,24 @@ async function steal7TV(
         interaction.editReply({ content: emoji.toString() });
       }, 2000);
     })
-    .catch((err) => {
-      if (err.code === RESTJSONErrorCodes.MaximumNumberOfEmojisReached) {
-        return stepPrinter("Maximum number of emojis reached");
-      }
-      if (err.code == RESTJSONErrorCodes.MaximumNumberOfAnimatedEmojisReached) {
-        return stepPrinter("Maximum number of animated emojis reached");
-      }
-      if (err.code === RESTJSONErrorCodes.FailedToResizeAssetBelowTheMinimumSize) {
-        return stepPrinter("Emote file size is too big.. do it yourself  : ^)");
+    .catch(async (err) => {
+      if (err instanceof DiscordAPIError) {
+        if (err.code === RESTJSONErrorCodes.MaximumNumberOfEmojisReached) {
+          return stepPrinter("Maximum number of emojis reached");
+        }
+        if (err.code == RESTJSONErrorCodes.MaximumNumberOfAnimatedEmojisReached) {
+          return stepPrinter("Maximum number of animated emojis reached");
+        }
+        if (err.code === RESTJSONErrorCodes.FailedToResizeAssetBelowTheMinimumSize) {
+          return stepPrinter(
+            `Emote file size is too big.. (MAX: ${Math.round(
+              MAX_SIZE / 1000
+            )}KB, this file: ${Math.round((await ufs(emoteURL)) / 1000)}KB)`
+          );
+        }
+        if (err.code === RESTJSONErrorCodes.InvalidFormBodyOrContentType) {
+          console.log(err);
+        }
       }
       stepPrinter(`An error has occurred: ${err.rawError.message}`);
       console.error(err);
