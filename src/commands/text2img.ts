@@ -1,20 +1,19 @@
 import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
-  RESTJSONErrorCodes,
   AutocompleteInteraction,
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 import ExtendedClient from "../utils/Client";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 
-interface responseJSON {
+interface apiPostResponseJSON {
   images: [string];
-  parameters: {};
+  parameters: apiPostRequestPayload;
   info: string;
 }
 
-interface requestJSON {
+interface apiPostRequestPayload {
   enable_hr?: boolean;
   denoising_strength?: number;
   firstphase_width?: number;
@@ -58,7 +57,7 @@ interface requestJSON {
   alwayson_scripts?: {};
 }
 
-interface updateJSON {
+interface apiGetProgressResponseJSON {
   progress: number;
   eta_relative: number;
   state: {
@@ -81,42 +80,74 @@ export default class Command extends BaseCommand {
   }
 
   LORAs: { name: string; fileName: string; trigger: string }[] = [
-    { name: "food", fileName: "foodphoto", trigger: "foodphoto" },
+    { name: "Aatrox", fileName: "Aatrox-03", trigger: "GodKing" },
     {
-      name: "Akali",
-      fileName: "akali_v2-000038",
-      trigger: "akali",
+      name: "Ahri",
+      fileName: "ahri-000045",
+      trigger: "ahri, ahri (league of legends)",
+    },
+    { name: "Akali", fileName: "akali_v2-000038", trigger: "akali" },
+    {
+      name: "Arcane Style",
+      fileName: "arcane_offset",
+      trigger: "arcane style",
+    },
+    { name: "Dark Elf", fileName: "drow_offset", trigger: "drow, dark elf" },
+    { name: "food", fileName: "foodphoto", trigger: "foodphoto" },
+    { name: "Illaoi", fileName: "illaoi-000008", trigger: "illaoi" },
+    { name: "Irelia", fileName: "ireliav2-000034", trigger: "irelia" },
+    { name: "Jinx", fileName: "JinxLol", trigger: "jinxlol" },
+    {
+      name: "Katarina",
+      fileName: "katarina-nvwls-v1-final",
+      trigger: "Katarina",
+    },
+    { name: "LOL Splash Art", fileName: "LoL Splash V02", trigger: "" },
+    {
+      name: "Lucy (Cyberpunk)",
+      fileName: "lucy_offset",
+      trigger: "lucy (cyberpunk)",
     },
     {
-      name: "Aatrox",
-      fileName: "Aatrox-03",
-      trigger: "GodKing",
+      name: "Neeko",
+      fileName: "neeko-nvwls-v1-final",
+      trigger:
+        "neeko, facial marks, hair ornaments, hair flower, necklace, brown shorts, crop top, lizard tail",
+    },
+    { name: "Pantheon", fileName: "Pantheon-07", trigger: "pant" },
+    {
+      name: "Punk / Goth / Rock",
+      fileName: "punk_v0.2",
+      trigger: "punk",
+    },
+    {
+      name: "Samira",
+      fileName: "samira-000033",
+      trigger: "samira (league of legends)",
+    },
+    {
+      name: "Seraphine",
+      fileName: "Seraphine_Psuedo",
+      trigger: "xyzseraphine",
     },
     { name: "Sett", fileName: "Sett", trigger: "Sett" },
-    { name: "Vi", fileName: "Vi Kangaxx", trigger: "vi_tpa" },
     {
       name: "Sylas",
       fileName: "sylas_lol-000011",
       trigger: "sylas (league of legends), 1boy, male focus, topless male, shackles, chain",
     },
-    { name: "Jinx", fileName: "JinxLol", trigger: "jinxlol" },
-    { name: "Punk / Goth / Rock", fileName: "punk_v0.2", trigger: "punk" },
-    { name: "Lucy (Cyberpunk)", fileName: "lucy_offset", trigger: "lucy (cyberpunk)" },
+    { name: "Vi", fileName: "Vi Kangaxx", trigger: "vi_tpa" },
     {
-      name: "Ada Wong",
-      fileName: "AdaWong",
-      trigger: "",
+      name: "Warframe",
+      fileName: "warframe_v1-000012",
+      trigger: "WARFRAME",
     },
-    { name: "Warframe", fileName: "warframe_v1-000012", trigger: "WARFRAME" },
-    { name: "Yasuo", fileName: "yspro", trigger: "ys,1boy, pectorals, ponytail" },
-    { name: "Samira", fileName: "samira-000033", trigger: "samira (league of legends)" },
     { name: "Xayah", fileName: "xayah-000036", trigger: "xayah" },
-    { name: "Irelia", fileName: "ireliav2-000034", trigger: "irelia" },
-    { name: "Blitzcrank", fileName: "BlitzcrankV2-000024", trigger: "blitzcrank" },
-    { name: "Kindred", fileName: "Kindred", trigger: "kindred, lamb" },
-    { name: "Pantheon", fileName: "Pantheon-07", trigger: "pant" },
-    { name: "Illaoi", fileName: "illaoi-000008", trigger: "illaoi" },
-    { name: "Ahri", fileName: "ahri-000045", trigger: "ahri, ahri (league of legends)" },
+    {
+      name: "Yasuo",
+      fileName: "yspro",
+      trigger: "ys,1boy, pectorals, ponytail",
+    },
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   getSlashCommandJSON() {
@@ -148,32 +179,41 @@ export default class Command extends BaseCommand {
           );
         return option.setAutocomplete(true);
       })
+      .addBooleanOption((option) =>
+        option.setName("detaillora").setDescription("Use detail lora? (default true)")
+      )
       .addStringOption((option) =>
         option.setName("negativeprompt").setDescription("Things you really dont want to include")
       )
       .addIntegerOption((option) =>
         option.setName("seed").setDescription("-1 for random (default)")
       )
-      .addIntegerOption((option) =>
+      .addNumberOption((option) =>
         option
           .setName("cfgscale")
           .setDescription(
             "How close you want the ai to follow the prompt (higher = closer) (0-20) (default 15)"
           )
+          .setMinValue(0)
+          .setMaxValue(20)
       )
-      .addIntegerOption((option) =>
+      .addNumberOption((option) =>
         option
           .setName("denoise")
           .setDescription(
             "How similar everything will be in the image (higher = less similar) (0-1) (default 0.5)"
           )
+          .setMinValue(0)
+          .setMaxValue(1)
       )
-      .addStringOption((option) =>
+      .addNumberOption((option) =>
         option
           .setName("upscale")
           .setDescription(
             "Upscale the image by Nx (max 2 cuz fuck off, min 1) (default 1) (1.2 - 1.4 is a good scale)"
           )
+          .setMinValue(1)
+          .setMaxValue(2)
       )
       .toJSON();
   }
@@ -184,7 +224,7 @@ export default class Command extends BaseCommand {
       lora.name.toLowerCase().includes(focusedValue.toLowerCase())
     );
 
-    if (!filtered) return;
+    if (!filtered) return interaction.respond([]);
 
     if (filtered.length <= 25)
       return interaction.respond(filtered.map((lora) => ({ name: lora.name, value: lora.name })));
@@ -205,12 +245,13 @@ export default class Command extends BaseCommand {
     const prompt = interaction.options.getString("prompt");
     const negativePrompt = interaction.options.getString("negativeprompt") ?? "";
     const seed = interaction.options.getInteger("seed") ?? -1;
-    const cfg_scale = interaction.options.getInteger("cfgscale") ?? 7;
-    const denoising_strength = interaction.options.getInteger("denoise") ?? 0.7;
-    const hr_scale = parseFloat(interaction.options.getString("upscale") ?? "1");
-    const res = interaction.options.getString("resolution") ?? "512x768";
-    const [width, height] = res.split("x").map((n) => parseInt(n));
+    const cfg_scale = interaction.options.getNumber("cfgscale") ?? 7;
+    const denoising_strength = interaction.options.getNumber("denoise") ?? 0.7;
+    const hr_scale = interaction.options.getNumber("upscale") ?? 1;
+    const resolution = interaction.options.getString("resolution") ?? "512x768";
+    const [width, height] = resolution.split("x").map((n) => parseInt(n));
     const inputLora = interaction.options.getString("lora");
+    const addDetailLora = interaction.options.getBoolean("detaillora") ?? true;
 
     var formattedLora = "";
     if (inputLora) {
@@ -242,16 +283,17 @@ export default class Command extends BaseCommand {
 
     await interaction.deferReply();
 
-    var data: requestJSON = {
+    var data: apiPostRequestPayload = {
       enable_hr: true,
       hr_scale: hr_scale,
       hr_upscaler: "Latent",
       prompt:
         "(masterpiece, best quality, ultra-detailed, best shadow), (detailed background), high contrast, (best illumination), colorful, hyper detail, intricate details, (" +
         prompt +
+        ")" +
         ", " +
         formattedLora +
-        ")",
+        `${addDetailLora && "<lora:add_detail:1>"}`,
       negative_prompt: "(worst quality, low quality:1.4), monochrome, zombie," + negativePrompt,
       sampler_index: "DPM++ 2M Karras",
       steps: 25,
@@ -266,9 +308,9 @@ export default class Command extends BaseCommand {
 
     const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
 
-    var result: Promise<AxiosResponse<responseJSON>> | undefined;
+    var result: Promise<AxiosResponse<apiPostResponseJSON>> | undefined;
     try {
-      result = axios.post<responseJSON>(apiURL + "txt2img", data, {
+      result = axios.post<apiPostResponseJSON>(apiURL + "txt2img", data, {
         headers: { "Content-Type": "application/json" },
       });
     } catch (err: any) {
@@ -301,7 +343,7 @@ export default class Command extends BaseCommand {
     }
 
     const updater = setInterval(async () => {
-      const update = await axios.get<updateJSON>(apiURL + "progress", {
+      const update = await axios.get<apiGetProgressResponseJSON>(apiURL + "progress", {
         headers: { "Content-Type": "application/json" },
       });
       if (update.data.current_image !== null) {
@@ -335,6 +377,7 @@ export default class Command extends BaseCommand {
         files: [{ attachment: stream, name: "img.png" }],
       });
       queue.shift();
+      return;
     });
     clearInterval(updater);
   }
