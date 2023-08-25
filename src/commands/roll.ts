@@ -11,7 +11,7 @@ export default class Command extends BaseCommand {
       .setName(this.name)
       .setDescription("Rolls a custom die (default 2)")
       .addIntegerOption((option) =>
-        option.setName("sides").setDescription("How many sides should the die have")
+        option.setName("sides").setDescription("How many sides should the die have").setMinValue(2)
       )
       .toJSON();
   }
