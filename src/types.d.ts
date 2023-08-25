@@ -58,3 +58,17 @@ export declare interface ContextCommand {
   getContextCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;
   run(interaction: MessageContextMenuCommandInteraction, client?: ExtendedClient): void;
 }
+
+type UserFineData = {
+  username: string;
+  fineAmount: number;
+  fineCap: number;
+  capReached: boolean;
+};
+
+export interface FineData {
+  lastMessageID: string;
+  userFineData: {
+    [userid: string]: UserFineData;
+  };
+}

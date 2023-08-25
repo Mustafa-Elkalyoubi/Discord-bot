@@ -1,11 +1,20 @@
-import { BaseGuildTextChannel, Collection, Events, TextChannel } from "discord.js";
-import { reminderDetails } from "../types";
+import {
+  ActivityType,
+  BaseGuildTextChannel,
+  Collection,
+  Events,
+  GuildTextBasedChannel,
+  TextChannel,
+  codeBlock,
+} from "discord.js";
+import { FineData, reminderDetails } from "../types";
 import { LIGHT_GREEN, DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
 import path from "path";
 import fs from "node:fs";
 import { DateTime } from "luxon";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import ExtendedClient from "../utils/Client";
+import { beautifyNumber, calcAndSaveFine } from "../utils/FineHelper";
 
 interface MiscFile {
   reboot: {
@@ -17,7 +26,7 @@ interface MiscFile {
   shouldUpdateItems: boolean;
 }
 
-type AxiosData = Array<{
+type WikiData = Array<{
   examine: string;
   id: number;
   members: boolean;
@@ -46,9 +55,77 @@ export = {
     if (misc.reboot && misc.reboot.shouldMessage) {
       await editRebootMessage(misc, client);
     }
+
     if (misc.shouldUpdateItems) {
       updateOSRSItems(misc, client);
     }
+
+    client.user.setActivity(
+      client.aiEnabled ? "Text2Img is enabled :)" : "Text2Img is disabled :(",
+      { type: ActivityType.Playing }
+    );
+
+    const finePath = path.join(__dirname, "..", "data", "fines.json");
+    const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as FineData;
+    if (!fines.lastMessageID) return;
+    const fineChannel = (await client.channels.fetch(
+      "852270452142899213"
+    )) as GuildTextBasedChannel;
+    const missedMessages = await fineChannel.messages.fetch({ after: fines.lastMessageID });
+
+    const finesToAddUp: {
+      length: number;
+      fines: { [k: string]: { amount: number; username: string; id: string } };
+    } = { length: 0, fines: {} };
+    missedMessages.forEach(async (message) => {
+      if (!message.content.includes("🥹") || message.author.bot) return;
+
+      const thisFine = calcAndSaveFine(message, fines);
+
+      if (!finesToAddUp.fines[message.author.id]) {
+        finesToAddUp.fines[message.author.id] = {
+          amount: thisFine,
+          username: message.author.username,
+          id: message.author.id,
+        };
+        finesToAddUp.length++;
+        return;
+      }
+      finesToAddUp.fines[message.author.id].amount += thisFine;
+    });
+
+    if (finesToAddUp.length < 1) return;
+    if (finesToAddUp.length === 1) {
+      const onlyGuy = Object.values(finesToAddUp.fines)[0];
+      const amount = beautifyNumber(onlyGuy.amount);
+      const capReached = fines.userFineData[onlyGuy.id].capReached;
+      const fineAmount = beautifyNumber(fines.userFineData[onlyGuy.id].fineAmount);
+      fineChannel.send(
+        `You shouldnt be sending 🥹 even while I'm gone, ${
+          Object.values(finesToAddUp.fines)[0].username
+        }\nYou've earned ${amount} fines${
+          capReached
+            ? " and you've hit the cap: send <:waaah:1016423553320628284> to pay for your crimes"
+            : `, your total is ${fineAmount}`
+        }`
+      );
+    } else {
+      var msgs = [];
+      for (var userFine of Object.values(finesToAddUp.fines)) {
+        const amount = beautifyNumber(userFine.amount);
+        const capReached = fines.userFineData[userFine.id].capReached;
+        const fineAmount = beautifyNumber(fines.userFineData[userFine.id].fineAmount);
+        msgs.push(
+          `• ${userFine.username} has gotten ${amount} fines${
+            capReached ? ` and has hit the cap` : `, with total ${fineAmount}`
+          }`
+        );
+      }
+
+      fineChannel.send(codeBlock(msgs.join("\n")));
+    }
+    fines.lastMessageID = "";
+    fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
   },
 };
 
@@ -71,11 +148,16 @@ async function editRebootMessage(misc: MiscFile, client: ExtendedClient) {
 
 async function updateOSRSItems(misc: MiscFile, client: ExtendedClient) {
   const url = `https://prices.runescape.wiki/api/v1/osrs/mapping`;
-  var config = {
-    headers: { "User-Agent": "Discord Bot - Jiggly Jelly#6009" },
+  var config: AxiosRequestConfig = {
+    headers: {
+      "User-Agent": "Discord Bot - @birbkiwi",
+      "Content-Type": "application/json",
+    },
+    timeout: 60000,
   };
 
-  var items = await axios.get(url, config).catch((e: Error) => {
+  console.log("Requesting updated items...");
+  var items = await axios.get<WikiData>(url, config).catch((e: Error) => {
     if (axios.isAxiosError(e)) {
       if (e.cause && e.cause.name !== "ECONNREFUSED") console.error(e);
       else console.log("Failed to connect to wiki servers");
@@ -83,7 +165,7 @@ async function updateOSRSItems(misc: MiscFile, client: ExtendedClient) {
   });
   if (!items) return;
 
-  const itemData = items.data as AxiosData;
+  const itemData = items.data;
   const itemsObj = Object.fromEntries(itemData.map((item) => [item.name, `${item.id}`]));
 
   client.osrsItems = itemData.map((item) => {

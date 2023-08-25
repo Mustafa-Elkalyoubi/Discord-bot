@@ -1,10 +1,12 @@
-import { Events, Message } from "discord.js";
+import { Events, Message, Snowflake } from "discord.js";
 import ExtendedClient from "../utils/Client";
 import { CYAN, DEFAULT, YELLOW } from "../utils/ConsoleText";
 import { DateTime } from "luxon";
 import config from "../config.json";
 import fs from "node:fs";
 import path from "node:path";
+import { FineData } from "../types";
+import { beautifyNumber, calcAndSaveFine } from "../utils/FineHelper";
 
 export = {
   name: Events.MessageCreate,
@@ -65,93 +67,59 @@ export = {
   },
 };
 
-interface fineData {
-  [k: string]: {
-    username: string;
-    fineAmount: number;
-    fineCap: number;
-    capReached: boolean;
-  };
-}
-
 async function forFun(message: Message) {
+  if (message.channel.id !== "852270452142899213") return;
   const finePath = path.join(__dirname, "..", "data", "fines.json");
   const authorID = message.author.id;
+  const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as FineData;
+
+  const lastMessageSent = message.id;
+  fines.lastMessageID = lastMessageSent;
 
   if (message.content.includes("🥹")) {
-    const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as fineData;
+    const thisFine = calcAndSaveFine(message, fines);
 
-    if (!fines[authorID])
-      fines[authorID] = {
-        username: message.author.username,
-        fineAmount: 0,
-        fineCap: 5000,
-        capReached: false,
-      };
+    const { capReached, fineCap, fineAmount } = fines.userFineData[authorID];
 
-    const { fineAmount: currentFine, fineCap: cap } = fines[authorID];
-
-    if (currentFine >= cap) return message.react(`855089585919098911`);
-
-    // in case user changed username
-    fines[authorID].username = message.author.username;
-
-    // Percentage of max is 20% - 10%
-    var percentageOfCap = ((0.2 - 0.1) / (5000 - 1000000000)) * (cap - 1000000000) + 0.1;
-    if (percentageOfCap < 0.1) percentageOfCap = 0.1;
-    // Random for cap between max % of cap and 3.5% of the cap
-    const randomAmount = Math.floor(Math.random() * (cap * percentageOfCap) + cap * 0.035);
-    const thisFine =
-      randomAmount + currentFine >= cap ? cap - fines[authorID].fineAmount : randomAmount;
-    fines[authorID].fineAmount += thisFine;
-
-    if (fines[authorID].fineAmount >= cap) {
-      fines[authorID].capReached = true;
+    if (capReached) {
       fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
       return message.reply(
-        `You have reached the fine limit ( ***${BigInt(fines[message.author.id].fineCap)
-          .toString()
-          .replace(
-            /\B(?=(\d{3})+(?!\d))/g,
-            ","
-          )}*** ), you must post <:waaah:1016423553320628284> to pay for your crimes`
+        `You have reached the fine limit ( ***${beautifyNumber(
+          fineCap
+        )}*** ), you must post <:waaah:1016423553320628284> to pay for your crimes`
       );
     }
 
     fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
     return message.reply(
-      `Do not 🥹 (${BigInt(thisFine)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} fine). Your total is **${BigInt(
-        fines[message.author.id].fineAmount
-      )
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}**`
+      `Do not 🥹 (${beautifyNumber(thisFine)} fine). Your total is **${beautifyNumber(fineAmount)}**`
     );
   }
 
   if (message.content.includes("<:waaah:1016423553320628284>")) {
-    const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as fineData;
+    const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as FineData;
 
-    if (!fines[authorID]) return;
-    if (fines[authorID].fineAmount <= 0) return;
+    if (!fines.userFineData[authorID]) return;
+    if (fines.userFineData[authorID].fineAmount <= 0) return;
 
-    const { fineAmount: prevFine, capReached } = fines[authorID];
+    const { fineAmount: prevFine, capReached } = fines.userFineData[authorID];
     // in case user changed username
-    fines[authorID].username = message.author.username;
-    fines[authorID].fineAmount = 0;
+    fines.userFineData[authorID].username = message.author.username;
+    fines.userFineData[authorID].fineAmount = 0;
 
-    if (capReached) fines[authorID].fineCap *= 2;
-    fines[authorID].capReached = false;
+    if (capReached) fines.userFineData[authorID].fineCap *= 2;
+    fines.userFineData[authorID].capReached = false;
     fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
-    message.reply(
+    return message.reply(
       `Your fines have all been paid (**${BigInt(prevFine)}**)${
         BigInt(capReached)
-          ? `, fine cap has increased to ${BigInt(fines[message.author.id].fineCap)
+          ? `, fine cap has increased to ${BigInt(fines.userFineData[message.author.id].fineCap)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
           : ``
       }`
     );
   }
+
+  fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
 }
