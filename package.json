@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --config nodemon.json src/index.ts",
+    "norerun": "ts-node ./src",
     "build": "tsc",
     "start": "node ./dist/"
   },
