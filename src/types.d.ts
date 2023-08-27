@@ -4,6 +4,7 @@ import {
   MessageContextMenuCommandInteraction,
   ChatInputCommandInteraction,
   AutocompleteInteraction,
+  Snowflake,
 } from "discord.js";
 import { BaseCommand } from "./utils/BaseCommand";
 import BaseSlashSubCommand from "./utils/BaseSlashSubCommand";
@@ -48,12 +49,14 @@ export declare interface BaseSubCommand extends BaseSlashSubCommand {
 }
 
 export interface SubCommand {
+  server: Snowflake;
   constructor(): void;
   run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): void;
   autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): void;
 }
 
 export declare interface ContextCommand {
+  all: boolean;
   constructor: void;
   getContextCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;
   run(interaction: MessageContextMenuCommandInteraction, client?: ExtendedClient): void;
@@ -72,3 +75,41 @@ export interface FineData {
     [userid: string]: UserFineData;
   };
 }
+
+export interface DBDPerk {
+  id: string;
+  name: string;
+  description: string;
+  role: "killer" | "survivor";
+  character: number | null;
+  image: string;
+}
+
+export interface DBDCharacter {
+  id: string;
+  charid: string;
+  name: string;
+  role: "killer" | "survivor";
+  gender: "male" | "female";
+  dlc: string | null;
+  img: string;
+}
+
+export interface DBDDLC {
+  id: string;
+  name: string;
+  steamid: number;
+  time: number;
+}
+
+export type OSRSWikiData = Array<{
+  examine: string;
+  id: number;
+  members: boolean;
+  lowalch: number;
+  limit: number;
+  value: number;
+  highalch: number;
+  icon: string;
+  name: string;
+}>;

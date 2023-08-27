@@ -1,0 +1,578 @@
+[
+    {
+        "charid": "0",
+        "name": "Dwight Fairfield",
+        "role": "survivor",
+        "id": "Dwight",
+        "gender": "male",
+        "dlc": null
+    },
+    {
+        "charid": "1",
+        "name": "Meg Thomas",
+        "role": "survivor",
+        "id": "Meg",
+        "gender": "female",
+        "dlc": null
+    },
+    {
+        "charid": "2",
+        "name": "Claudette Morel",
+        "role": "survivor",
+        "id": "Claudette",
+        "gender": "female",
+        "dlc": null
+    },
+    {
+        "charid": "3",
+        "name": "Jake Park",
+        "role": "survivor",
+        "id": "Jake",
+        "gender": "male",
+        "dlc": null
+    },
+    {
+        "charid": "4",
+        "name": "Nea Karlsson",
+        "role": "survivor",
+        "id": "Nea",
+        "gender": "female",
+        "dlc": null
+    },
+    {
+        "charid": "5",
+        "name": "Laurie Strode",
+        "role": "survivor",
+        "id": "Laurie",
+        "gender": "female",
+        "dlc": "halloween"
+    },
+    {
+        "charid": "6",
+        "name": "Ace Visconti",
+        "role": "survivor",
+        "id": "Ace",
+        "gender": "male",
+        "dlc": "fleshAndMud"
+    },
+    {
+        "charid": "7",
+        "name": "William \"Bill\" Overbeck",
+        "role": "survivor",
+        "id": "Bill",
+        "gender": "male",
+        "dlc": null
+    },
+    {
+        "charid": "8",
+        "name": "Feng Min",
+        "role": "survivor",
+        "id": "Feng",
+        "gender": "female",
+        "dlc": "sparkofMadness"
+    },
+    {
+        "charid": "9",
+        "name": "David King",
+        "role": "survivor",
+        "id": "Smoke",
+        "gender": "male",
+        "dlc": "boreal"
+    },
+    {
+        "charid": "10",
+        "name": "Kate Denson",
+        "role": "survivor",
+        "id": "Kate",
+        "gender": "female",
+        "dlc": "Guam"
+    },
+    {
+        "charid": "11",
+        "name": "Quentin Smith",
+        "role": "survivor",
+        "id": "Quentin",
+        "gender": "male",
+        "dlc": "Sandman"
+    },
+    {
+        "charid": "12",
+        "name": "Detective Tapp",
+        "role": "survivor",
+        "id": "Eric",
+        "gender": "male",
+        "dlc": "Finland"
+    },
+    {
+        "charid": "13",
+        "name": "Adam Francis",
+        "role": "survivor",
+        "id": "Adam",
+        "gender": "male",
+        "dlc": "Haiti"
+    },
+    {
+        "charid": "14",
+        "name": "Jeff Johansen",
+        "role": "survivor",
+        "id": "Jeff",
+        "gender": "male",
+        "dlc": "Kenya"
+    },
+    {
+        "charid": "15",
+        "name": "Jane Romero",
+        "role": "survivor",
+        "id": "Jane",
+        "gender": "female",
+        "dlc": "Mali"
+    },
+    {
+        "charid": "16",
+        "name": "Ashley J. Williams",
+        "role": "survivor",
+        "id": "Ash",
+        "gender": "male",
+        "dlc": "Nepals"
+    },
+    {
+        "charid": "17",
+        "name": "Nancy Wheeler",
+        "role": "survivor",
+        "id": "Nancy",
+        "gender": "female",
+        "dlc": "Qatar"
+    },
+    {
+        "charid": "18",
+        "name": "Steve Harrington",
+        "role": "survivor",
+        "id": "Steve",
+        "gender": "male",
+        "dlc": "Qatar"
+    },
+    {
+        "charid": "19",
+        "name": "Yui Kimura",
+        "role": "survivor",
+        "id": "Yui",
+        "gender": "female",
+        "dlc": "Sweden"
+    },
+    {
+        "charid": "20",
+        "name": "Zarina Kassir",
+        "role": "survivor",
+        "id": "Zarina",
+        "gender": "female",
+        "dlc": "Ukraine"
+    },
+    {
+        "charid": "21",
+        "name": "Cheryl Mason",
+        "role": "survivor",
+        "id": "S22",
+        "gender": "female",
+        "dlc": "Wales"
+    },
+    {
+        "charid": "22",
+        "name": "Felix Richter",
+        "role": "survivor",
+        "id": "S23",
+        "gender": "male",
+        "dlc": "Yemen"
+    },
+    {
+        "charid": "23",
+        "name": "Élodie Rakoto",
+        "role": "survivor",
+        "id": "S24",
+        "gender": "female",
+        "dlc": "Aurora"
+    },
+    {
+        "charid": "24",
+        "name": "Yun-Jin Lee",
+        "role": "survivor",
+        "id": "S25",
+        "gender": "female",
+        "dlc": "Comet"
+    },
+    {
+        "charid": "25",
+        "name": "Jill Valentine",
+        "role": "survivor",
+        "id": "S26",
+        "gender": "female",
+        "dlc": "Eclipse"
+    },
+    {
+        "charid": "26",
+        "name": "Leon S. Kennedy",
+        "role": "survivor",
+        "id": "S27",
+        "gender": "male",
+        "dlc": "Eclipse"
+    },
+    {
+        "charid": "27",
+        "name": "Mikaela Reid",
+        "role": "survivor",
+        "id": "S28",
+        "gender": "female",
+        "dlc": "Hubble"
+    },
+    {
+        "charid": "28",
+        "name": "Jonah Vasquez",
+        "role": "survivor",
+        "id": "S29",
+        "gender": "male",
+        "dlc": "Ion"
+    },
+    {
+        "charid": "29",
+        "name": "Yoichi Asakawa",
+        "role": "survivor",
+        "id": "S30",
+        "gender": "male",
+        "dlc": "Kepler"
+    },
+    {
+        "charid": "30",
+        "name": "Haddie Kaur",
+        "role": "survivor",
+        "id": "S31",
+        "gender": "female",
+        "dlc": "Meteor"
+    },
+    {
+        "charid": "31",
+        "name": "Ada Wong",
+        "role": "survivor",
+        "id": "S32",
+        "gender": "female",
+        "dlc": "Orion"
+    },
+    {
+        "charid": "32",
+        "name": "Rebecca Chambers",
+        "role": "survivor",
+        "id": "S33",
+        "gender": "female",
+        "dlc": "Orion"
+    },
+    {
+        "charid": "33",
+        "name": "Vittorio Toscano",
+        "role": "survivor",
+        "id": "S34",
+        "gender": "male",
+        "dlc": "Quantum"
+    },
+    {
+        "charid": "34",
+        "name": "Thalita Lyra",
+        "role": "survivor",
+        "id": "S35",
+        "gender": "female",
+        "dlc": "Saturn"
+    },
+    {
+        "charid": "35",
+        "name": "Renato Lyra",
+        "role": "survivor",
+        "id": "S36",
+        "gender": "male",
+        "dlc": "Saturn"
+    },
+    {
+        "charid": "36",
+        "name": "Gabriel Soma",
+        "role": "survivor",
+        "id": "S37",
+        "gender": "male",
+        "dlc": "Umbra"
+    },
+    {
+        "charid": "37",
+        "name": "Nicolas Cage",
+        "role": "survivor",
+        "id": "S38",
+        "gender": "male",
+        "dlc": "Venus"
+    },
+    {
+        "charid": "38",
+        "name": "Ellen Ripley",
+        "role": "survivor",
+        "id": "S39",
+        "gender": "female",
+        "dlc": "Wormhole"
+    },
+    {
+        "charid": "268435456",
+        "name": "The Trapper",
+        "role": "killer",
+        "id": "Chuckles",
+        "gender": "male",
+        "dlc": null
+    },
+    {
+        "charid": "268435457",
+        "name": "The Wraith",
+        "role": "killer",
+        "id": "Bob",
+        "gender": "male",
+        "dlc": null
+    },
+    {
+        "charid": "268435458",
+        "name": "The Hillbilly",
+        "role": "killer",
+        "id": "HillBilly",
+        "gender": "male",
+        "dlc": null
+    },
+    {
+        "charid": "268435459",
+        "name": "The Nurse",
+        "role": "killer",
+        "id": "Nurse",
+        "gender": "female",
+        "dlc": null
+    },
+    {
+        "charid": "268435460",
+        "name": "The Hag",
+        "role": "killer",
+        "id": "Witch",
+        "gender": "female",
+        "dlc": "fleshAndMud"
+    },
+    {
+        "charid": "268435461",
+        "name": "The Shape",
+        "role": "killer",
+        "id": "Shape",
+        "gender": "male",
+        "dlc": "halloween"
+    },
+    {
+        "charid": "268435462",
+        "name": "The Doctor",
+        "role": "killer",
+        "id": "Killer07",
+        "gender": "male",
+        "dlc": "sparkofMadness"
+    },
+    {
+        "charid": "268435463",
+        "name": "The Huntress",
+        "role": "killer",
+        "id": "Bear",
+        "gender": "female",
+        "dlc": "boreal"
+    },
+    {
+        "charid": "268435464",
+        "name": "The Cannibal",
+        "role": "killer",
+        "id": "Cannibal",
+        "gender": "male",
+        "dlc": "Cannibal"
+    },
+    {
+        "charid": "268435465",
+        "name": "The Nightmare",
+        "role": "killer",
+        "id": "Nightmare",
+        "gender": "male",
+        "dlc": "Sandman"
+    },
+    {
+        "charid": "268435466",
+        "name": "The Pig",
+        "role": "killer",
+        "id": "Pig",
+        "gender": "female",
+        "dlc": "Finland"
+    },
+    {
+        "charid": "268435467",
+        "name": "The Clown",
+        "role": "killer",
+        "id": "Clown",
+        "gender": "male",
+        "dlc": "Guam"
+    },
+    {
+        "charid": "268435468",
+        "name": "The Spirit",
+        "role": "killer",
+        "id": "Spirit",
+        "gender": "female",
+        "dlc": "Haiti"
+    },
+    {
+        "charid": "268435469",
+        "name": "The Legion",
+        "role": "killer",
+        "id": "Legion",
+        "gender": "multiple",
+        "dlc": "Kenya"
+    },
+    {
+        "charid": "268435470",
+        "name": "The Plague",
+        "role": "killer",
+        "id": "Plague",
+        "gender": "female",
+        "dlc": "Mali"
+    },
+    {
+        "charid": "268435471",
+        "name": "The Ghost Face",
+        "role": "killer",
+        "id": "Ghostface",
+        "gender": "male",
+        "dlc": "Oman"
+    },
+    {
+        "charid": "268435472",
+        "name": "The Demogorgon",
+        "role": "killer",
+        "id": "Demogorgon",
+        "gender": "nothuman",
+        "dlc": "Qatar"
+    },
+    {
+        "charid": "268435473",
+        "name": "The Oni",
+        "role": "killer",
+        "id": "Oni",
+        "gender": "male",
+        "dlc": "Sweden"
+    },
+    {
+        "charid": "268435474",
+        "name": "The Deathslinger",
+        "role": "killer",
+        "id": "Gunslinger",
+        "gender": "male",
+        "dlc": "Ukraine"
+    },
+    {
+        "charid": "268435475",
+        "name": "The Executioner",
+        "role": "killer",
+        "id": "K20",
+        "gender": "male",
+        "dlc": "Wales"
+    },
+    {
+        "charid": "268435476",
+        "name": "The Blight",
+        "role": "killer",
+        "id": "K21",
+        "gender": "male",
+        "dlc": "Yemen"
+    },
+    {
+        "charid": "268435477",
+        "name": "The Twins",
+        "role": "killer",
+        "id": "K22",
+        "gender": "female",
+        "dlc": "Aurora"
+    },
+    {
+        "charid": "268435478",
+        "name": "The Trickster",
+        "role": "killer",
+        "id": "K23",
+        "gender": "male",
+        "dlc": "Comet"
+    },
+    {
+        "charid": "268435479",
+        "name": "The Nemesis",
+        "role": "killer",
+        "id": "K24",
+        "gender": "male",
+        "dlc": "Eclipse"
+    },
+    {
+        "charid": "268435480",
+        "name": "The Cenobite",
+        "role": "killer",
+        "id": "K25",
+        "gender": "male",
+        "dlc": "Gemini"
+    },
+    {
+        "charid": "268435481",
+        "name": "The Artist",
+        "role": "killer",
+        "id": "K26",
+        "gender": "female",
+        "dlc": "Ion"
+    },
+    {
+        "charid": "268435482",
+        "name": "The Onryō",
+        "role": "killer",
+        "id": "K27",
+        "gender": "female",
+        "dlc": "Kepler"
+    },
+    {
+        "charid": "268435483",
+        "name": "The Dredge",
+        "role": "killer",
+        "id": "K28",
+        "gender": "nothuman",
+        "dlc": "Meteor"
+    },
+    {
+        "charid": "268435484",
+        "name": "The Mastermind",
+        "role": "killer",
+        "id": "K29",
+        "gender": "male",
+        "dlc": "Orion"
+    },
+    {
+        "charid": "268435485",
+        "name": "The Knight",
+        "role": "killer",
+        "id": "K30",
+        "gender": "male",
+        "dlc": "Quantum"
+    },
+    {
+        "charid": "268435486",
+        "name": "The Skull Merchant",
+        "role": "killer",
+        "id": "K31",
+        "gender": "female",
+        "dlc": "Saturn"
+    },
+    {
+        "charid": "268435487",
+        "name": "The Singularity",
+        "role": "killer",
+        "id": "K32",
+        "gender": "male",
+        "dlc": "Umbra"
+    },
+    {
+        "charid": "268435488",
+        "name": "The Xenomorph",
+        "role": "killer",
+        "id": "K33",
+        "gender": "nothuman",
+        "dlc": "Wormhole"
+    }
+]

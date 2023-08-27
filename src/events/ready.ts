@@ -23,20 +23,7 @@ interface MiscFile {
     messageID: string;
     shouldMessage: boolean;
   };
-  shouldUpdateItems: boolean;
 }
-
-type WikiData = Array<{
-  examine: string;
-  id: number;
-  members: boolean;
-  lowalch: number;
-  limit: number;
-  value: number;
-  highalch: number;
-  icon: string;
-  name: string;
-}>;
 
 export = {
   name: Events.ClientReady,
@@ -54,10 +41,6 @@ export = {
     const misc = (await JSON.parse(fs.readFileSync(miscPath, "utf-8"))) as MiscFile;
     if (misc.reboot && misc.reboot.shouldMessage) {
       await editRebootMessage(misc, client);
-    }
-
-    if (misc.shouldUpdateItems) {
-      updateOSRSItems(misc, client);
     }
 
     client.user.setActivity(
@@ -144,37 +127,4 @@ async function editRebootMessage(misc: MiscFile, client: ExtendedClient) {
 
   var miscPath = path.join(__dirname, "..", "data", "misc.json");
   fs.writeFileSync(miscPath, JSON.stringify(misc, null, 4));
-}
-
-async function updateOSRSItems(misc: MiscFile, client: ExtendedClient) {
-  const url = `https://prices.runescape.wiki/api/v1/osrs/mapping`;
-  var config: AxiosRequestConfig = {
-    headers: {
-      "User-Agent": "Discord Bot - @birbkiwi",
-      "Content-Type": "application/json",
-    },
-    timeout: 60000,
-  };
-
-  console.log("Requesting updated items...");
-  var items = await axios.get<WikiData>(url, config).catch((e: Error) => {
-    if (axios.isAxiosError(e)) {
-      if (e.cause && e.cause.name !== "ECONNREFUSED") console.error(e);
-      else console.log("Failed to connect to wiki servers");
-    }
-  });
-  if (!items) return;
-
-  const itemData = items.data;
-  const itemsObj = Object.fromEntries(itemData.map((item) => [item.name, `${item.id}`]));
-
-  client.osrsItems = itemData.map((item) => {
-    return { name: item.name, value: `${item.id}` };
-  });
-
-  const dataPath = path.join(__dirname, "..", "data");
-  fs.writeFileSync(path.join(dataPath, "itemIDs.json"), JSON.stringify(itemsObj, null, 4));
-  misc.shouldUpdateItems = false;
-  fs.writeFileSync(path.join(dataPath, "misc.json"), JSON.stringify(misc, null, 4));
-  console.log(`Updated OSRS Item IDs`);
 }
