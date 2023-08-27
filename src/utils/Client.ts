@@ -9,9 +9,20 @@ import {
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-import { Command, BaseSubCommand, ContextCommand, messageProps, reminderDetails } from "../types";
+import {
+  Command,
+  BaseSubCommand,
+  ContextCommand,
+  messageProps,
+  reminderDetails,
+  OSRSWikiData,
+  DBDPerk,
+  DBDCharacter,
+  DBDDLC,
+} from "../types";
 import { DateTime } from "luxon";
 import { GREEN, DEFAULT } from "./ConsoleText";
+import axios, { AxiosRequestConfig } from "axios";
 
 export default class ExtendedClient extends Client {
   public commands: Collection<string, Command>;
@@ -22,6 +33,9 @@ export default class ExtendedClient extends Client {
   public reminders: { [index: string]: Array<reminderDetails> };
   public reminderTimeouts: NodeJS.Timeout[];
   public osrsItems: Array<{ name: string; value: string }>;
+  public dbdPerks: DBDPerk[];
+  public dbdChars: DBDCharacter[];
+  public dbdDLC: DBDDLC[];
   public aiEnabled: Boolean;
   public aiQueue: { userID: string; interactionID: string }[];
   public ownerID: string;
@@ -43,15 +57,37 @@ export default class ExtendedClient extends Client {
 
     this._reminderPath = path.join(__dirname, "..", "data", "reminders.json");
 
-    const itemIDPath = path.join(__dirname, "..", "data", "itemIDs.json");
+    const osrsItemsPath = path.join(__dirname, "..", "data", "itemIDs.json");
+    const dbdPerkFilePath = path.join(__dirname, "..", "data", "dbdPerks.json");
+    const dbdCharFilePath = path.join(__dirname, "..", "data", "dbdChars.json");
+    const dbdDLCFilePath = path.join(__dirname, "..", "data", "dbdDLC.json");
 
     this.rest.setToken(token);
 
-    this.osrsItems = Object.entries(JSON.parse(fs.readFileSync(itemIDPath, "utf-8"))).map(
-      (item) => {
-        return { name: item[0] as string, value: item[1] as string };
-      }
-    );
+    if (!fs.existsSync(osrsItemsPath)) {
+      this.osrsItems = [];
+      this.getOSRSItems();
+    } else
+      this.osrsItems = Object.entries(JSON.parse(fs.readFileSync(osrsItemsPath, "utf-8"))).map(
+        (item) => {
+          return { name: item[0] as string, value: item[1] as string };
+        }
+      );
+
+    if (
+      !fs.existsSync(dbdPerkFilePath) ||
+      !fs.existsSync(dbdCharFilePath) ||
+      !fs.existsSync(dbdDLCFilePath)
+    ) {
+      this.dbdPerks = [];
+      this.dbdChars = [];
+      this.dbdDLC = [];
+      this.getDBDData();
+    } else {
+      this.dbdPerks = JSON.parse(fs.readFileSync(dbdPerkFilePath, "utf-8"));
+      this.dbdChars = JSON.parse(fs.readFileSync(dbdCharFilePath, "utf-8"));
+      this.dbdDLC = JSON.parse(fs.readFileSync(dbdDLCFilePath, "utf-8"));
+    }
   }
 
   public reload(command: string) {
@@ -201,5 +237,160 @@ export default class ExtendedClient extends Client {
       return false;
     }
     return true;
+  }
+
+  public async getOSRSItems() {
+    const apiURL = "https://prices.runescape.wiki/api/v1/osrs/mapping";
+    var config: AxiosRequestConfig = {
+      headers: {
+        "User-Agent": "Discord Bot - @birbkiwi",
+        "Content-Type": "application/json",
+      },
+      timeout: 60000,
+    };
+
+    var res = await axios.get<OSRSWikiData>(apiURL, config).catch((e: Error) => {
+      if (axios.isAxiosError(e)) {
+        if (e.cause && e.cause.name !== "ECONNREFUSED") console.error(e);
+        else console.log("Failed to connect to wiki servers");
+      }
+    });
+    if (!res) return;
+
+    const items = Object.fromEntries(res.data.map((item) => [item.name, `${item.id}`]));
+    const osrsItemPath = path.join(__dirname, "..", "data", "itemIDs.json");
+
+    this.osrsItems = res.data.map((item) => {
+      return { name: item.name, value: `${item.id}` };
+    });
+
+    fs.writeFile(osrsItemPath, JSON.stringify(items, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("OSRS Items updated");
+    });
+  }
+
+  public async getDBDData() {
+    interface ObjTunables {
+      [key: string]: string[];
+    }
+
+    interface PerkData extends DBDPerk {
+      categories: string[] | null;
+      tunables: string[][] | ObjTunables;
+      modifier: string;
+      teachable: number;
+    }
+
+    interface DBDPerkApiData {
+      [k: string]: PerkData;
+    }
+
+    interface DBDCharApiData {
+      [k: string]: Omit<DBDCharacter, "charid">;
+    }
+    interface DBDDLCApiData {
+      [k: string]: Omit<DBDDLC, "id">;
+    }
+
+    const apiURL = "https://dbd.tricky.lol/api/";
+    const dbdPerkFilePath = path.join(__dirname, "..", "data", "dbdPerks.json");
+    const dbdCharFilePath = path.join(__dirname, "..", "data", "dbdChars.json");
+    const dbdDLCFilePath = path.join(__dirname, "..", "data", "dbdDLC.json");
+
+    const perkData = await axios.get<DBDPerkApiData>(apiURL + "perks", {
+      headers: {
+        "User-Agent": "Discord Bot - birbkiwi",
+      },
+    });
+
+    const charData = await axios.get<DBDCharApiData>(apiURL + "characters", {
+      headers: {
+        "User-Agent": "Discord Bot - birbkiwi",
+      },
+    });
+
+    const dlcData = await axios.get<DBDDLCApiData>(apiURL + "dlc", {
+      headers: {
+        "User-Agent": "Discord Bot - birbkiwi",
+      },
+    });
+
+    if (perkData.status !== 200 || charData.status !== 200 || dlcData.status !== 200) {
+      return console.log(perkData, charData, dlcData);
+    }
+
+    const dbdPerks = Object.entries(perkData.data).map(([perkID, perk]) => {
+      var tunables: ObjTunables = {};
+      if (Array.isArray(perk.tunables)) {
+        for (var i = 0; i < perk.tunables.length; i++) {
+          tunables[i] = [perk.tunables[i][perk.tunables[i].length - 1]];
+        }
+      } else tunables = perk.tunables;
+
+      for (var key in perk.tunables) {
+        perk.description = perk.description.replace(
+          new RegExp("\\{" + key + "\\}", "gi"),
+          `<b>${tunables[key][tunables[key].length - 1]}</b>`
+        );
+      }
+
+      perk.description = perk.description
+        .replace(/<b>(.*?)<\/b>/g, "**$1**")
+        .replace(/<br>/g, "\n")
+        .replace(/<i>(.*?)<\/i>/g, "*$1*")
+        .replace(/<li>(.*?)<\/li>/g, "• $1\n");
+
+      return {
+        id: perkID,
+        name: perk.name,
+        character: perk.character,
+        description: perk.description,
+        image: perk.image,
+        role: perk.role,
+      } as DBDPerk;
+    });
+
+    this.dbdPerks = dbdPerks;
+
+    const dbdChars = Object.entries(charData.data).map(([key, char]) => {
+      return {
+        charid: key,
+        name: char.name,
+        role: char.role,
+        id: char.id,
+        gender: char.gender,
+        dlc: char.dlc,
+        img: char.img,
+      } as DBDCharacter;
+    });
+
+    this.dbdChars = dbdChars;
+
+    const dbdDlc = Object.entries(dlcData.data).map(([key, dlc]) => {
+      return {
+        id: key,
+        name: dlc.name,
+        steamid: dlc.steamid,
+        time: dlc.time,
+      } as DBDDLC;
+    });
+
+    this.dbdDLC = dbdDlc;
+
+    fs.writeFile(dbdPerkFilePath, JSON.stringify(dbdPerks, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("DBD perks retrieved");
+    });
+
+    fs.writeFile(dbdCharFilePath, JSON.stringify(dbdChars, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("DBD chars retrieved");
+    });
+
+    fs.writeFile(dbdDLCFilePath, JSON.stringify(dbdDlc, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("DBD dlcs retrieved");
+    });
   }
 }
