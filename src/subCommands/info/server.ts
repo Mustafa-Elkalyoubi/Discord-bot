@@ -23,7 +23,7 @@ export default class SubCommand extends BaseSubCommandRunner {
     const roleStrings = divideRoles(interaction);
     var serverEmbed = new EmbedBuilder()
       // @ts-ignore
-      .setColor(client.randomColor())
+      .setColor("Random")
       .setAuthor({
         name: interaction.user.username,
         iconURL: interaction.user.displayAvatarURL(),
