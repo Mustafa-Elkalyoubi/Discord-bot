@@ -68,8 +68,8 @@ async function runSubCommand(
     const subCommandInstance = client.subCommands.get(commandName);
     if (subCommandInstance == undefined) throw "Could not find main subcommand file somehow";
     const runner = subCommandInstance.groupCommands.get(subCommandName);
-    if (runner == undefined) throw "huh";
-    if (runner instanceof Collection) throw "huh2";
+    if (runner == undefined) throw "Runner not found";
+    if (runner instanceof Collection) throw "Runner not a collection";
     if (interaction.isAutocomplete()) {
       if (!runner.autocomplete) throw "No autocomplete function found";
       return runner.autocomplete(interaction, client);
