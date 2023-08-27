@@ -60,15 +60,39 @@ async function registerJSONs(client: ExtendedClient) {
     await registerSubCommands(client);
     await registerContextCommands(client);
 
-    const commandJSONs = client.commands.map((cmd) => cmd.getSlashCommandJSON());
-    const subCommandJSONs = client.subCommands.map((cmd) => cmd.getSlashCommandJSON());
-    const contextJSONs = client.contextCommands.map((cmd) => cmd.getContextCommandJSON());
+    const allServersCommandJSONs = client.commands
+      .filter((cmd) => cmd.all)
+      .map((cmd) => cmd.getSlashCommandJSON());
+    const allServersSubCommandJSONs = client.subCommands
+      .filter((cmd) => cmd.all)
+      .map((cmd) => cmd.getSlashCommandJSON());
+    const allServersContextJSONs = client.contextCommands
+      .filter((cmd) => cmd.all)
+      .map((cmd) => cmd.getContextCommandJSON());
 
-    if (commandJSONs === undefined || subCommandJSONs === undefined || contextJSONs === undefined)
+    const privateCommandJSONs = client.commands
+      .filter((cmd) => !cmd.all)
+      .map((cmd) => cmd.getSlashCommandJSON());
+    const privateSubCommandJSONs = client.subCommands
+      .filter((cmd) => !cmd.all)
+      .map((cmd) => cmd.getSlashCommandJSON());
+    const privateContextJSONs = client.contextCommands
+      .filter((cmd) => !cmd.all)
+      .map((cmd) => cmd.getContextCommandJSON());
+
+    if (
+      allServersCommandJSONs === undefined ||
+      allServersSubCommandJSONs === undefined ||
+      allServersContextJSONs === undefined
+    )
       return;
 
     await client.rest.put(Routes.applicationCommands(config.clientID), {
-      body: [...commandJSONs, ...subCommandJSONs, ...contextJSONs],
+      body: [...allServersCommandJSONs, ...allServersSubCommandJSONs, ...allServersContextJSONs],
+    });
+
+    await client.rest.put(Routes.applicationGuildCommands(config.clientID, config.testGuild), {
+      body: [...privateCommandJSONs, ...privateSubCommandJSONs, ...privateContextJSONs],
     });
     // const registeredCommands = await client.rest.get(Routes.applicationCommands(config.clientID));
   } catch (error) {

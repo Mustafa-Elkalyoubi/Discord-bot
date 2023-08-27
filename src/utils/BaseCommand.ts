@@ -1,11 +1,19 @@
-export class BaseCommand {
-  _name: string;
+import { Snowflake } from "discord.js";
 
-  constructor(name: string) {
+export class BaseCommand {
+  private _name: string;
+  private _all: boolean;
+
+  constructor(name: string, server = true) {
     this._name = name;
+    this._all = server;
   }
 
   get name() {
     return this._name;
+  }
+
+  get all() {
+    return this._all;
   }
 }
