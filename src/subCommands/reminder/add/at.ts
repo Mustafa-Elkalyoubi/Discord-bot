@@ -13,7 +13,7 @@ export default class SubCommand extends BaseSubCommandRunner {
     const day = interaction.options.getInteger("day");
     const month = interaction.options.getInteger("month");
     const year = interaction.options.getInteger("year");
-    var hour = interaction.options.getInteger("hour");
+    let hour = interaction.options.getInteger("hour");
     const minute = interaction.options.getInteger("minute");
     const meridiem = interaction.options.getString("meridiem");
     if (!day && !month && !year && !hour && !minute)

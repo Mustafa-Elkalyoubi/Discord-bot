@@ -4,7 +4,7 @@ import {
   MessageContextMenuCommandInteraction,
   RESTJSONErrorCodes,
 } from "discord.js";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { StepPrinter } from "./StepPrinter";
 import sharp from "sharp";
 import ufs from "url-file-size";
@@ -23,7 +23,7 @@ interface sevenTVResponse {
     username: string;
     display_name: string;
     avatar_url: string;
-    style: {};
+    style: { [k: string]: string };
     roles: string[];
   };
   host: {
@@ -113,15 +113,15 @@ async function steal7TV(
 
   stepPrinter(`Emote is ${emoteData.animated ? "" : "not "}animated`);
 
-  var emoteURL = "https:" + emoteData.host.url + `${emoteData.animated ? "/4x.gif" : "/4x.png"}`;
+  let emoteURL = "https:" + emoteData.host.url + `${emoteData.animated ? "/4x.gif" : "/4x.png"}`;
 
   stepPrinter("Grabbing highest res");
 
   const getImgBuffer = async (url: string, size: number): Promise<Buffer | null | undefined> => {
     url = url.replace("4x.", `${size}x.`);
-    var input: AxiosResponse<any, any> | null = null;
+    let input: AxiosResponse<string> | null = null;
     try {
-      input = await axios.get(url, {
+      input = await axios.get<string>(url, {
         responseType: "arraybuffer",
         timeout: 60000,
       });
@@ -138,11 +138,11 @@ async function steal7TV(
       : await sharp(input.data, { animated: false }).png().toBuffer();
   };
 
-  var imgBuffer: Buffer | null | string | undefined = null;
+  let imgBuffer: Buffer | null | string | undefined = null;
   const MAX_SIZE = 262144;
-  var imgTooBig = false;
+  let imgTooBig = false;
 
-  for (var i = 4; i > 0; i--) {
+  for (let i = 4; i > 0; i--) {
     imgBuffer = await getImgBuffer(emoteURL, i);
     if (!imgBuffer) continue;
     if (Buffer.byteLength(imgBuffer) < MAX_SIZE) break;
@@ -159,8 +159,8 @@ async function steal7TV(
   if (!imgBuffer) return stepPrinter("An unknown error occurred");
 
   if (imgTooBig) {
-    for (var i = 4; i > 0; i--) {
-      var size;
+    for (let i = 4; i > 0; i--) {
+      let size;
       try {
         size = await ufs(emoteURL);
         if (size < MAX_SIZE) {

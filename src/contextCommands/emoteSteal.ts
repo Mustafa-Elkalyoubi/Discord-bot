@@ -5,7 +5,6 @@ import {
   MessageContextMenuCommandInteraction,
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
-import ExtendedClient from "../utils/Client";
 import { steal7TV } from "../utils/steal7tv";
 
 export default class Command extends BaseCommand {
@@ -20,7 +19,7 @@ export default class Command extends BaseCommand {
       .toJSON();
   }
 
-  async run(interaction: MessageContextMenuCommandInteraction, client: ExtendedClient) {
+  async run(interaction: MessageContextMenuCommandInteraction) {
     const message = await interaction.channel?.messages.fetch(interaction.targetId);
 
     if (!message) return interaction.reply("Couldnt find message with id " + interaction.targetId);
@@ -34,7 +33,7 @@ export default class Command extends BaseCommand {
     const emojiRegex = /<:\w+:\d+>/i;
     const animatedRegex = /<a:\w+:\d+>/i;
 
-    var emojiRes = emojiRegex.exec(message.content) ?? animatedRegex.exec(message.content);
+    const emojiRes = emojiRegex.exec(message.content) ?? animatedRegex.exec(message.content);
     if (!emojiRes)
       return interaction.reply({
         content: `Could not find stealable emoji in message`,

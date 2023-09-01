@@ -5,8 +5,8 @@ import {
   ActionRowBuilder,
   ButtonStyle,
   ButtonInteraction,
-  CollectorFilter,
   EmbedBuilder,
+  ComponentType,
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 import { DateTime } from "luxon";
@@ -78,12 +78,13 @@ export default class Command extends BaseCommand {
         .setStyle(ButtonStyle.Primary);
     });
 
-    const filter: CollectorFilter<any[]> = (btn: ButtonInteraction) => {
+    const filter = (btn: ButtonInteraction) => {
       return !alreadyVoted.includes(btn.user.id);
     };
 
     const collector = interaction.channel?.createMessageComponentCollector({
-      filter,
+      componentType: ComponentType.Button,
+      filter: filter,
       max: 20,
       time: 1000 * 60 * length,
     });
@@ -92,7 +93,7 @@ export default class Command extends BaseCommand {
 
     await interaction.reply({
       embeds: [createNewEmbedObj()],
-      // @ts-expect-error
+      // @ts-expect-error not happy with actionrow for whatever reason
       components: [actionRow],
     });
 
@@ -101,7 +102,7 @@ export default class Command extends BaseCommand {
       pollOptions[index].value++;
       alreadyVoted.push(btn.user.id);
 
-      // @ts-expect-error
+      // @ts-expect-error not happy with actionrow for whatever reason
       btn.update({ embeds: [createNewEmbedObj()], components: [actionRow] });
     });
 
@@ -109,7 +110,7 @@ export default class Command extends BaseCommand {
       btn.reply({ content: "You already voted", ephemeral: true });
     });
 
-    collector?.on("end", (collection) => {
+    collector?.on("end", () => {
       pollOptions.sort((a, b) => b.value - a.value);
       interaction.editReply({ components: [], embeds: [createNewEmbedObj(true)] });
     });

@@ -37,20 +37,17 @@ export type reminderDetails = {
 };
 
 interface Command extends BaseCommand {
-  constructor(): void;
   getSlashCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;
   run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): void;
   autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): void;
 }
 
 export declare interface BaseSubCommand extends BaseSlashSubCommand {
-  constructor(): void;
   getSlashCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;
 }
 
 export interface SubCommand {
   server: Snowflake;
-  constructor(): void;
   run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): void;
   autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): void;
 }
@@ -90,9 +87,9 @@ export interface DBDCharacter {
   charid: string;
   name: string;
   role: "killer" | "survivor";
-  gender: "male" | "female";
+  gender: "male" | "female" | "nothuman";
   dlc: string | null;
-  img: string;
+  image: string;
 }
 
 export interface DBDDLC {

@@ -2,7 +2,6 @@ import ExtendedClient from "../../utils/Client";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 import { APIEmbedField, ChatInputCommandInteraction, EmbedBuilder, RestOrArray } from "discord.js";
 import axios from "axios";
-import { DateTime } from "luxon";
 
 const apiURL = "https://dbd.tricky.lol/api/shrine";
 interface apiData {
@@ -18,7 +17,7 @@ export default class SubCommand extends BaseSubCommandRunner {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    interaction.deferReply();
+    await interaction.deferReply();
     const res = await axios.get<apiData>(apiURL, {
       headers: { "User-Agent": "Discord bot - birbkiwi" },
     });

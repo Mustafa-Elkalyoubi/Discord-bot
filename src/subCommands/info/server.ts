@@ -1,4 +1,3 @@
-import ExtendedClient from "../../utils/Client";
 import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
@@ -17,12 +16,11 @@ export default class SubCommand extends BaseSubCommandRunner {
     super(baseCommand, group, name);
   }
 
-  async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
+  async run(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return interaction.reply("This command can only be used in a server");
     const owner = await interaction.guild?.fetchOwner();
     const roleStrings = divideRoles(interaction);
-    var serverEmbed = new EmbedBuilder()
-      // @ts-ignore
+    const serverEmbed = new EmbedBuilder()
       .setColor("Random")
       .setAuthor({
         name: interaction.user.username,
@@ -53,15 +51,15 @@ export default class SubCommand extends BaseSubCommandRunner {
 }
 
 function divideRoles(interaction: ChatInputCommandInteraction) {
-  var roles: Array<string> = [];
-  var division = 0;
-  var strings = [];
+  const roles: Array<string> = [];
+  let division = 0;
+  const strings = [];
   interaction.guild?.roles.cache.map((role) => {
     roles.push(`<@&${role.id}>`);
   });
 
   strings[0] = "";
-  for (var role of roles) {
+  for (const role of roles) {
     if (strings[division].length >= 1000) {
       division++;
       strings[division] = "";

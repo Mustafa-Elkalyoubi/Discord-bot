@@ -31,7 +31,7 @@ export const calcAndSaveFine = (message: Message, fines: FineData) => {
   fines.userFineData[authorID].username = message.author.username;
 
   // Percentage of max is 20% - 10%
-  var percentageOfCap = ((0.2 - 0.1) / (5000 - 1000000000)) * (cap - 1000000000) + 0.1;
+  let percentageOfCap = ((0.2 - 0.1) / (5000 - 1000000000)) * (cap - 1000000000) + 0.1;
   if (percentageOfCap < 0.1) percentageOfCap = 0.1;
   // Random for cap between max % of cap and 3.5% of the cap
   const randomAmount = Math.floor(Math.random() * (cap * percentageOfCap) + cap * 0.035);

@@ -2,13 +2,12 @@ import ExtendedClient from "../../utils/Client";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 import {
   APIEmbedField,
-  AttachmentBuilder,
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   EmbedBuilder,
   RestOrArray,
 } from "discord.js";
-import { DBDCharacter, DBDPerk } from "../../types";
+import { DBDPerk } from "../../types";
 import path from "node:path";
 import { DateTime } from "luxon";
 
@@ -42,7 +41,7 @@ export default class SubCommand extends BaseSubCommandRunner {
     if (!selectedPerk)
       return interaction.reply({ content: "idk how that happened", ephemeral: true });
 
-    var perk: DBDPerk[] = client.dbdPerks.filter((perk) =>
+    const perk: DBDPerk[] = client.dbdPerks.filter((perk) =>
       perk.name.toLowerCase().includes(selectedPerk.toLowerCase())
     );
     if (perk.length < 1) return interaction.reply({ content: "Perk not found", ephemeral: true });
@@ -83,8 +82,8 @@ export default class SubCommand extends BaseSubCommandRunner {
       } else embedFields.push({ name: "DLC", value: "Free", inline: true });
     } else embedFields.push({ name: "Character", value: "Global", inline: true });
 
-    const imagePath = path.join(__dirname, "..", "..", "assets", perk[0].image);
-    const imgName = path.basename(imagePath);
+    const perkImagePath = path.join(__dirname, "..", "..", "assets", perk[0].image);
+    const perkImgName = path.basename(perkImagePath);
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
@@ -92,9 +91,14 @@ export default class SubCommand extends BaseSubCommandRunner {
       .setTitle(perk[0].name)
       .setDescription(perk[0].description)
       .addFields(embedFields)
-      .setThumbnail(`attachment://${imgName}`)
+      .setImage(`attachment://${perkImgName}`)
       .setTimestamp();
 
-    interaction.reply({ embeds: [embed], files: [imagePath] });
+    if (charPerk.length < 1) return interaction.reply({ embeds: [embed], files: [perkImagePath] });
+
+    const charImagePath = path.join(__dirname, "..", "..", "assets", charPerk[0].image);
+    const charImgName = path.basename(charImagePath);
+    embed.setThumbnail(`attachment://${charImgName}`);
+    interaction.reply({ embeds: [embed], files: [perkImagePath, charImagePath] });
   }
 }

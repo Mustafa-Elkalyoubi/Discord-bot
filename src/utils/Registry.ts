@@ -25,7 +25,7 @@ async function registerCommands(client: ExtendedClient, dir = "../commands") {
     }
     // create new command object, and add to client.commands
     if (file.endsWith(".js") || file.endsWith(".ts")) {
-      const { default: Command } = require(path.join(filePath, file));
+      const { default: Command } = await import(path.join(filePath, file));
       const cmd = new Command();
       client.commands?.set(cmd.name, cmd);
       log(`${GREEN}Registering command: ${DEFAULT}${cmd.name}`);
@@ -45,20 +45,22 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
     if (stat.isDirectory()) {
       const subCommandDirectoryFiles = await fsPromise.readdir(folderPath);
       const indexFilePos = subCommandDirectoryFiles.indexOf(
-        `${file}${fs.existsSync(`${file}.js`) ? ".js" : ".ts"}`
+        `${file}${fs.existsSync(`${path.join(filePath, file, file)}.js`) ? ".js" : ".ts"}`
       );
       subCommandDirectoryFiles.splice(indexFilePos, 1);
       try {
-        var baseFile = path.join(folderPath, file + ".js");
-        const { default: BaseSubCommand } = require(fs.existsSync(baseFile)
-          ? baseFile
-          : path.join(folderPath, file + ".ts"));
+        const baseFile = path.join(folderPath, file + ".js");
+        const { default: BaseSubCommand } = await import(
+          fs.existsSync(baseFile) ? baseFile : path.join(folderPath, file + ".ts")
+        );
         const subCommand = new BaseSubCommand();
         client.subCommands?.set(file, subCommand);
 
         for (const group of subCommand.groups) {
           for (const command of group.subCommands) {
-            const { default: SubCommand } = require(path.join(folderPath, group.name, command));
+            const { default: SubCommand } = await import(
+              path.join(folderPath, group.name, command)
+            );
             let subCommandGroupMap = subCommand.groupCommands.get(group.name);
             if (subCommandGroupMap)
               subCommandGroupMap.set(command, new SubCommand(file, group.name, command));
@@ -73,7 +75,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
         }
         for (const subCommandFile of subCommandDirectoryFiles) {
           if (subCommandFile.endsWith(".json")) continue;
-          const { default: SubCommand } = require(path.join(folderPath, subCommandFile));
+          const { default: SubCommand } = await import(path.join(folderPath, subCommandFile));
           const cmd = new SubCommand(file, null, subCommandFile.split(".")[0]);
           const subCommandInstance = client.subCommands?.get(file);
           subCommandInstance?.groupCommands.set(cmd.name, cmd);
@@ -97,7 +99,7 @@ async function registerContextCommands(client: ExtendedClient, dir = "../context
       log(`Closing folder ${file}`);
     }
     if (file.endsWith(".js") || file.endsWith(".ts")) {
-      const { default: Command } = require(filePath);
+      const { default: Command } = await import(filePath);
       const cmd = new Command();
       client.contextCommands?.set(cmd.name, cmd);
       log(`${GREEN}Registering context command: ${DEFAULT}${cmd.name}`);

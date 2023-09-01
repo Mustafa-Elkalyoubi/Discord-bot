@@ -1,4 +1,4 @@
-import { Collection, Snowflake } from "discord.js";
+import { Collection } from "discord.js";
 import { SubCommand } from "../types";
 
 type SubCommandGroup = {

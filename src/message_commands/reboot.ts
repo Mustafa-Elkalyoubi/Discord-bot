@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import path from "node:path";
 import fs from "node:fs";
 
-exports.run = async (message: Message, args: string[]) => {
+exports.run = async (message: Message) => {
   const msg = await message.channel.send("Rebooting...");
 
   const miscPath = path.join(__dirname, "..", "data", "misc.json");

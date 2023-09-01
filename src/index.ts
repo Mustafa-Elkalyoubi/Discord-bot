@@ -7,7 +7,9 @@ import { registerCommands, registerContextCommands, registerSubCommands } from "
 
 import config from "./config.json";
 import { DEFAULT, GREEN } from "./utils/ConsoleText";
-require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
+import env from "dotenv";
+
+env.config({ path: path.join(__dirname, "..", ".env") });
 const { DISCORD_TOKEN: token } = process.env;
 if (!token) throw "Missing token";
 
@@ -32,17 +34,18 @@ const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs.readdirSync(eventsPath);
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
-  const event = require(filePath);
-  if (event.once) client.once(event.name, (...args) => event.run(...args, client));
-  else client.on(event.name, (...args) => event.run(...args, client));
+  import(filePath).then((event) => {
+    if (event.once) client.once(event.name, (...args) => event.run(...args, client));
+    else client.on(event.name, (...args) => event.run(...args, client));
+  });
 }
 
 const messagesPath = path.join(__dirname, "message_commands");
 const messagesFiles = fs.readdirSync(messagesPath);
-var messageCommandsCount = 0;
-messagesFiles.forEach((file) => {
+let messageCommandsCount = 0;
+messagesFiles.forEach(async (file) => {
   messageCommandsCount++;
-  const props = require(path.join(messagesPath, file));
+  const props = await import(path.join(messagesPath, file));
   console.log(
     `${GREEN}[${DateTime.now().toFormat(
       "yyyy-MM-DD HH:mm:ss"

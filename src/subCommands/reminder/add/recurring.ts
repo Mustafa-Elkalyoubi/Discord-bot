@@ -6,5 +6,7 @@ export default class SubCommand extends BaseSubCommandRunner {
     super(baseCommand, group, name);
   }
 
-  async run(interaction: ChatInputCommandInteraction) {}
+  async run(interaction: ChatInputCommandInteraction) {
+    interaction.reply("not built yet");
+  }
 }

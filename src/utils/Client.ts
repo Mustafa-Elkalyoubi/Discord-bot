@@ -36,7 +36,7 @@ export default class ExtendedClient extends Client {
   public dbdPerks: DBDPerk[];
   public dbdChars: DBDCharacter[];
   public dbdDLC: DBDDLC[];
-  public aiEnabled: Boolean;
+  public aiEnabled: boolean;
   public aiQueue: { userID: string; interactionID: string }[];
   public ownerID: string;
 
@@ -90,25 +90,21 @@ export default class ExtendedClient extends Client {
     }
   }
 
-  public reload(command: string) {
+  public async reload(command: string) {
     const messagesPath = path.join(__dirname, "..", "message_commands");
 
-    return new Promise((resolve, reject) => {
-      try {
-        let cmdPath = path.join(messagesPath, command);
-        delete require.cache[require.resolve(cmdPath)];
-        let cmd = require(cmdPath);
-        this.aliases.forEach((cmd, alias) => {
-          if (cmd === command) this.aliases.delete(alias);
-        });
-        this.messageCommands.set(command, cmd);
-        cmd.conf.aliases.forEach((alias: string) => {
-          this.aliases.set(alias, cmd.help.name);
-        });
-        resolve(null);
-      } catch (err) {
-        reject(err);
-      }
+    const cmdPath = path.join(messagesPath, command);
+    const cmd = await import(cmdPath);
+    return new Promise((resolve) => {
+      delete require.cache[require.resolve(cmdPath)];
+      this.aliases.forEach((cmd, alias) => {
+        if (cmd === command) this.aliases.delete(alias);
+      });
+      this.messageCommands.set(command, cmd);
+      cmd.conf.aliases.forEach((alias: string) => {
+        this.aliases.set(alias, cmd.help.name);
+      });
+      resolve(null);
     });
   }
 
@@ -151,7 +147,7 @@ export default class ExtendedClient extends Client {
     } else {
       if (!reminder.details) throw "Recurring details missing in reminder";
       const { day, hour, minute } = reminder.details;
-      var newReminderTime = DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m");
+      let newReminderTime = DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m");
       if (newReminderTime.toMillis() < DateTime.now().toMillis())
         newReminderTime = newReminderTime.plus({ days: 7 });
       reminder.timeToRemind = newReminderTime.toMillis();
@@ -169,8 +165,8 @@ export default class ExtendedClient extends Client {
   public reloadTimeouts() {
     for (const timeout of this.reminderTimeouts) clearTimeout(timeout);
     this.reminderTimeouts = [];
-    for (var userID in this.reminders) {
-      for (var reminder of this.reminders[userID]) {
+    for (const userID in this.reminders) {
+      for (const reminder of this.reminders[userID]) {
         const timeout = setTimeout(() => {
           this.executeReminder(reminder, userID);
         }, reminder.timeToRemind - DateTime.now().toMillis());
@@ -230,9 +226,9 @@ export default class ExtendedClient extends Client {
     }
   }
 
-  public isJSONString(str: any) {
+  public isJSONString(str: unknown) {
     try {
-      JSON.parse(str);
+      if (typeof str === "string") JSON.parse(str);
     } catch (e) {
       return false;
     }
@@ -241,7 +237,7 @@ export default class ExtendedClient extends Client {
 
   public async getOSRSItems() {
     const apiURL = "https://prices.runescape.wiki/api/v1/osrs/mapping";
-    var config: AxiosRequestConfig = {
+    const config: AxiosRequestConfig = {
       headers: {
         "User-Agent": "Discord Bot - @birbkiwi",
         "Content-Type": "application/json",
@@ -249,7 +245,7 @@ export default class ExtendedClient extends Client {
       timeout: 60000,
     };
 
-    var res = await axios.get<OSRSWikiData>(apiURL, config).catch((e: Error) => {
+    const res = await axios.get<OSRSWikiData>(apiURL, config).catch((e: Error) => {
       if (axios.isAxiosError(e)) {
         if (e.cause && e.cause.name !== "ECONNREFUSED") console.error(e);
         else console.log("Failed to connect to wiki servers");
@@ -321,14 +317,14 @@ export default class ExtendedClient extends Client {
     }
 
     const dbdPerks = Object.entries(perkData.data).map(([perkID, perk]) => {
-      var tunables: ObjTunables = {};
+      let tunables: ObjTunables = {};
       if (Array.isArray(perk.tunables)) {
-        for (var i = 0; i < perk.tunables.length; i++) {
+        for (let i = 0; i < perk.tunables.length; i++) {
           tunables[i] = [perk.tunables[i][perk.tunables[i].length - 1]];
         }
       } else tunables = perk.tunables;
 
-      for (var key in perk.tunables) {
+      for (const key in perk.tunables) {
         perk.description = perk.description.replace(
           new RegExp("\\{" + key + "\\}", "gi"),
           `<b>${tunables[key][tunables[key].length - 1]}</b>`
@@ -361,7 +357,7 @@ export default class ExtendedClient extends Client {
         id: char.id,
         gender: char.gender,
         dlc: char.dlc,
-        img: char.img,
+        image: char.image,
       } as DBDCharacter;
     });
 

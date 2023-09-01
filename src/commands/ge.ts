@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 import ExtendedClient from "../utils/Client";
-import { fetchItem } from "../utils/Request";
+import axios from "axios";
 
 export default class Command extends BaseCommand {
   constructor() {
@@ -77,28 +77,30 @@ export default class Command extends BaseCommand {
     await interaction.deferReply();
 
     const { name: itemName, value: itemID } = item;
-    var timeFrame = {
-      latest: "latest",
-      hour: "1h",
-    };
+
+    enum timeFrame {
+      latest = "latest",
+      hour = "1h",
+    }
     const tf = (interaction.options.getString("timeframe") ?? "hour") as keyof typeof timeFrame;
 
     const url = `https://prices.runescape.wiki/api/v1/osrs/${timeFrame[tf]}`;
-    var config = {
+    const config = {
       headers: { "User-Agent": "Discord Bot - birbkiwi" },
       params: { id: itemID },
     };
 
-    var prices;
+    let prices;
     try {
-      prices = await fetchItem(url, config)
+      prices = await axios
+        .get(url, config)
         .then(async function (res) {
-          const obj = await res.json();
+          const obj = res.data;
           return obj.data[itemID];
         })
         .catch((e: Error) => console.error(e));
-    } catch (error: any) {
-      if (error.code === "ETIMEDOUT")
+    } catch (error) {
+      if (!axios.isAxiosError(error))
         return interaction.editReply("Sorry, the servers seem to be having issues");
       console.error(error);
     }
@@ -111,7 +113,7 @@ export default class Command extends BaseCommand {
 
     const spriteURL = `https://secure.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${itemID}`;
 
-    var embed = new EmbedBuilder()
+    const embed = new EmbedBuilder()
       .setColor("Random")
       .setTitle(itemName)
       .setURL(`https://prices.runescape.wiki/osrs/item/${itemID}`)

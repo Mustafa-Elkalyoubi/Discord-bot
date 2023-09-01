@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { DateTime } from "luxon";
 
 async function run(message: Message, args: string[]) {
-  var hours, mins, seconds;
+  let hours, mins, seconds;
 
   if (args.length > 4)
     [hours, mins, seconds] = [parseInt(args[0]), parseInt(args[2]), parseInt(args[4])];

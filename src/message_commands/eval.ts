@@ -2,7 +2,7 @@ import config from "../config.json";
 import { Message } from "discord.js";
 import { codeBlock } from "discord.js";
 
-exports.run = async (message: Message, args: String[]) => {
+exports.run = async (message: Message, args: string[]) => {
   if (message.author.id !== config.ownerID) return;
 
   const clean = (text: string) => {
@@ -17,10 +17,11 @@ exports.run = async (message: Message, args: String[]) => {
     const code = args.join(" ");
     let evaled = eval(code);
 
-    if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
+    if (typeof evaled !== "string") evaled = (await import("util")).inspect(evaled);
     await message.channel.send(codeBlock("xl", clean(evaled)));
-  } catch (err: any) {
-    await message.channel.send({ content: "`ERROR`\n" + codeBlock("xl", clean(err)) });
+  } catch (err) {
+    if (typeof err === "string")
+      await message.channel.send({ content: "`ERROR`\n" + codeBlock("xl", clean(err)) });
   }
 };
 

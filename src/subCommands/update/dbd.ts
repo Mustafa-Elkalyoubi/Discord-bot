@@ -1,6 +1,6 @@
 import ExtendedClient from "../../utils/Client";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
-import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {

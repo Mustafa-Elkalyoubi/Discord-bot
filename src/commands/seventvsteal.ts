@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, RESTJSONErrorCodes } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 import { steal7TV } from "../utils/steal7tv";
 
@@ -22,7 +22,7 @@ export default class Command extends BaseCommand {
 
   async run(interaction: ChatInputCommandInteraction) {
     const url = interaction.options.getString("url")!;
-    var emoteName = interaction.options.getString("name") ?? "";
+    const emoteName = interaction.options.getString("name") ?? "";
 
     if (!url.includes("7tv.app"))
       return interaction.reply({ content: "Not a 7tv.app link", ephemeral: true });

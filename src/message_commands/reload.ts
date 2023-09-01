@@ -13,8 +13,8 @@ exports.run = (message: Message, args: string[], client: ExtendedClient) => {
     client
       .reload(command!)
       .then(() => msg.edit(`Successfully reloaded: ${command!}`))
-      .catch((err: any) =>
-        message.edit(`Command reload failed: ${command}\n\`\`\`${err.stack}\`\`\``)
+      .catch((err: unknown) =>
+        message.edit(`Command reload failed: ${command}\n\`\`\`${err}\`\`\``)
       );
   });
 };

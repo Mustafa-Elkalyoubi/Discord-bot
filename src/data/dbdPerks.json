@@ -475,7 +475,7 @@
         "id": "FurtiveChase",
         "name": "Furtive Chase",
         "character": 268435471,
-        "description": "You become **obsessed** with one Survivor. You lurk in the shadows, eliminating your victims one by one. When your Obsession is hooked, *Furtive Chase* receives a token, up to a maximum of **4** tokens.\n\nEach token decreases your Terror Radius by **4** meters while in a chase.\n\nWhen a Survivor rescues the Obsession from a hook, the rescuer becomes the Obsession.\n\nThe Killer can only be **obsessed** with one Survivor at a time.",
+        "description": "You lurk in the shadows, eliminating your victims one by one.\n\nYou become **obsessed** with one Survivor. When your Obsession is hooked, *Furtive Chase* receives a token, up to a maximum of **4** tokens.\n\nEach token decreases your Terror Radius by **4** meters while in a chase.\n\nWhen a Survivor rescues the Obsession from a hook, the rescuer becomes the Obsession.\n\nThe Killer can only be **obsessed** with one Survivor at a time.",
         "image": "UI/Icons/Perks/Oman/iconPerks_furtiveChase.png",
         "role": "killer"
     },
@@ -923,7 +923,7 @@
         "id": "K33P01",
         "name": "Ultimate Weapon",
         "character": 268435488,
-        "description": "When they spot you, they know the end is near.\n\nWhen you open a locker, this perk activates for **30** seconds.\n\nSurvivors entering your Terror Radius scream, reveal their position and gain **Blindness** for **30** seconds.\n\nBlindness prevents Survivors from seeing auras.\n\nThis perk goes on cooldown for **30** seconds.\n\n“I can't lie to you about your chances, but... you have my sympathies.” –Ash",
+        "description": "When they spot you, they know the end is near.\n\nWhen you open a locker, this perk activates for **30** seconds.\n\nSurvivors entering your Terror Radius scream, reveal their position and gain **Blindness** for **30** seconds.\n\nThis perk goes on cooldown for **30** seconds.\n\nBlindness prevents Survivors from seeing auras.\n\n“I can't lie to you about your chances, but... you have my sympathies.” –Ash",
         "image": "UI/Icons/Perks/Wormhole/iconPerks_UltimateWeapon.png",
         "role": "killer"
     },
@@ -1715,7 +1715,7 @@
         "id": "Spine_Chill",
         "name": "Spine Chill",
         "character": null,
-        "description": "An unnatural tingle warns you of impending doom.\n\nGet notified when the Killer is within a 36-meter range. If the Killer is within range and is looking at you with a clear line of sight, your speed while repairing, sabotaging, healing, unhooking, cleansing, blessing, opening exit gates and unlocking is increased by **6**%.• The effects of *Spine Chill* linger for 0.5 seconds after the Killer looks away or is out of range.\n",
+        "description": "An unnatural tingle warns you of impending doom.\n\nGet notified when the Killer is looking at you with a clear line of sight within a 36-meter range. Your speed while repairing, sabotaging, healing, unhooking, cleansing, blessing, opening exit gates and unlocking is increased by **6**%.• The effects of *Spine Chill* linger for 0.5 seconds after the Killer looks away or is out of range.\n",
         "image": "UI/Icons/Perks/iconPerks_spineChill.png",
         "role": "survivor"
     },
@@ -1931,7 +1931,7 @@
         "id": "WindowsOfOpportunity",
         "name": "Windows of Opportunity",
         "character": 10,
-        "description": "Unlocks potential in one's aura reading ability. Auras of pallets, breakable walls, and vault locations are revealed to you when within a **32** meter range.",
+        "description": "Unlocks potential in one's aura reading ability. Auras of pallets and vault locations are revealed to you when within a **32** meter range.\n\n*Windows of Opportunity* has a cooldown of&nbsp;**20** seconds after vaulting or dropping a pallet.",
         "image": "UI/Icons/Perks/Kate/iconPerks_windowsOfOpportunity.png",
         "role": "survivor"
     },

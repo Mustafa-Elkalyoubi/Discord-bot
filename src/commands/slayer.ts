@@ -54,7 +54,7 @@ export default class Command extends BaseCommand {
       fs.readFileSync(masterPath, "utf-8")
     );
 
-    var valid = [];
+    const valid = [];
     for (const [master, monsters] of Object.entries(masters)) {
       if (Object.keys(monsters).includes(monster))
         valid.push({

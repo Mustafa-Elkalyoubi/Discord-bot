@@ -47,14 +47,14 @@ interface apiPostRequestPayload {
   s_tmax?: number;
   s_tmin?: number;
   s_noise?: number;
-  override_settings?: {};
+  override_settings?: { [k: string]: string };
   override_settings_restore_afterwards?: boolean;
-  script_args?: any[];
+  script_args?: [];
   sampler_index?: string;
   script_name?: string;
   send_images?: boolean;
   save_images?: boolean;
-  alwayson_scripts?: {};
+  alwayson_scripts?: { [k: string]: string };
 }
 
 interface apiGetProgressResponseJSON {
@@ -218,7 +218,7 @@ export default class Command extends BaseCommand {
       .toJSON();
   }
 
-  async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
+  async autocomplete(interaction: AutocompleteInteraction) {
     const focusedValue = interaction.options.getFocused() ?? "";
     const filtered = this.LORAs.filter((lora) =>
       lora.name.toLowerCase().includes(focusedValue.toLowerCase())
@@ -253,7 +253,7 @@ export default class Command extends BaseCommand {
     const inputLora = interaction.options.getString("lora");
     const addDetailLora = interaction.options.getBoolean("detaillora") ?? true;
 
-    var formattedLora = "";
+    let formattedLora = "";
     if (inputLora) {
       const selectedLora = this.LORAs.filter((_lora) =>
         _lora.name.toLowerCase().includes(inputLora.toLowerCase())
@@ -283,7 +283,7 @@ export default class Command extends BaseCommand {
 
     await interaction.deferReply();
 
-    var data: apiPostRequestPayload = {
+    const data: apiPostRequestPayload = {
       enable_hr: true,
       hr_scale: hr_scale,
       hr_upscaler: "Latent",
@@ -308,13 +308,14 @@ export default class Command extends BaseCommand {
 
     const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
 
-    var result: Promise<AxiosResponse<apiPostResponseJSON>> | undefined;
+    let result: Promise<AxiosResponse<apiPostResponseJSON>> | undefined;
     try {
       result = axios.post<apiPostResponseJSON>(apiURL + "txt2img", data, {
         headers: { "Content-Type": "application/json" },
       });
+      // eslint-disable-next-line
     } catch (err: any) {
-      console.log(err.detail);
+      if (!err) return;
       queue.shift();
       if (axios.isAxiosError(err)) {
         if (err.cause && err.cause.name === "ECONNREFUSED")
@@ -323,6 +324,7 @@ export default class Command extends BaseCommand {
           );
         console.error(err);
       }
+
       if (!err.response) {
         console.log(err);
         interaction.editReply("Sorry, something went wrong");

@@ -6,7 +6,7 @@ import {
   SlashCommandBuilder,
   codeBlock,
   ButtonInteraction,
-  CollectorFilter,
+  ComponentType,
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 
@@ -58,8 +58,8 @@ export default class Command extends BaseCommand {
       Vome,
       Xata,
     }
-    var a: eReq = interaction.options.getInteger("a")!;
-    var b: eReq = interaction.options.getInteger("b")!;
+    let a: eReq = interaction.options.getInteger("a")!;
+    let b: eReq = interaction.options.getInteger("b")!;
 
     if (a === eReq.Unknown && b === eReq.Unknown)
       return interaction.reply(
@@ -83,7 +83,7 @@ export default class Command extends BaseCommand {
     await interaction.reply({
       content: `Was **${this.requiems[a]}** correct in position 2?`,
       components: [
-        // @ts-expect-error
+        // @ts-expect-error works but not allowed for some reason
         new ActionRowBuilder().setComponents(
           new ButtonBuilder().setCustomId("aTwo").setLabel("Yes").setStyle(ButtonStyle.Success),
           new ButtonBuilder().setCustomId("aNotTwo").setLabel("No").setStyle(ButtonStyle.Danger)
@@ -91,17 +91,18 @@ export default class Command extends BaseCommand {
       ],
     });
 
-    const filter: CollectorFilter<any[]> = (btnInteraction: ButtonInteraction) => {
+    const filter = (btnInteraction: ButtonInteraction) => {
       return interaction.user.id === btnInteraction.user.id;
     };
 
-    const collector = interaction.channel?.createMessageComponentCollector({
-      filter,
+    const collector = interaction.channel!.createMessageComponentCollector({
+      componentType: ComponentType.Button,
+      filter: filter,
       max: 20,
       time: 1000 * 90,
     });
 
-    collector?.on("collect", async (btn: ButtonInteraction) => {
+    collector.on("collect", async (btn: ButtonInteraction) => {
       if (btn.customId === "aTwo") {
         await btn.update({
           content: codeBlock(
@@ -120,7 +121,7 @@ export default class Command extends BaseCommand {
             `Use this order: \nOull, ${this.requiems[b]}, ${this.requiems[a]}`
           ),
           components: [
-            // @ts-expect-error
+            // @ts-expect-error works but not allowed for some reason
             new ActionRowBuilder().setComponents(
               new ButtonBuilder()
                 .setCustomId("b2W")
@@ -142,7 +143,7 @@ export default class Command extends BaseCommand {
             `Ouch. Use this order: \n${this.requiems[b]}, Oull, ${this.requiems[a]}`
           ),
           components: [
-            // @ts-expect-error
+            // @ts-expect-error works but not allowed for some reason
             new ActionRowBuilder().setComponents(
               new ButtonBuilder()
                 .setCustomId("b1W")
@@ -176,7 +177,7 @@ export default class Command extends BaseCommand {
       }
     });
 
-    collector?.on("end", (collection) => {
+    collector.on("end", () => {
       interaction.editReply({ components: [] });
     });
   }

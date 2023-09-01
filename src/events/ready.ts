@@ -1,18 +1,8 @@
-import {
-  ActivityType,
-  BaseGuildTextChannel,
-  Collection,
-  Events,
-  GuildTextBasedChannel,
-  TextChannel,
-  codeBlock,
-} from "discord.js";
-import { FineData, reminderDetails } from "../types";
-import { LIGHT_GREEN, DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
+import { ActivityType, Events, GuildTextBasedChannel, TextChannel, codeBlock } from "discord.js";
+import { FineData } from "../types";
+import { DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
 import path from "path";
 import fs from "node:fs";
-import { DateTime } from "luxon";
-import axios, { AxiosRequestConfig } from "axios";
 import ExtendedClient from "../utils/Client";
 import { beautifyNumber, calcAndSaveFine } from "../utils/FineHelper";
 
@@ -31,13 +21,13 @@ export = {
   run: async (client: ExtendedClient) => {
     if (!client.user) throw "What? (check ready.ts)";
     const dataPath = path.join(__dirname, "..", "data");
-    var reminderPath = path.join(dataPath, "reminders.json");
+    const reminderPath = path.join(dataPath, "reminders.json");
     client.reminders = JSON.parse(fs.readFileSync(reminderPath, "utf-8"));
 
     console.log(`${LIGHT_BLUE}Ready, logged in as ${client.user.tag + DEFAULT}`);
     client.reloadTimeouts();
 
-    var miscPath = path.join(dataPath, "misc.json");
+    const miscPath = path.join(dataPath, "misc.json");
     const misc = (await JSON.parse(fs.readFileSync(miscPath, "utf-8"))) as MiscFile;
     if (misc.reboot && misc.reboot.shouldMessage) {
       await editRebootMessage(misc, client);
@@ -93,8 +83,8 @@ export = {
         }`
       );
     } else {
-      var msgs = [];
-      for (var userFine of Object.values(finesToAddUp.fines)) {
+      const msgs = [];
+      for (const userFine of Object.values(finesToAddUp.fines)) {
         const amount = beautifyNumber(userFine.amount);
         const capReached = fines.userFineData[userFine.id].capReached;
         const fineAmount = beautifyNumber(fines.userFineData[userFine.id].fineAmount);
@@ -125,6 +115,6 @@ async function editRebootMessage(misc: MiscFile, client: ExtendedClient) {
 
   misc.reboot.shouldMessage = false;
 
-  var miscPath = path.join(__dirname, "..", "data", "misc.json");
+  const miscPath = path.join(__dirname, "..", "data", "misc.json");
   fs.writeFileSync(miscPath, JSON.stringify(misc, null, 4));
 }

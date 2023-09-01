@@ -1,5 +1,3 @@
-import { Snowflake } from "discord.js";
-
 export class BaseCommand {
   private _name: string;
   private _all: boolean;
