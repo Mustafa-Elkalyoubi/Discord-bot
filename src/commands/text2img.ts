@@ -143,10 +143,11 @@ export default class Command extends BaseCommand {
       trigger: "WARFRAME",
     },
     { name: "Xayah", fileName: "xayah-000036", trigger: "xayah" },
+    { name: "Xenomorph", fileName: "xenomilf", trigger: "monster girl, black skin" },
     {
       name: "Yasuo",
       fileName: "yspro",
-      trigger: "ys,1boy, pectorals, ponytail",
+      trigger: "ys, 1boy, pectorals, ponytail",
     },
   ].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -168,7 +169,8 @@ export default class Command extends BaseCommand {
             { name: "512x512", value: "512x512" },
             { name: "768x768", value: "768x768" },
             { name: "512x768", value: "512x768" },
-            { name: "768x512", value: "768x512" }
+            { name: "768x512", value: "768x512" },
+            { name: "680x240", value: "680x240" }
           )
       )
       .addStringOption((option) => {
