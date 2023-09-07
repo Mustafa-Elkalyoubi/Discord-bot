@@ -82,15 +82,33 @@ export interface DBDPerk {
   image: string;
 }
 
-export interface DBDCharacter {
+export interface DBDPower {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+}
+
+interface DBDChar {
   id: string;
   charid: string;
   name: string;
-  role: "killer" | "survivor";
   gender: "male" | "female" | "nothuman";
   dlc: string | null;
   image: string;
 }
+
+export interface dbdSurvivor extends DBDChar {
+  role: "survivor";
+  item: null;
+}
+
+export interface dbdKiller extends DBDChar {
+  role: "killer";
+  item: string;
+}
+
+export type DBDCharacter = dbdSurvivor | dbdKiller;
 
 export interface DBDDLC {
   id: string;

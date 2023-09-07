@@ -9,7 +9,6 @@ import {
 } from "discord.js";
 import { DBDPerk } from "../../types";
 import path from "node:path";
-import { DateTime } from "luxon";
 
 function capitalizeFirstLetter(str: string) {
   return str[0].toUpperCase() + str.slice(1);
@@ -75,7 +74,7 @@ export default class SubCommand extends BaseSubCommandRunner {
           },
           {
             name: "Date Added",
-            value: DateTime.fromSeconds(dlc.time).toLocaleString(DateTime.DATE_MED),
+            value: `<t:${dlc.time}:D>`,
             inline: true,
           }
         );

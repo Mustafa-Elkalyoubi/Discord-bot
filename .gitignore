@@ -4,3 +4,5 @@ dist
 Open Blitz dumbass
 node_modules
 src/config.json
+src/assets
+src/data

@@ -19,10 +19,13 @@ import {
   DBDPerk,
   DBDCharacter,
   DBDDLC,
+  DBDPower,
 } from "../types";
 import { DateTime } from "luxon";
 import { GREEN, DEFAULT } from "./ConsoleText";
 import axios, { AxiosRequestConfig } from "axios";
+
+const dbdApiUrl = "https://dbd.tricky.lol/api/";
 
 export default class ExtendedClient extends Client {
   public commands: Collection<string, Command>;
@@ -36,6 +39,7 @@ export default class ExtendedClient extends Client {
   public dbdPerks: DBDPerk[];
   public dbdChars: DBDCharacter[];
   public dbdDLC: DBDDLC[];
+  public dbdPowers: DBDPower[];
   public aiEnabled: boolean;
   public aiQueue: { userID: string; interactionID: string }[];
   public ownerID: string;
@@ -55,12 +59,15 @@ export default class ExtendedClient extends Client {
     this.aiEnabled = aiEnabled;
     this.ownerID = ownerID;
 
-    this._reminderPath = path.join(__dirname, "..", "data", "reminders.json");
+    const dataPath = path.join(__dirname, "..", "data");
 
-    const osrsItemsPath = path.join(__dirname, "..", "data", "itemIDs.json");
-    const dbdPerkFilePath = path.join(__dirname, "..", "data", "dbdPerks.json");
-    const dbdCharFilePath = path.join(__dirname, "..", "data", "dbdChars.json");
-    const dbdDLCFilePath = path.join(__dirname, "..", "data", "dbdDLC.json");
+    this._reminderPath = path.join(dataPath, "reminders.json");
+
+    const osrsItemsPath = path.join(dataPath, "itemIDs.json");
+    const dbdPerkFilePath = path.join(dataPath, "dbdPerks.json");
+    const dbdCharFilePath = path.join(dataPath, "dbdChars.json");
+    const dbdDLCFilePath = path.join(dataPath, "dbdDLC.json");
+    const dbdPowerFilePath = path.join(dataPath, "dbdPower.json");
 
     this.rest.setToken(token);
 
@@ -74,20 +81,22 @@ export default class ExtendedClient extends Client {
         }
       );
 
-    if (
-      !fs.existsSync(dbdPerkFilePath) ||
-      !fs.existsSync(dbdCharFilePath) ||
-      !fs.existsSync(dbdDLCFilePath)
-    ) {
-      this.dbdPerks = [];
-      this.dbdChars = [];
-      this.dbdDLC = [];
-      this.getDBDData();
-    } else {
-      this.dbdPerks = JSON.parse(fs.readFileSync(dbdPerkFilePath, "utf-8"));
-      this.dbdChars = JSON.parse(fs.readFileSync(dbdCharFilePath, "utf-8"));
-      this.dbdDLC = JSON.parse(fs.readFileSync(dbdDLCFilePath, "utf-8"));
-    }
+    this.dbdPerks = [];
+    this.dbdChars = [];
+    this.dbdDLC = [];
+    this.dbdPowers = [];
+
+    if (!fs.existsSync(dbdPerkFilePath)) this.getDBDPerks();
+    else this.dbdPerks = JSON.parse(fs.readFileSync(dbdPerkFilePath, "utf-8"));
+
+    if (!fs.existsSync(dbdCharFilePath)) this.getDBDChars();
+    else this.dbdChars = JSON.parse(fs.readFileSync(dbdCharFilePath, "utf-8"));
+
+    if (!fs.existsSync(dbdDLCFilePath)) this.getDBDDLC();
+    else this.dbdDLC = JSON.parse(fs.readFileSync(dbdDLCFilePath, "utf-8"));
+
+    if (!fs.existsSync(dbdPowerFilePath)) this.getDBDPowers();
+    else this.dbdPowers = JSON.parse(fs.readFileSync(dbdPowerFilePath, "utf-8"));
   }
 
   public async reload(command: string) {
@@ -266,7 +275,16 @@ export default class ExtendedClient extends Client {
     });
   }
 
-  public async getDBDData() {
+  private sanitizeHTML = (str: string) => {
+    return str
+      .replace(/<b>(.*?)<\/b>/g, "**$1**")
+      .replace(/<br>/g, "\n")
+      .replace(/<i>(.*?)<\/i>/g, "*$1*")
+      .replace(/<li>(.*?)<\/li>/g, "• $1\n")
+      .replace(/&nbsp;/g, " ");
+  };
+
+  private async getDBDPerks() {
     interface ObjTunables {
       [key: string]: string[];
     }
@@ -282,39 +300,13 @@ export default class ExtendedClient extends Client {
       [k: string]: PerkData;
     }
 
-    interface DBDCharApiData {
-      [k: string]: Omit<DBDCharacter, "charid">;
-    }
-    interface DBDDLCApiData {
-      [k: string]: Omit<DBDDLC, "id">;
-    }
-
-    const apiURL = "https://dbd.tricky.lol/api/";
-    const dbdPerkFilePath = path.join(__dirname, "..", "data", "dbdPerks.json");
-    const dbdCharFilePath = path.join(__dirname, "..", "data", "dbdChars.json");
-    const dbdDLCFilePath = path.join(__dirname, "..", "data", "dbdDLC.json");
-
-    const perkData = await axios.get<DBDPerkApiData>(apiURL + "perks", {
+    const perkData = await axios.get<DBDPerkApiData>(dbdApiUrl + "perks", {
       headers: {
         "User-Agent": "Discord Bot - birbkiwi",
       },
     });
 
-    const charData = await axios.get<DBDCharApiData>(apiURL + "characters", {
-      headers: {
-        "User-Agent": "Discord Bot - birbkiwi",
-      },
-    });
-
-    const dlcData = await axios.get<DBDDLCApiData>(apiURL + "dlc", {
-      headers: {
-        "User-Agent": "Discord Bot - birbkiwi",
-      },
-    });
-
-    if (perkData.status !== 200 || charData.status !== 200 || dlcData.status !== 200) {
-      return console.log(perkData, charData, dlcData);
-    }
+    if (perkData.status !== 200) return console.error(perkData);
 
     const dbdPerks = Object.entries(perkData.data).map(([perkID, perk]) => {
       let tunables: ObjTunables = {};
@@ -331,17 +323,11 @@ export default class ExtendedClient extends Client {
         );
       }
 
-      perk.description = perk.description
-        .replace(/<b>(.*?)<\/b>/g, "**$1**")
-        .replace(/<br>/g, "\n")
-        .replace(/<i>(.*?)<\/i>/g, "*$1*")
-        .replace(/<li>(.*?)<\/li>/g, "• $1\n");
-
       return {
         id: perkID,
         name: perk.name,
         character: perk.character,
-        description: perk.description,
+        description: this.sanitizeHTML(perk.description),
         image: perk.image,
         role: perk.role,
       } as DBDPerk;
@@ -349,19 +335,59 @@ export default class ExtendedClient extends Client {
 
     this.dbdPerks = dbdPerks;
 
-    const dbdChars = Object.entries(charData.data).map(([key, char]) => {
-      return {
-        charid: key,
-        name: char.name,
-        role: char.role,
-        id: char.id,
-        gender: char.gender,
-        dlc: char.dlc,
-        image: char.image,
-      } as DBDCharacter;
+    const dbdPerkFilePath = path.join(__dirname, "..", "data", "dbdPerks.json");
+    fs.writeFile(dbdPerkFilePath, JSON.stringify(dbdPerks, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("DBD perks retrieved");
+    });
+  }
+
+  private async getDBDChars() {
+    interface DBDCharApiData {
+      [k: string]: Omit<DBDCharacter, "charid">;
+    }
+
+    const charData = await axios.get<DBDCharApiData>(dbdApiUrl + "characters", {
+      headers: {
+        "User-Agent": "Discord Bot - birbkiwi",
+      },
     });
 
+    if (charData.status !== 200) return console.error(charData);
+
+    const dbdChars = Object.entries(charData.data).map(
+      ([key, char]) =>
+        ({
+          charid: key,
+          name: char.name,
+          role: char.role,
+          id: char.id,
+          gender: char.gender,
+          dlc: char.dlc,
+          image: char.image,
+          item: char.item,
+        } as DBDCharacter)
+    );
+
     this.dbdChars = dbdChars;
+
+    const dbdCharFilePath = path.join(__dirname, "..", "data", "dbdChars.json");
+    fs.writeFile(dbdCharFilePath, JSON.stringify(dbdChars, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("DBD chars retrieved");
+    });
+  }
+
+  private async getDBDDLC() {
+    interface DBDDLCApiData {
+      [k: string]: Omit<DBDDLC, "id">;
+    }
+    const dlcData = await axios.get<DBDDLCApiData>(dbdApiUrl + "dlc", {
+      headers: {
+        "User-Agent": "Discord Bot - birbkiwi",
+      },
+    });
+    if (dlcData.status !== 200) return console.error(dlcData);
 
     const dbdDlc = Object.entries(dlcData.data).map(([key, dlc]) => {
       return {
@@ -374,19 +400,49 @@ export default class ExtendedClient extends Client {
 
     this.dbdDLC = dbdDlc;
 
-    fs.writeFile(dbdPerkFilePath, JSON.stringify(dbdPerks, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("DBD perks retrieved");
-    });
-
-    fs.writeFile(dbdCharFilePath, JSON.stringify(dbdChars, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("DBD chars retrieved");
-    });
-
+    const dbdDLCFilePath = path.join(__dirname, "..", "data", "dbdDLC.json");
     fs.writeFile(dbdDLCFilePath, JSON.stringify(dbdDlc, null, 4), { flag: "w" }, (err) => {
       if (err) throw err;
       console.log("DBD dlcs retrieved");
     });
+  }
+
+  private async getDBDPowers() {
+    interface DBDPowerApiData {
+      [k: string]: Omit<DBDPower, "id">;
+    }
+
+    const powerData = await axios.get<DBDPowerApiData>(dbdApiUrl + "items", {
+      headers: {
+        "User-Agent": "Discord Bot - birbkiwi",
+      },
+      params: {
+        role: "killer",
+        type: "power",
+      },
+    });
+    if (powerData.status !== 200) return console.error(powerData);
+
+    const dbdPower = Object.entries(powerData.data).map(([key, power]) => ({
+      id: key,
+      name: this.sanitizeHTML(power.name),
+      description: this.sanitizeHTML(power.description),
+      image: power.image,
+    }));
+
+    this.dbdPowers = dbdPower;
+
+    const dbdPowerFilePath = path.join(__dirname, "..", "data", "dbdPower.json");
+    fs.writeFile(dbdPowerFilePath, JSON.stringify(dbdPower, null, 4), { flag: "w" }, (err) => {
+      if (err) throw err;
+      console.log("DBD Powers retrieved");
+    });
+  }
+
+  public async getDBDData() {
+    this.getDBDPerks();
+    this.getDBDChars();
+    this.getDBDDLC();
+    this.getDBDPowers();
   }
 }
