@@ -23,6 +23,7 @@ const client = new ExtendedClient(
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.GuildMessageReactions,
     ],
+    allowedMentions: { parse: ["roles", "users"], repliedUser: true },
     partials: [Partials.Channel],
     rest: { version: "10" },
   },
