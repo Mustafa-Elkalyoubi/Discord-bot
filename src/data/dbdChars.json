@@ -6,7 +6,8 @@
         "id": "Dwight",
         "gender": "male",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/S01_DwightFairfield_Portrait.png"
+        "image": "UI/Icons/CharPortraits/S01_DwightFairfield_Portrait.png",
+        "item": null
     },
     {
         "charid": "1",
@@ -15,7 +16,8 @@
         "id": "Meg",
         "gender": "female",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/S02_MegThomas_Portrait.png"
+        "image": "UI/Icons/CharPortraits/S02_MegThomas_Portrait.png",
+        "item": null
     },
     {
         "charid": "2",
@@ -24,7 +26,8 @@
         "id": "Claudette",
         "gender": "female",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/S03_ClaudetteMorel_Portrait.png"
+        "image": "UI/Icons/CharPortraits/S03_ClaudetteMorel_Portrait.png",
+        "item": null
     },
     {
         "charid": "3",
@@ -33,7 +36,8 @@
         "id": "Jake",
         "gender": "male",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/S04_JakePark_Portrait.png"
+        "image": "UI/Icons/CharPortraits/S04_JakePark_Portrait.png",
+        "item": null
     },
     {
         "charid": "4",
@@ -42,7 +46,8 @@
         "id": "Nea",
         "gender": "female",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/S05_NeaKarlsson_Portrait.png"
+        "image": "UI/Icons/CharPortraits/S05_NeaKarlsson_Portrait.png",
+        "item": null
     },
     {
         "charid": "5",
@@ -51,7 +56,8 @@
         "id": "Laurie",
         "gender": "female",
         "dlc": "halloween",
-        "image": "UI/Icons/CharPortraits/DLC2/S06_LaurieStrode_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC2/S06_LaurieStrode_Portrait.png",
+        "item": null
     },
     {
         "charid": "6",
@@ -60,7 +66,8 @@
         "id": "Ace",
         "gender": "male",
         "dlc": "fleshAndMud",
-        "image": "UI/Icons/CharPortraits/DLC3/S07_AceVisconti_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC3/S07_AceVisconti_Portrait.png",
+        "item": null
     },
     {
         "charid": "7",
@@ -69,7 +76,8 @@
         "id": "Bill",
         "gender": "male",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/L4D/S08_WilliamBillOverbeck_Portrait.png"
+        "image": "UI/Icons/CharPortraits/L4D/S08_WilliamBillOverbeck_Portrait.png",
+        "item": null
     },
     {
         "charid": "8",
@@ -78,7 +86,8 @@
         "id": "Feng",
         "gender": "female",
         "dlc": "sparkofMadness",
-        "image": "UI/Icons/CharPortraits/DLC4/S09_FengMin_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC4/S09_FengMin_Portrait.png",
+        "item": null
     },
     {
         "charid": "9",
@@ -87,7 +96,8 @@
         "id": "Smoke",
         "gender": "male",
         "dlc": "boreal",
-        "image": "UI/Icons/CharPortraits/DLC5/S10_DavidKing_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC5/S10_DavidKing_Portrait.png",
+        "item": null
     },
     {
         "charid": "10",
@@ -96,7 +106,8 @@
         "id": "Kate",
         "gender": "female",
         "dlc": "Guam",
-        "image": "UI/Icons/CharPortraits/Guam/S13_KateDenson_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Guam/S13_KateDenson_Portrait.png",
+        "item": null
     },
     {
         "charid": "11",
@@ -105,7 +116,8 @@
         "id": "Quentin",
         "gender": "male",
         "dlc": "Sandman",
-        "image": "UI/Icons/CharPortraits/England/S11_QuentinSmith_Portrait.png"
+        "image": "UI/Icons/CharPortraits/England/S11_QuentinSmith_Portrait.png",
+        "item": null
     },
     {
         "charid": "12",
@@ -114,7 +126,8 @@
         "id": "Eric",
         "gender": "male",
         "dlc": "Finland",
-        "image": "UI/Icons/CharPortraits/Finland/S12_DetectiveDavidTapp_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Finland/S12_DetectiveDavidTapp_Portrait.png",
+        "item": null
     },
     {
         "charid": "13",
@@ -123,7 +136,8 @@
         "id": "Adam",
         "gender": "male",
         "dlc": "Haiti",
-        "image": "UI/Icons/CharPortraits/Haiti/S14_AdamFrancis_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Haiti/S14_AdamFrancis_Portrait.png",
+        "item": null
     },
     {
         "charid": "14",
@@ -132,7 +146,8 @@
         "id": "Jeff",
         "gender": "male",
         "dlc": "Kenya",
-        "image": "UI/Icons/CharPortraits/Kenya/S15_JeffJohansen_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Kenya/S15_JeffJohansen_Portrait.png",
+        "item": null
     },
     {
         "charid": "15",
@@ -141,7 +156,8 @@
         "id": "Jane",
         "gender": "female",
         "dlc": "Mali",
-        "image": "UI/Icons/CharPortraits/Mali/S16_JaneRomero_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Mali/S16_JaneRomero_Portrait.png",
+        "item": null
     },
     {
         "charid": "16",
@@ -150,7 +166,8 @@
         "id": "Ash",
         "gender": "male",
         "dlc": "Nepals",
-        "image": "UI/Icons/CharPortraits/Ash/S17_AshleyJWilliams_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Ash/S17_AshleyJWilliams_Portrait.png",
+        "item": null
     },
     {
         "charid": "17",
@@ -159,7 +176,8 @@
         "id": "Nancy",
         "gender": "female",
         "dlc": "Qatar",
-        "image": "UI/Icons/CharPortraits/Qatar/S19_NancyWheeler_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Qatar/S19_NancyWheeler_Portrait.png",
+        "item": null
     },
     {
         "charid": "18",
@@ -168,7 +186,8 @@
         "id": "Steve",
         "gender": "male",
         "dlc": "Qatar",
-        "image": "UI/Icons/CharPortraits/Qatar/S18_SteveHarrington_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Qatar/S18_SteveHarrington_Portrait.png",
+        "item": null
     },
     {
         "charid": "19",
@@ -177,7 +196,8 @@
         "id": "Yui",
         "gender": "female",
         "dlc": "Sweden",
-        "image": "UI/Icons/CharPortraits/Sweden/S20_YuiKimura_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Sweden/S20_YuiKimura_Portrait.png",
+        "item": null
     },
     {
         "charid": "20",
@@ -186,7 +206,8 @@
         "id": "Zarina",
         "gender": "female",
         "dlc": "Ukraine",
-        "image": "UI/Icons/CharPortraits/Ukraine/S21_ZarinaKassir_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Ukraine/S21_ZarinaKassir_Portrait.png",
+        "item": null
     },
     {
         "charid": "21",
@@ -195,7 +216,8 @@
         "id": "S22",
         "gender": "female",
         "dlc": "Wales",
-        "image": "UI/Icons/CharPortraits/Wales/S22_CherylMason_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Wales/S22_CherylMason_Portrait.png",
+        "item": null
     },
     {
         "charid": "22",
@@ -204,7 +226,8 @@
         "id": "S23",
         "gender": "male",
         "dlc": "Yemen",
-        "image": "UI/Icons/CharPortraits/Yemen/S23_FelixRichter_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Yemen/S23_FelixRichter_Portrait.png",
+        "item": null
     },
     {
         "charid": "23",
@@ -213,7 +236,8 @@
         "id": "S24",
         "gender": "female",
         "dlc": "Aurora",
-        "image": "UI/Icons/CharPortraits/Aurora/S24_ElodieRakoto_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Aurora/S24_ElodieRakoto_Portrait.png",
+        "item": null
     },
     {
         "charid": "24",
@@ -222,7 +246,8 @@
         "id": "S25",
         "gender": "female",
         "dlc": "Comet",
-        "image": "UI/Icons/CharPortraits/Comet/S25_YunJinLee_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Comet/S25_YunJinLee_Portrait.png",
+        "item": null
     },
     {
         "charid": "25",
@@ -231,7 +256,8 @@
         "id": "S26",
         "gender": "female",
         "dlc": "Eclipse",
-        "image": "UI/Icons/CharPortraits/Eclipse/S26_JillValentine_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Eclipse/S26_JillValentine_Portrait.png",
+        "item": null
     },
     {
         "charid": "26",
@@ -240,7 +266,8 @@
         "id": "S27",
         "gender": "male",
         "dlc": "Eclipse",
-        "image": "UI/Icons/CharPortraits/Eclipse/S27_LeonSKennedy_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Eclipse/S27_LeonSKennedy_Portrait.png",
+        "item": null
     },
     {
         "charid": "27",
@@ -249,7 +276,8 @@
         "id": "S28",
         "gender": "female",
         "dlc": "Hubble",
-        "image": "UI/Icons/CharPortraits/Hubble/S28_MikaelaReid_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Hubble/S28_MikaelaReid_Portrait.png",
+        "item": null
     },
     {
         "charid": "28",
@@ -258,7 +286,8 @@
         "id": "S29",
         "gender": "male",
         "dlc": "Ion",
-        "image": "UI/Icons/CharPortraits/Ion/S29_JonahVasquez_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Ion/S29_JonahVasquez_Portrait.png",
+        "item": null
     },
     {
         "charid": "29",
@@ -267,7 +296,8 @@
         "id": "S30",
         "gender": "male",
         "dlc": "Kepler",
-        "image": "UI/Icons/CharPortraits/Kepler/S30_YoichiAsakawa_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Kepler/S30_YoichiAsakawa_Portrait.png",
+        "item": null
     },
     {
         "charid": "30",
@@ -276,7 +306,8 @@
         "id": "S31",
         "gender": "female",
         "dlc": "Meteor",
-        "image": "UI/Icons/CharPortraits/Meteor/S31_HaddieKaur_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Meteor/S31_HaddieKaur_Portrait.png",
+        "item": null
     },
     {
         "charid": "31",
@@ -285,7 +316,8 @@
         "id": "S32",
         "gender": "female",
         "dlc": "Orion",
-        "image": "UI/Icons/CharPortraits/Orion/S32_AdaWong_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Orion/S32_AdaWong_Portrait.png",
+        "item": null
     },
     {
         "charid": "32",
@@ -294,7 +326,8 @@
         "id": "S33",
         "gender": "female",
         "dlc": "Orion",
-        "image": "UI/Icons/CharPortraits/Orion/S33_RebeccaChambers_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Orion/S33_RebeccaChambers_Portrait.png",
+        "item": null
     },
     {
         "charid": "33",
@@ -303,7 +336,8 @@
         "id": "S34",
         "gender": "male",
         "dlc": "Quantum",
-        "image": "UI/Icons/CharPortraits/Quantum/S34_VittorioToscano_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Quantum/S34_VittorioToscano_Portrait.png",
+        "item": null
     },
     {
         "charid": "34",
@@ -312,7 +346,8 @@
         "id": "S35",
         "gender": "female",
         "dlc": "Saturn",
-        "image": "UI/Icons/CharPortraits/Saturn/S35_ThalitaLyra_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Saturn/S35_ThalitaLyra_Portrait.png",
+        "item": null
     },
     {
         "charid": "35",
@@ -321,7 +356,8 @@
         "id": "S36",
         "gender": "male",
         "dlc": "Saturn",
-        "image": "UI/Icons/CharPortraits/Saturn/S36_RenatoLyra_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Saturn/S36_RenatoLyra_Portrait.png",
+        "item": null
     },
     {
         "charid": "36",
@@ -330,7 +366,8 @@
         "id": "S37",
         "gender": "male",
         "dlc": "Umbra",
-        "image": "UI/Icons/CharPortraits/Umbra/S37_GabrielSoma_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Umbra/S37_GabrielSoma_Portrait.png",
+        "item": null
     },
     {
         "charid": "37",
@@ -339,7 +376,8 @@
         "id": "S38",
         "gender": "male",
         "dlc": "Venus",
-        "image": "UI/Icons/CharPortraits/Venus/S38_NicolasCage_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Venus/S38_NicolasCage_Portrait.png",
+        "item": null
     },
     {
         "charid": "38",
@@ -348,7 +386,8 @@
         "id": "S39",
         "gender": "female",
         "dlc": "Wormhole",
-        "image": "UI/Icons/CharPortraits/Wormhole/S39_EllenRipley_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Wormhole/S39_EllenRipley_Portrait.png",
+        "item": null
     },
     {
         "charid": "268435456",
@@ -357,7 +396,8 @@
         "id": "Chuckles",
         "gender": "male",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/K01_TheTrapper_Portrait.png"
+        "image": "UI/Icons/CharPortraits/K01_TheTrapper_Portrait.png",
+        "item": "Item_Slasher_Beartrap"
     },
     {
         "charid": "268435457",
@@ -366,7 +406,8 @@
         "id": "Bob",
         "gender": "male",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/K02_TheWraith_Portrait.png"
+        "image": "UI/Icons/CharPortraits/K02_TheWraith_Portrait.png",
+        "item": "Item_Slasher_CloakBell"
     },
     {
         "charid": "268435458",
@@ -375,7 +416,8 @@
         "id": "HillBilly",
         "gender": "male",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/K03_TheHillbilly_Portrait.png"
+        "image": "UI/Icons/CharPortraits/K03_TheHillbilly_Portrait.png",
+        "item": "Item_Slasher_Chainsaw"
     },
     {
         "charid": "268435459",
@@ -384,7 +426,8 @@
         "id": "Nurse",
         "gender": "female",
         "dlc": null,
-        "image": "UI/Icons/CharPortraits/K04_TheNurse_Portrait.png"
+        "image": "UI/Icons/CharPortraits/K04_TheNurse_Portrait.png",
+        "item": "Item_Slasher_Blinker"
     },
     {
         "charid": "268435460",
@@ -393,7 +436,8 @@
         "id": "Witch",
         "gender": "female",
         "dlc": "fleshAndMud",
-        "image": "UI/Icons/CharPortraits/DLC3/K05_TheHag_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC3/K05_TheHag_Portrait.png",
+        "item": "Item_Slasher_PhantomTrap"
     },
     {
         "charid": "268435461",
@@ -402,7 +446,8 @@
         "id": "Shape",
         "gender": "male",
         "dlc": "halloween",
-        "image": "UI/Icons/CharPortraits/DLC2/K06_TheShape_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC2/K06_TheShape_Portrait.png",
+        "item": "Item_Slasher_Stalker"
     },
     {
         "charid": "268435462",
@@ -411,7 +456,8 @@
         "id": "Killer07",
         "gender": "male",
         "dlc": "sparkofMadness",
-        "image": "UI/Icons/CharPortraits/DLC4/K07_TheDoctor_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC4/K07_TheDoctor_Portrait.png",
+        "item": "Item_Slasher_Killer07Item"
     },
     {
         "charid": "268435463",
@@ -420,7 +466,8 @@
         "id": "Bear",
         "gender": "female",
         "dlc": "boreal",
-        "image": "UI/Icons/CharPortraits/DLC5/K08_TheHuntress_Portrait.png"
+        "image": "UI/Icons/CharPortraits/DLC5/K08_TheHuntress_Portrait.png",
+        "item": "Item_Slasher_Hatchet"
     },
     {
         "charid": "268435464",
@@ -429,7 +476,8 @@
         "id": "Cannibal",
         "gender": "male",
         "dlc": "Cannibal",
-        "image": "UI/Icons/CharPortraits/Cannibal/K09_TheCannibal_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Cannibal/K09_TheCannibal_Portrait.png",
+        "item": "Item_Slasher_LFChainsaw"
     },
     {
         "charid": "268435465",
@@ -438,7 +486,8 @@
         "id": "Nightmare",
         "gender": "male",
         "dlc": "Sandman",
-        "image": "UI/Icons/CharPortraits/England/K10_TheNightmare_Portrait.png"
+        "image": "UI/Icons/CharPortraits/England/K10_TheNightmare_Portrait.png",
+        "item": "Item_Slasher_DreamInducer"
     },
     {
         "charid": "268435466",
@@ -447,7 +496,8 @@
         "id": "Pig",
         "gender": "female",
         "dlc": "Finland",
-        "image": "UI/Icons/CharPortraits/Finland/K11_ThePig_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Finland/K11_ThePig_Portrait.png",
+        "item": "Item_Slasher_ReverseBearTrap"
     },
     {
         "charid": "268435467",
@@ -456,7 +506,8 @@
         "id": "Clown",
         "gender": "male",
         "dlc": "Guam",
-        "image": "UI/Icons/CharPortraits/Guam/K12_TheClown_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Guam/K12_TheClown_Portrait.png",
+        "item": "Item_Slasher_GasBomb"
     },
     {
         "charid": "268435468",
@@ -465,7 +516,8 @@
         "id": "Spirit",
         "gender": "female",
         "dlc": "Haiti",
-        "image": "UI/Icons/CharPortraits/Haiti/K13_TheSpirit_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Haiti/K13_TheSpirit_Portrait.png",
+        "item": "Item_Slasher_PhaseWalker"
     },
     {
         "charid": "268435469",
@@ -474,7 +526,8 @@
         "id": "Legion",
         "gender": "multiple",
         "dlc": "Kenya",
-        "image": "UI/Icons/CharPortraits/Kenya/K14_TheLegion_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Kenya/K14_TheLegion_Portrait.png",
+        "item": "Item_Slasher_Frenzy"
     },
     {
         "charid": "268435470",
@@ -483,7 +536,8 @@
         "id": "Plague",
         "gender": "female",
         "dlc": "Mali",
-        "image": "UI/Icons/CharPortraits/Mali/K15_ThePlague_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Mali/K15_ThePlague_Portrait.png",
+        "item": "Item_Slasher_PlaguePower"
     },
     {
         "charid": "268435471",
@@ -492,7 +546,8 @@
         "id": "Ghostface",
         "gender": "male",
         "dlc": "Oman",
-        "image": "UI/Icons/CharPortraits/Oman/K16_TheGhostface_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Oman/K16_TheGhostface_Portrait.png",
+        "item": "Item_Slasher_GhostPower"
     },
     {
         "charid": "268435472",
@@ -501,7 +556,8 @@
         "id": "Demogorgon",
         "gender": "nothuman",
         "dlc": "Qatar",
-        "image": "UI/Icons/CharPortraits/Qatar/K17_TheDemogorgon_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Qatar/K17_TheDemogorgon_Portrait.png",
+        "item": "Item_Slasher_QatarKillerPower"
     },
     {
         "charid": "268435473",
@@ -510,7 +566,8 @@
         "id": "Oni",
         "gender": "male",
         "dlc": "Sweden",
-        "image": "UI/Icons/CharPortraits/Sweden/K18_TheOni_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Sweden/K18_TheOni_Portrait.png",
+        "item": "Item_Slasher_Kanobo"
     },
     {
         "charid": "268435474",
@@ -519,7 +576,8 @@
         "id": "Gunslinger",
         "gender": "male",
         "dlc": "Ukraine",
-        "image": "UI/Icons/CharPortraits/Ukraine/K19_TheDeathslinger_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Ukraine/K19_TheDeathslinger_Portrait.png",
+        "item": "Item_Slasher_HarpoonRifle"
     },
     {
         "charid": "268435475",
@@ -528,7 +586,8 @@
         "id": "K20",
         "gender": "male",
         "dlc": "Wales",
-        "image": "UI/Icons/CharPortraits/Wales/K20_TheExecutioner_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Wales/K20_TheExecutioner_Portrait.png",
+        "item": "Item_Slasher_TormentMode"
     },
     {
         "charid": "268435476",
@@ -537,7 +596,8 @@
         "id": "K21",
         "gender": "male",
         "dlc": "Yemen",
-        "image": "UI/Icons/CharPortraits/Yemen/K21_TheBlight_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Yemen/K21_TheBlight_Portrait.png",
+        "item": "Item_Slasher_K21Power"
     },
     {
         "charid": "268435477",
@@ -546,7 +606,8 @@
         "id": "K22",
         "gender": "female",
         "dlc": "Aurora",
-        "image": "UI/Icons/CharPortraits/Aurora/K22_TheTwins_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Aurora/K22_TheTwins_Portrait.png",
+        "item": "Item_Slasher_K22Power"
     },
     {
         "charid": "268435478",
@@ -555,7 +616,8 @@
         "id": "K23",
         "gender": "male",
         "dlc": "Comet",
-        "image": "UI/Icons/CharPortraits/Comet/K23_TheTrickster_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Comet/K23_TheTrickster_Portrait.png",
+        "item": "Item_Slasher_ThrowingKnives"
     },
     {
         "charid": "268435479",
@@ -564,7 +626,8 @@
         "id": "K24",
         "gender": "male",
         "dlc": "Eclipse",
-        "image": "UI/Icons/CharPortraits/Eclipse/K24_TheNemesis_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Eclipse/K24_TheNemesis_Portrait.png",
+        "item": "Item_Slasher_K24Power"
     },
     {
         "charid": "268435480",
@@ -573,7 +636,8 @@
         "id": "K25",
         "gender": "male",
         "dlc": "Gemini",
-        "image": "UI/Icons/CharPortraits/Gemini/K25_TheCenobite_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Gemini/K25_TheCenobite_Portrait.png",
+        "item": "Item_Slasher_K25Power"
     },
     {
         "charid": "268435481",
@@ -582,7 +646,8 @@
         "id": "K26",
         "gender": "female",
         "dlc": "Ion",
-        "image": "UI/Icons/CharPortraits/Ion/K26_TheArtist_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Ion/K26_TheArtist_Portrait.png",
+        "item": "Item_Slasher_K26Power"
     },
     {
         "charid": "268435482",
@@ -591,7 +656,8 @@
         "id": "K27",
         "gender": "female",
         "dlc": "Kepler",
-        "image": "UI/Icons/CharPortraits/Kepler/K27_TheOnryo_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Kepler/K27_TheOnryo_Portrait.png",
+        "item": "Item_Slasher_K27Power"
     },
     {
         "charid": "268435483",
@@ -600,7 +666,8 @@
         "id": "K28",
         "gender": "nothuman",
         "dlc": "Meteor",
-        "image": "UI/Icons/CharPortraits/Meteor/K28_TheDredge_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Meteor/K28_TheDredge_Portrait.png",
+        "item": "Item_Slasher_K28Power"
     },
     {
         "charid": "268435484",
@@ -609,7 +676,8 @@
         "id": "K29",
         "gender": "male",
         "dlc": "Orion",
-        "image": "UI/Icons/CharPortraits/Orion/K29_TheMasterMind_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Orion/K29_TheMasterMind_Portrait.png",
+        "item": "Item_Slasher_K29Power"
     },
     {
         "charid": "268435485",
@@ -618,7 +686,8 @@
         "id": "K30",
         "gender": "male",
         "dlc": "Quantum",
-        "image": "UI/Icons/CharPortraits/Quantum/K30_TheKnight_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Quantum/K30_TheKnight_Portrait.png",
+        "item": "Item_Slasher_K30Power"
     },
     {
         "charid": "268435486",
@@ -627,7 +696,8 @@
         "id": "K31",
         "gender": "female",
         "dlc": "Saturn",
-        "image": "UI/Icons/CharPortraits/Saturn/K31_TheSkullMerchant_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Saturn/K31_TheSkullMerchant_Portrait.png",
+        "item": "Item_Slasher_K31Power"
     },
     {
         "charid": "268435487",
@@ -636,7 +706,8 @@
         "id": "K32",
         "gender": "male",
         "dlc": "Umbra",
-        "image": "UI/Icons/CharPortraits/Umbra/K32_TheSingularity_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Umbra/K32_TheSingularity_Portrait.png",
+        "item": "Item_Slasher_K32Power"
     },
     {
         "charid": "268435488",
@@ -645,6 +716,7 @@
         "id": "K33",
         "gender": "nothuman",
         "dlc": "Wormhole",
-        "image": "UI/Icons/CharPortraits/Wormhole/K33_TheXenomorph_Portrait.png"
+        "image": "UI/Icons/CharPortraits/Wormhole/K33_TheXenomorph_Portrait.png",
+        "item": "Item_Slasher_K33Power"
     }
 ]

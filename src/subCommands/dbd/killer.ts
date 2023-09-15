@@ -1,18 +1,8 @@
 import ExtendedClient from "../../utils/Client";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
-import {
-  APIEmbedField,
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  EmbedBuilder,
-  RestOrArray,
-} from "discord.js";
+import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import path from "node:path";
 import { dbdKiller } from "../../types";
-
-function capitalizeFirstLetter(str: string) {
-  return str[0].toUpperCase() + str.slice(1);
-}
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {
