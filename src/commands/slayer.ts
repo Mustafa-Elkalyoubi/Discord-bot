@@ -56,13 +56,18 @@ export default class Command extends BaseCommand {
 
     const valid = [];
     for (const [master, monsters] of Object.entries(masters)) {
-      if (Object.keys(monsters).includes(monster))
+      if (
+        Object.keys(monsters)
+          .map((monster) => monster.toLowerCase())
+          .includes(monster.toLowerCase())
+      )
         valid.push({
           master: master,
           weight: monsters[monster],
-          total: monsters["total"],
+          total: Object.values(monsters).reduce((acc, curr) => acc + curr, 0),
         });
     }
+
     const sorted = valid.sort((b, a) => a.weight / a.total - b.weight / b.total);
     return interaction.reply(
       codeBlock(
