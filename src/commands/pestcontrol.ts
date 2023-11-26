@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 
 enum multipliers {
@@ -87,6 +87,13 @@ export default class Command extends BaseCommand {
       )
       .addNumberOption((option) =>
         option
+          .setName("hitpoints")
+          .setDescription("your current hitpoints level")
+          .setMaxValue(99)
+          .setMinValue(25)
+      )
+      .addNumberOption((option) =>
+        option
           .setName("mage")
           .setDescription("your current mage level")
           .setMaxValue(99)
@@ -108,29 +115,55 @@ export default class Command extends BaseCommand {
     const attack = interaction.options.getNumber("attack") ?? 99;
     const strength = interaction.options.getNumber("strength") ?? 99;
     const defence = interaction.options.getNumber("defence") ?? 99;
+    const hp = interaction.options.getNumber("hitpoints") ?? 99;
     const range = interaction.options.getNumber("range") ?? 99;
     const mage = interaction.options.getNumber("mage") ?? 99;
     const prayer = interaction.options.getNumber("prayer") ?? 99;
     const points = interaction.options.getNumber("points") ?? 0;
     const ppp = interaction.options.getNumber("ppp") ?? 56;
 
-    let pointsNeeded = 0;
+    const attackPoints = calcPointsUntilMax(attack, "melee", xpMultiplier);
+    const strengthPoints = calcPointsUntilMax(strength, "melee", xpMultiplier);
+    const defencePoints = calcPointsUntilMax(defence, "melee", xpMultiplier);
+    const hpPoints = calcPointsUntilMax(hp, "melee", xpMultiplier);
+    const rangePoints = calcPointsUntilMax(range, "other", xpMultiplier);
+    const magePoints = calcPointsUntilMax(mage, "other", xpMultiplier);
+    const prayerPoints = calcPointsUntilMax(prayer, "prayer", xpMultiplier);
 
-    pointsNeeded += calcPointsUntilMax(attack, "melee", xpMultiplier);
-    pointsNeeded += calcPointsUntilMax(strength, "melee", xpMultiplier);
-    pointsNeeded += calcPointsUntilMax(defence, "melee", xpMultiplier);
-    pointsNeeded += calcPointsUntilMax(range, "other", xpMultiplier);
-    pointsNeeded += calcPointsUntilMax(mage, "other", xpMultiplier);
-    pointsNeeded += calcPointsUntilMax(prayer, "prayer", xpMultiplier);
+    const totalPoints =
+      attackPoints +
+      strengthPoints +
+      defencePoints +
+      hpPoints +
+      rangePoints +
+      magePoints +
+      prayerPoints;
 
-    interaction.reply(
-      `You need ${roundNearest100(pointsNeeded - points)} to get 99 in all combats, or ${Math.ceil(
-        (pointsNeeded - points) / ppp
-      )} runs`
-    );
+    const embed = new EmbedBuilder()
+      .setColor("Random")
+      .setTimestamp()
+      .setTitle("[Leagues] Pest Control points needed")
+      .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
+      .setFooter({ text: "gl" })
+      .setDescription(
+        `You need **${roundNearest100(totalPoints) - points}** points${
+          points !== 0 ? ` **(${roundNearest100(totalPoints)} total)**` : ""
+        } to get 99 in all combats, or **${Math.ceil((totalPoints - points) / ppp)}** runs`
+      )
+      .addFields(
+        { name: "Hitpoints", value: `Level: ${hp}, Points needed: **${hpPoints}**` },
+        { name: "Attack", value: `Level: ${attack}, Points needed: **${attackPoints}**` },
+        { name: "Strength", value: `Level: ${strength}, Points needed: **${strength}**` },
+        { name: "Defence", value: `Level: ${defence}, Points needed: **${defencePoints}**` },
+        { name: "Range", value: `Level: ${range}, Points needed: **${rangePoints}**` },
+        { name: "Mage", value: `Level: ${mage}, Points needed: **${magePoints}**` },
+        { name: "Prayer", value: `Level: ${prayer}, Points needed: **${prayerPoints}**` }
+      );
+
+    interaction.reply({ embeds: [embed] });
   }
 }
 
 function roundNearest100(num: number) {
-  return Math.round(num / 100) * 100;
+  return Math.ceil(num / 100) * 100;
 }
