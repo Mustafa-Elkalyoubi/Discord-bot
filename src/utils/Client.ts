@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   Client,
   ClientOptions,
@@ -22,7 +23,7 @@ import {
   DBDPower,
 } from "../types";
 import { DateTime } from "luxon";
-import { GREEN, DEFAULT } from "./ConsoleText";
+import Modifiers, { DEFAULT } from "./ConsoleText";
 import axios, { AxiosRequestConfig } from "axios";
 
 const dbdApiUrl = "https://dbd.tricky.lol/api/";
@@ -33,7 +34,7 @@ export default class ExtendedClient extends Client {
   public contextCommands: Collection<string, ContextCommand>;
   public messageCommands: Collection<string, messageProps>;
   public aliases: Collection<string, string>;
-  public reminders: { [index: string]: Array<reminderDetails> };
+  public reminders: Collection<string, Array<reminderDetails>>;
   public reminderTimeouts: NodeJS.Timeout[];
   public osrsItems: Array<{ name: string; value: string }>;
   public dbdPerks: DBDPerk[];
@@ -53,7 +54,7 @@ export default class ExtendedClient extends Client {
     this.contextCommands = new Collection();
     this.messageCommands = new Collection();
     this.aliases = new Collection();
-    this.reminders = {};
+    this.reminders = new Collection();
     this.reminderTimeouts = [];
     this.aiQueue = [];
     this.aiEnabled = aiEnabled;
@@ -136,10 +137,32 @@ export default class ExtendedClient extends Client {
     return permlevel;
   }
 
-  public log(location: string, message: string) {
+  public log(location: string, message: string, color: string = DEFAULT) {
     console.log(
-      `${GREEN}${location} [${DateTime.now().toFormat("HH:mm:ss")}] ${DEFAULT}${message}`
+      `${Modifiers.MAGENTA}${location} [${DateTime.now().toFormat(
+        "HH:mm:ss"
+      )}] ${color}${message}${DEFAULT}`
     );
+  }
+
+  public async findTextChannel(name: string, guildID: string) {
+    const guild = await this.guilds.fetch(guildID);
+    if (!guild) {
+      this.log("findTextChannel", `Could not find guild with id ${guildID}`, Modifiers.RED);
+      return null;
+    }
+
+    const channels = await guild.channels.fetch();
+    if (!channels) {
+      this.log("findTextChannel", `guild ${guild.id} does not have channels?`);
+      return null;
+    }
+
+    const channel = channels.find(
+      (channel) => channel && channel.name.includes(name) && channel.type === ChannelType.GuildText
+    );
+    if (!channel) return null;
+    return channel as TextChannel;
   }
 
   public async sendToChannel(channelID: string, message: string) {
@@ -150,10 +173,8 @@ export default class ExtendedClient extends Client {
   public executeReminder(reminder: reminderDetails, userID: string) {
     this.sendToChannel(reminder.channel, `<@!${userID}>: ${reminder.message}`);
 
-    if (!reminder.recurring) {
-      this.reminders[userID].splice(this.reminders[userID].indexOf(reminder), 1);
-      if (this.reminders[userID].length < 1) delete this.reminders[userID];
-    } else {
+    if (!reminder.recurring) this.deleteReminder(reminder.id, userID);
+    else {
       if (!reminder.details) throw "Recurring details missing in reminder";
       const { day, hour, minute } = reminder.details;
       let newReminderTime = DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m");
@@ -165,7 +186,24 @@ export default class ExtendedClient extends Client {
     this.reloadTimeouts();
 
     try {
-      fs.writeFileSync(this._reminderPath, JSON.stringify(this.reminders, null, 4));
+      fs.writeFileSync(this._reminderPath, JSON.stringify(this.reminders.toJSON(), null, 4));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  public deleteReminder(reminderID: number, userID: string) {
+    const reminders = this.reminders.get(userID);
+    if (!reminders) throw "user has no reminders to delete";
+
+    const reminderToDelete = reminders.findIndex((r) => r.id === reminderID);
+    if (reminderToDelete === -1) throw "cannot find reminder to delete";
+
+    reminders.splice(reminderToDelete, 1);
+    if (reminders.length < 1) this.reminders.delete(userID);
+
+    try {
+      fs.writeFileSync(this._reminderPath, JSON.stringify(this.reminders.toJSON(), null, 4));
     } catch (e) {
       console.error(e);
     }
@@ -174,14 +212,14 @@ export default class ExtendedClient extends Client {
   public reloadTimeouts() {
     for (const timeout of this.reminderTimeouts) clearTimeout(timeout);
     this.reminderTimeouts = [];
-    for (const userID in this.reminders) {
-      for (const reminder of this.reminders[userID]) {
+    this.reminders.forEach((reminders, userID) => {
+      reminders.forEach((reminder) => {
         const timeout = setTimeout(() => {
           this.executeReminder(reminder, userID);
         }, reminder.timeToRemind - DateTime.now().toMillis());
         this.reminderTimeouts.push(timeout);
-      }
-    }
+      });
+    });
   }
 
   public async saveReminder(
@@ -194,10 +232,7 @@ export default class ExtendedClient extends Client {
     minute: number | null = null
   ) {
     const userID = interaction.user.id;
-    if (!this.reminders[userID]) {
-      this.reminders[userID] = [];
-      this.reminders[userID] = [];
-    }
+    const reminders = this.reminders.ensure(userID, () => []);
 
     if (!interaction.channel) throw "No idea how this error occurred";
     const saveDetails = {
@@ -208,10 +243,13 @@ export default class ExtendedClient extends Client {
       recurring: recurring,
     };
 
-    this.reminders[userID].push(saveDetails);
+    this.reminders.set(userID, [...reminders, saveDetails]);
 
     try {
-      fs.writeFileSync(this._reminderPath, JSON.stringify(this.reminders, null, 4));
+      fs.writeFileSync(
+        this._reminderPath,
+        JSON.stringify(Array.from(this.reminders.entries()), null, 4)
+      );
       if (saveDetails.recurring)
         return interaction.reply({
           content: `\`RECURRING\` Reminder [${saveDetails.id}] set! Reminding you <t:${Math.floor(

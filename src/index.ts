@@ -1,5 +1,6 @@
 import { Partials, GatewayIntentBits, Routes } from "discord.js";
 import ExtendedClient from "./utils/Client";
+import fsPromise from "node:fs/promises";
 import fs from "node:fs";
 import path from "node:path";
 import { DateTime } from "luxon";
@@ -19,6 +20,7 @@ const client = new ExtendedClient(
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.GuildMembers,
       GatewayIntentBits.DirectMessages,
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.GuildMessageReactions,
@@ -32,14 +34,22 @@ const client = new ExtendedClient(
 );
 
 const eventsPath = path.join(__dirname, "events");
-const eventFiles = fs.readdirSync(eventsPath);
-for (const file of eventFiles) {
-  const filePath = path.join(eventsPath, file);
-  import(filePath).then((event) => {
-    if (event.once) client.once(event.name, (...args) => event.run(...args, client));
-    else client.on(event.name, (...args) => event.run(...args, client));
-  });
-}
+const loadEvents = async (currPath = eventsPath) => {
+  const eventFiles = fs.readdirSync(currPath);
+  for (const file of eventFiles) {
+    const filePath = path.join(currPath, file);
+    const stat = await fsPromise.lstat(filePath);
+
+    if (stat.isDirectory()) loadEvents(path.join(currPath, file));
+    else
+      import(filePath).then((event) => {
+        if (event.once) client.once(event.name, (...args) => event.run(...args, client));
+        else client.on(event.name, (...args) => event.run(...args, client));
+      });
+  }
+};
+
+loadEvents();
 
 const messagesPath = path.join(__dirname, "message_commands");
 const messagesFiles = fs.readdirSync(messagesPath);

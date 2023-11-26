@@ -9,7 +9,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     const userID = interaction.user.id;
-    const reminders = client.reminders[userID];
+    const reminders = client.reminders.get(userID);
 
     if (!reminders)
       return interaction.reply({ content: "You haven't set any reminders", ephemeral: true });

@@ -8,9 +8,8 @@ export default class SubCommand extends BaseSubCommandRunner {
   }
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
-    const reminders = client.reminders[interaction.user.id];
-
-    if (!reminders) return;
+    const reminders = client.reminders.get(interaction.user.id);
+    if (!reminders) return interaction.respond([]);
 
     const focusedValue = interaction.options.getFocused();
 
@@ -41,7 +40,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     const userID = interaction.user.id;
-    const reminders = client.reminders[userID];
+    const reminders = client.reminders.get(userID);
     const reminderID = parseInt(interaction.options.getString("id")!);
 
     if (!reminders)
@@ -58,9 +57,8 @@ export default class SubCommand extends BaseSubCommandRunner {
         ephemeral: true,
       });
 
-    client.reminders[userID].splice(client.reminders[userID].indexOf(reminderToRemove), 1);
-    if (client.reminders[userID].length === 0) delete client.reminders[userID];
-
+    client.deleteReminder(reminderID, userID);
+    interaction.reply({ content: `Removed reminder [${reminderID}]` });
     client.reloadTimeouts();
   }
 }
