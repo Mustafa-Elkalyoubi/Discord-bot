@@ -56,6 +56,7 @@ export default class Command extends BaseCommand {
             ]
           )
       )
+      .addNumberOption((option) => option.setName("points").setDescription("your current points"))
       .addNumberOption((option) =>
         option
           .setName("attack")
@@ -110,6 +111,7 @@ export default class Command extends BaseCommand {
     const range = interaction.options.getNumber("range") ?? 99;
     const mage = interaction.options.getNumber("mage") ?? 99;
     const prayer = interaction.options.getNumber("prayer") ?? 99;
+    const points = interaction.options.getNumber("points") ?? 0;
     const ppp = interaction.options.getNumber("ppp") ?? 56;
 
     let pointsNeeded = 0;
@@ -122,7 +124,7 @@ export default class Command extends BaseCommand {
     pointsNeeded += calcPointsUntilMax(prayer, "prayer", xpMultiplier);
 
     interaction.reply(
-      `You need ${roundNearest100(pointsNeeded)} to get 99 in all combats, or ${Math.ceil(
+      `You need ${roundNearest100(pointsNeeded - points)} to get 99 in all combats, or ${Math.ceil(
         pointsNeeded / ppp
       )} runs`
     );
