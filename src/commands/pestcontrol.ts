@@ -125,7 +125,7 @@ export default class Command extends BaseCommand {
 
     interaction.reply(
       `You need ${roundNearest100(pointsNeeded - points)} to get 99 in all combats, or ${Math.ceil(
-        pointsNeeded / ppp
+        (pointsNeeded - points) / ppp
       )} runs`
     );
   }
