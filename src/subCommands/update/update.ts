@@ -3,7 +3,7 @@ import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand";
 
 export default class BaseSubCommand extends BaseSlashSubCommand {
   constructor() {
-    super("update", [], ["osrs", "dbd"], false);
+    super("update", [], ["osrs", "dbd"], true);
   }
 
   getSlashCommandJSON() {

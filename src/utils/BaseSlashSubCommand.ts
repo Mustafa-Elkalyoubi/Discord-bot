@@ -17,13 +17,13 @@ export default class BaseSlashSubCommand {
     name: string,
     groups: Array<SubCommandGroup | null>,
     subcommands: Array<string | null>,
-    all = true
+    dev = false
   ) {
     this._name = name;
     this._groups = groups;
     this._subCommands = subcommands;
     this._groupCommands = new Collection();
-    this._all = all;
+    this._all = !dev;
   }
 
   get name() {
