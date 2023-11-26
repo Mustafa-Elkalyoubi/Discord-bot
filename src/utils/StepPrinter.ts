@@ -5,12 +5,19 @@ export const StepPrinter = function (
 ) {
   let steps: string[] = [];
 
-  return function (step: string, reset = false) {
+  const dict = {
+    INFO: "•",
+    POSITIVE: "+",
+    NEGATIVE: "-",
+  };
+
+  return function (step: string, stepType: keyof typeof dict = "INFO", reset = false) {
     if (!steps || reset) steps = [];
-    steps.push(step);
+
+    steps.push(`${dict[stepType]} ${step}`);
 
     interaction.editReply({
-      content: `\`\`\`\n• ${steps.join("\n• ")}\n\`\`\``,
+      content: `\`\`\`diff\n${steps.join("\n")}\n\`\`\``,
     });
   };
 };

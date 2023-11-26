@@ -58,7 +58,7 @@ async function steal7TV(
   if (!url.includes("7tv.app")) return interaction.editReply({ content: "Not a 7tv.app link" });
   const stepPrinter = StepPrinter(interaction);
 
-  stepPrinter("Stealing 7tv emote", true);
+  stepPrinter("Stealing 7tv emote", "INFO", true);
 
   const emoteID = url.slice(url.indexOf("7tv.app")).split("/")[2];
   const apiURL = `https://7tv.io/v3/emotes/${emoteID}`;
@@ -71,7 +71,7 @@ async function steal7TV(
           console.log(err.response.status);
           console.log(err.response.headers);
         } else if (err.request) {
-          stepPrinter("7tv is being stupid");
+          stepPrinter("7tv is being stupid", "NEGATIVE");
           // console.log("Here");
           // console.log(err.request);
         } else {
@@ -84,79 +84,56 @@ async function steal7TV(
     });
 
   if (!res) {
-    return stepPrinter("Sorry, something went wrong");
+    return stepPrinter("Sorry, something went wrong", "NEGATIVE");
   }
 
   const emoteData = res.data;
 
   if (name === "") {
     stepPrinter("Requesting emote name");
-
     name = emoteData.name;
   }
 
   if (name.length > 32)
     return stepPrinter(
-      `Error: Name is too long; Max length is 32 characters (emote is ${name.length})`
+      `Error: Name is too long; Max length is 32 characters (emote is ${name.length})`,
+      "NEGATIVE"
     );
 
-  if (name.length < 2) {
-    return stepPrinter(`Error: name is too short`);
-  }
+  if (name.length < 2) return stepPrinter(`Error: name is too short`, "NEGATIVE");
 
-  stepPrinter(`Name ${name}`);
+  stepPrinter(`Name ${name}`, "POSITIVE");
   const nameReg = /[^\w\d_]/g;
   const invalidReasons = Array.from(new Set(name.match(nameReg)));
-  if (invalidReasons.length > 0) {
-    return stepPrinter("Error: the name cannot include: " + invalidReasons.join(" | "));
-  }
+  if (invalidReasons.length > 0)
+    return stepPrinter("Error: the name cannot include: " + invalidReasons.join(" | "), "NEGATIVE");
 
-  stepPrinter(`Emote is ${emoteData.animated ? "" : "not "}animated`);
+  stepPrinter(`Emote is ${emoteData.animated ? "" : "not "}animated`, "INFO");
 
   let emoteURL = "https:" + emoteData.host.url + `${emoteData.animated ? "/4x.gif" : "/4x.png"}`;
-
-  stepPrinter("Grabbing highest res");
-
-  const getImgBuffer = async (url: string, size: number): Promise<Buffer | null | undefined> => {
-    url = url.replace("4x.", `${size}x.`);
-    let input: AxiosResponse<string> | null = null;
-    try {
-      input = await axios.get<string>(url, {
-        responseType: "arraybuffer",
-        timeout: 60000,
-      });
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.cause && err.cause.name !== "ECONNREFUSED") console.error(err);
-      }
-    }
-
-    if (!input) return null;
-
-    return emoteData.animated
-      ? await sharp(input.data, { animated: true }).gif().toBuffer()
-      : await sharp(input.data, { animated: false }).png().toBuffer();
-  };
-
   let imgBuffer: Buffer | null | string | undefined = null;
   const MAX_SIZE = 262144;
   let imgTooBig = false;
 
+  stepPrinter("Grabbing highest res", "INFO");
   for (let i = 4; i > 0; i--) {
-    imgBuffer = await getImgBuffer(emoteURL, i);
+    imgBuffer = await getImgBuffer(emoteURL, i, emoteData.animated);
     if (!imgBuffer) continue;
     if (Buffer.byteLength(imgBuffer) < MAX_SIZE) break;
 
     if (i === 1) {
-      stepPrinter("1x is too large.. lowering quality to garbage (artifacting can happen)");
+      stepPrinter(
+        "1x is too large.. lowering quality to garbage (artifacting can happen)",
+        "NEGATIVE"
+      );
       imgTooBig = true;
       break;
     }
 
-    stepPrinter(`${i}x is too large, grabbing ${i - 1}x...`);
+    stepPrinter(`${i}x is too large, grabbing ${i - 1}x...`, i <= 3 ? "NEGATIVE" : "INFO");
   }
 
-  if (!imgBuffer) return stepPrinter("An unknown error occurred");
+  if (!imgBuffer) return stepPrinter("An unknown error occurred", "NEGATIVE");
 
   if (imgTooBig) {
     for (let i = 4; i > 0; i--) {
@@ -171,10 +148,10 @@ async function steal7TV(
         console.error(e);
       }
       if (i === 1) {
-        stepPrinter("Bro even 1x is too high, trying anyway...");
+        stepPrinter("Bro even 1x is too high, trying anyway...", "NEGATIVE");
         break;
       }
-      stepPrinter(`${i}x garbage quality is also too large, grabbing ${i - 1}x...`);
+      stepPrinter(`${i}x garbage quality is also too large, grabbing ${i - 1}x...`, "NEGATIVE");
       emoteURL = emoteURL.replace(`${i}x.`, `${i - 1}x.`);
     }
   }
@@ -182,7 +159,7 @@ async function steal7TV(
   interaction
     .guild!.emojis.create({ attachment: imgBuffer, name: name })
     .then((emoji) => {
-      stepPrinter("Done!");
+      stepPrinter("Done!", "POSITIVE");
       setTimeout(() => {
         interaction.editReply({ content: emoji.toString() });
       }, 2000);
@@ -190,27 +167,53 @@ async function steal7TV(
     .catch(async (err) => {
       if (err instanceof DiscordAPIError) {
         if (err.code === RESTJSONErrorCodes.MaximumNumberOfEmojisReached) {
-          return stepPrinter("Maximum number of emojis reached");
+          return stepPrinter("Maximum number of emojis reached", "NEGATIVE");
         }
         if (err.code == RESTJSONErrorCodes.MaximumNumberOfAnimatedEmojisReached) {
-          return stepPrinter("Maximum number of animated emojis reached");
+          return stepPrinter("Maximum number of animated emojis reached", "NEGATIVE");
         }
         if (err.code === RESTJSONErrorCodes.FailedToResizeAssetBelowTheMinimumSize) {
           return stepPrinter(
             `Emote file size is too big.. (MAX: ${Math.round(
               MAX_SIZE / 1000
-            )}KB, this file: ${Math.round((await ufs(emoteURL)) / 1000)}KB)`
+            )}KB, this file: ${Math.round((await ufs(emoteURL)) / 1000)}KB)`,
+            "NEGATIVE"
           );
         }
         if (err.code === RESTJSONErrorCodes.InvalidFormBodyOrContentType) {
           console.log(err);
         }
       }
-      stepPrinter(`An error has occurred: ${err.rawError.message}`);
+      stepPrinter(`An error has occurred: ${err.rawError.message}`, "NEGATIVE");
       console.error(err);
       console.log(`Name: ${name}\nLink: ${emoteURL}`);
       console.log(`Size: ${Buffer.byteLength(imgBuffer ?? "")}`);
     });
 }
+
+const getImgBuffer = async (
+  url: string,
+  size: number,
+  animated: boolean
+): Promise<Buffer | null | undefined> => {
+  url = url.replace("4x.", `${size}x.`);
+  let input: AxiosResponse<string> | null = null;
+  try {
+    input = await axios.get<string>(url, {
+      responseType: "arraybuffer",
+      timeout: 60000,
+    });
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      if (err.cause && err.cause.name !== "ECONNREFUSED") console.error(err);
+    }
+  }
+
+  if (!input) return null;
+
+  return animated
+    ? await sharp(input.data, { animated }).gif().toBuffer()
+    : await sharp(input.data, { animated }).png().toBuffer();
+};
 
 export { steal7TV };
