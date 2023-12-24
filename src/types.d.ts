@@ -23,18 +23,30 @@ type messageProps = {
   };
 };
 
-export type reminderDetails = {
+interface BaseReminder {
   id: number;
   message: string;
   timeToRemind: number;
+  channel: Snowflake;
   recurring: boolean;
-  channel: string;
-  details?: {
+}
+
+interface RecurringReminder extends BaseReminder {
+  recurring: true;
+  details: {
     day: string;
     hour: number;
     minute: number;
   };
-};
+}
+
+interface RegularReminder extends BaseReminder {
+  recurring: false;
+  details: undefined;
+}
+
+export type ReminderDetails = RegularReminder | RecurringReminder;
+export type ReminderSaveType = Array<[Snowflake, Array<ReminderDetails>]>;
 
 interface Command extends BaseCommand {
   getSlashCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;

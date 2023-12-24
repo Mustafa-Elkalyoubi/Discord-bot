@@ -15,12 +15,13 @@ import {
   BaseSubCommand,
   ContextCommand,
   messageProps,
-  reminderDetails,
+  ReminderDetails,
   OSRSWikiData,
   DBDPerk,
   DBDCharacter,
   DBDDLC,
   DBDPower,
+  ReminderSaveType,
 } from "../types";
 import { DateTime } from "luxon";
 import Modifiers, { DEFAULT } from "./ConsoleText";
@@ -34,7 +35,7 @@ export default class ExtendedClient extends Client {
   public contextCommands: Collection<string, ContextCommand>;
   public messageCommands: Collection<string, messageProps>;
   public aliases: Collection<string, string>;
-  public reminders: Collection<string, Array<reminderDetails>>;
+  public reminders: Collection<string, Array<ReminderDetails>>;
   public reminderTimeouts: NodeJS.Timeout[];
   public osrsItems: Array<{ name: string; value: string }>;
   public dbdPerks: DBDPerk[];
@@ -170,7 +171,7 @@ export default class ExtendedClient extends Client {
     channel.send(message);
   }
 
-  public executeReminder(reminder: reminderDetails, userID: string) {
+  public executeReminder(reminder: ReminderDetails, userID: string) {
     this.sendToChannel(reminder.channel, `<@!${userID}>: ${reminder.message}`);
 
     if (!reminder.recurring) this.deleteReminder(reminder.id, userID);
@@ -184,12 +185,7 @@ export default class ExtendedClient extends Client {
     }
 
     this.reloadTimeouts();
-
-    try {
-      fs.writeFileSync(this._reminderPath, JSON.stringify(this.reminders.toJSON(), null, 4));
-    } catch (e) {
-      console.error(e);
-    }
+    this.exportReminders();
   }
 
   public deleteReminder(reminderID: number, userID: string) {
@@ -202,11 +198,7 @@ export default class ExtendedClient extends Client {
     reminders.splice(reminderToDelete, 1);
     if (reminders.length < 1) this.reminders.delete(userID);
 
-    try {
-      fs.writeFileSync(this._reminderPath, JSON.stringify(this.reminders.toJSON(), null, 4));
-    } catch (e) {
-      console.error(e);
-    }
+    this.exportReminders();
   }
 
   public reloadTimeouts() {
@@ -225,12 +217,26 @@ export default class ExtendedClient extends Client {
   public async saveReminder(
     interaction: ChatInputCommandInteraction,
     message: string,
+    timeToRemind: number
+  ): Promise<void>;
+  public async saveReminder(
+    interaction: ChatInputCommandInteraction,
+    message: string,
+    timeToRemind: number,
+    recurring: true,
+    day: string,
+    hour: number,
+    minute: number
+  ): Promise<void>;
+  public async saveReminder(
+    interaction: ChatInputCommandInteraction,
+    message: string,
     timeToRemind: number,
     recurring = false,
-    day: string | null = null,
-    hour: number | null = null,
-    minute: number | null = null
-  ) {
+    day?: string,
+    hour?: number,
+    minute?: number
+  ): Promise<void> {
     const userID = interaction.user.id;
     const reminders = this.reminders.ensure(userID, () => []);
 
@@ -241,23 +247,32 @@ export default class ExtendedClient extends Client {
       message: message,
       timeToRemind: timeToRemind,
       recurring: recurring,
-    };
+      ...(recurring && {
+        details: {
+          day,
+          hour,
+          minute,
+        },
+      }),
+    } as ReminderDetails;
 
-    this.reminders.set(userID, [...reminders, saveDetails]);
+    reminders.push(saveDetails);
+    this.reminders.set(userID, reminders);
 
     try {
-      fs.writeFileSync(
-        this._reminderPath,
-        JSON.stringify(Array.from(this.reminders.entries()), null, 4)
-      );
-      if (saveDetails.recurring)
-        return interaction.reply({
+      const successful = this.exportReminders();
+      if (!successful) throw "Check Client.ts: 268";
+
+      if (saveDetails.recurring) {
+        interaction.reply({
           content: `\`RECURRING\` Reminder [${saveDetails.id}] set! Reminding you <t:${Math.floor(
             timeToRemind / 1000
           )}:R> (Every ${DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m").toFormat(
             "EEEE 'at' H':'mm"
           )})`,
         });
+        return;
+      }
       interaction.reply({
         content: `Reminder \`${saveDetails.id}\` set! Reminding you <t:${Math.floor(
           timeToRemind / 1000
@@ -269,7 +284,19 @@ export default class ExtendedClient extends Client {
       }, saveDetails.timeToRemind - DateTime.now().toMillis());
     } catch (err) {
       interaction.reply({ content: "Sorry, something went wrong", ephemeral: true });
-      console.error(err);
+    }
+  }
+
+  private exportReminders() {
+    try {
+      fs.writeFileSync(
+        this._reminderPath,
+        JSON.stringify(Array.from(this.reminders.entries()) as ReminderSaveType, null, 4)
+      );
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
     }
   }
 
