@@ -718,5 +718,15 @@
         "dlc": "Wormhole",
         "image": "UI/Icons/CharPortraits/Wormhole/K33_TheXenomorph_Portrait.png",
         "item": "Item_Slasher_K33Power"
+    },
+    {
+        "charid": "268435489",
+        "name": "The Good Guy",
+        "role": "killer",
+        "id": "K34",
+        "gender": "male",
+        "dlc": "Yerkes",
+        "image": "UI/Icons/CharPortraits/Yerkes/K34_TheYerkes_Portrait.png",
+        "item": "Item_Slasher_K34Power"
     }
 ]

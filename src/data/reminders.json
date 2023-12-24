@@ -1,1 +1,42 @@
-{}
+[
+    [
+        "187507781392269313",
+        [
+            {
+                "id": 187509483869028350,
+                "channel": "506873537341030402",
+                "message": "Login to elite",
+                "timeToRemind": 1703170800000,
+                "recurring": false
+            },
+            {
+                "id": 187509483869031040,
+                "channel": "506873537341030402",
+                "message": "Login to elite",
+                "timeToRemind": 1703257200000,
+                "recurring": false
+            },
+            {
+                "id": 187509483869033440,
+                "channel": "506873537341030402",
+                "message": "Login to elite",
+                "timeToRemind": 1703343600000,
+                "recurring": false
+            },
+            {
+                "id": 187509483869035800,
+                "channel": "506873537341030402",
+                "message": "Login to elite",
+                "timeToRemind": 1703430000000,
+                "recurring": false
+            },
+            {
+                "id": 187509483869039500,
+                "channel": "506873537341030402",
+                "message": "Login to elite",
+                "timeToRemind": 1703516400000,
+                "recurring": false
+            }
+        ]
+    ]
+]

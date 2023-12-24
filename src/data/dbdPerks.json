@@ -57,7 +57,7 @@
     },
     {
         "id": "Babysitter",
-        "name": "Guardian",
+        "name": "Babysitter",
         "character": 18,
         "description": "While you have a reputation for being self-centered, you risk it all to help those in need.\n\nWhen you unhook a Survivor, they won’t leave scratch marks or pools of blood, and they gain a **7**% **Haste** status effect for **8** seconds.\n\nYou see the Killer's aura for **8** seconds.\n\nHaste increases Survivor movement speed.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_babySitter.png",
@@ -97,7 +97,7 @@
     },
     {
         "id": "BetterTogether",
-        "name": "Situational Awareness",
+        "name": "Better Together",
         "character": 17,
         "description": "You seek justice and uncover the truth no matter what obstacle stands in your way.\n\nThe aura of the generator you are currently repairing is revealed to all other Survivors located within **32** meters.\n\nIf The Killer downs a Survivor while you are repairing a generator, you see the aura of all other Survivors for **10** seconds.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_betterTogether.png",
@@ -115,7 +115,7 @@
         "id": "BloodEcho",
         "name": "Blood Echo",
         "character": 268435473,
-        "description": "The agony of one is inflicted on others.\n\nWhen hooking a Survivor, all other injured Survivors suffer from the Hemorrhage&nbsp;and Exhaustion&nbsp;status effect for **45**&nbsp;seconds.\n\n*Blood Echo* has a cooldown of **60** seconds.\n\nExhausted prevents Survivors from activating exhausting perks.\n\nHemorrhage regresses healing progress when not healing, and increases blood trails left by injured Survivors.",
+        "description": "The agony of one is inflicted on others.\n\nWhen hooking a Survivor, all other injured Survivors suffer from the Hemorrhage and Exhausted status effect for **45** seconds.\n\n*Blood Echo* has a cooldown of **60** seconds.\n\nExhausted prevents Survivors from activating perks that cause Exhausted.\n\nHemorrhage regresses healing progress when not healing, and increases blood trails left by injured Survivors.",
         "image": "UI/Icons/Perks/Sweden/iconPerks_bloodEcho.png",
         "role": "killer"
     },
@@ -139,7 +139,7 @@
         "id": "BloodWarden",
         "name": "Blood Warden",
         "character": 268435465,
-        "description": "As soon as an exit gate is opened, Blood Warden is activated. The auras of any Survivors located within Exit areas are revealed to you.\n\nOnce per match, hooking a Survivor while Blood Warden is active calls upon The Entity to block both Exits for all Survivors for&nbsp;**60** seconds.",
+        "description": "As soon as an exit gate is opened, Blood Warden is activated. The auras of any Survivors located within Exit areas are revealed to you.\n\nOnce per match, hooking a Survivor while Blood Warden is active calls upon The Entity to block both Exits for all Survivors for **60** seconds.",
         "image": "UI/Icons/Perks/England/iconPerks_bloodWarden.png",
         "role": "killer"
     },
@@ -233,9 +233,9 @@
     },
     {
         "id": "Camaraderie",
-        "name": "Kinship",
+        "name": "Camaraderie",
         "character": 18,
-        "description": "Life has taught you the importance of friendship which has given you strength.\n\nWhile you are on the hook in the struggle phase, *Kinship* activates.\n\nIf another Survivor is within **16** meters of you while *Kinship* is activated, the hook timer is paused for **34** seconds.",
+        "description": "Life has taught you the importance of friendship which has given you strength.\n\nWhile you are on the hook in the struggle phase, *Camaraderie* activates.\n\nIf another Survivor is within **16** meters of you while *Camaraderie* is activated, the hook timer is paused for **34** seconds.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_camaraderie.png",
         "role": "survivor"
     },
@@ -243,7 +243,7 @@
         "id": "CorruptIntervention",
         "name": "Corrupt Intervention",
         "character": 268435470,
-        "description": "Your prayers invoke a dark power that meddles with the Survivors’s chances of survival.\n\n**3** generators located furthest from you are blocked by The Entity for **120** seconds at the start of the trial.\n\nSurvivors cannot repair these generators for the duration. Affected generators are highlighted by a white aura.\n\n*Corrupt Intervention*&nbsp;deactivates when any Survivor enters the dying state.",
+        "description": "Your prayers invoke a dark power that meddles with the Survivors’s chances of survival.\n\n**3** generators located furthest from you are blocked by The Entity for **120** seconds at the start of the trial.\n\nSurvivors cannot repair these generators for the duration. Affected generators are highlighted by a white aura.\n\n*Corrupt Intervention* deactivates when any Survivor enters the dying state.",
         "image": "UI/Icons/Perks/Mali/iconPerks_corruptIntervention.png",
         "role": "killer"
     },
@@ -257,9 +257,9 @@
     },
     {
         "id": "CruelConfinement",
-        "name": "Claustrophobia",
+        "name": "Cruel Limits",
         "character": 268435472,
-        "description": "Your ties to the otherworldly manifest when your prey attempts to get away.\n\nEvery time a generator is completed, all windows and vault locations are blocked for all Survivors for the next **30** seconds.\n\nYou see the aura of the vault locations blocked by *Claustrophobia* for the duration.",
+        "description": "Your ties to the otherworldly manifest when your prey attempts to get away.\n\nEvery time a generator is completed, all windows and vault locations are blocked for all Survivors for the next **30** seconds.\n\nYou see the aura of the vault locations blocked by *Cruel Limits* for the duration.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_cruelConfinement.png",
         "role": "killer"
     },
@@ -275,7 +275,7 @@
         "id": "DarkDevotion",
         "name": "Dark Devotion",
         "character": 268435470,
-        "description": "The display of your powers creates a whirlwind of panic that spreads throughout the land.\n\nYou become obsessed with one Survivor. When the Obsession loses a health state, your Terror Radius transfers to the Obsession for **30**&nbsp;seconds, and its radius is set to **32**&nbsp;meters.\n\nYou are granted the **Undetectable** status effect for the duration.\n\nThe Survivor with the transferred Terror Radius is also considered to be \"inside the Terror Radius\" for other purposes.\n\nThe Killer can only be **obsessed** with one Survivor at a time.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
+        "description": "The display of your powers creates a whirlwind of panic that spreads throughout the land.\n\nYou become obsessed with one Survivor. When the Obsession loses a health state, your Terror Radius transfers to the Obsession for **30** seconds, and its radius is set to **32** meters.\n\nYou are granted the **Undetectable** status effect for the duration.\n\nThe Survivor with the transferred Terror Radius is also considered to be \"inside the Terror Radius\" for other purposes.\n\nThe Killer can only be **obsessed** with one Survivor at a time.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
         "image": "UI/Icons/Perks/Mali/iconPerks_darkDevotion.png",
         "role": "killer"
     },
@@ -307,7 +307,7 @@
         "id": "Deathbound",
         "name": "Deathbound",
         "character": 268435475,
-        "description": "Those whose lives are intertwined in darkness are destined to suffer together.\n\nWhen a Survivor heals another Survivor for one health state at least **32**&nbsp;meters away from the Killer,&nbsp;the Survivor performing the healing action will scream, revealing their location and activating *Deathbound* for the next **60**&nbsp;seconds.\n\nDuring that time, the Survivor will suffer from the **Oblivious** status effect when further than **8**&nbsp;meters away from the healed Survivor.\n\nOblivious prevents Survivors from hearing or being affected by the Killer's Terror Radius.",
+        "description": "Those whose lives are intertwined in darkness are destined to suffer together.\n\nWhen a Survivor heals another Survivor for one health state at least **32** meters away from the Killer, the Survivor performing the healing action will scream, revealing their location and activating *Deathbound* for the next **60** seconds.\n\nDuring that time, the Survivor will suffer from the **Oblivious** status effect when further than **8** meters away from the healed Survivor.\n\nOblivious prevents Survivors from hearing or being affected by the Killer's Terror Radius.",
         "image": "UI/Icons/Perks/Wales/iconPerks_deathbound.png",
         "role": "killer"
     },
@@ -387,7 +387,7 @@
         "id": "Diversion",
         "name": "Diversion",
         "character": 13,
-        "description": "Being within the Killer's Terror Radius while not in a chase for **30** seconds&nbsp;activates *Diversion*.\n\n• Once *Diversion* is activated, press the *Active Ability Button 1* while crouched and motionless to throw a pebble, which creates a distraction for The Killer at a distance of 20 meters.\n\n\n• The perk timer resets once the ability has been activated.\n\n\nThe distraction consists of:\n\n• A loud noise notification\n• Scratch marks\n",
+        "description": "Being within the Killer's Terror Radius while not in a chase for **30** seconds activates *Diversion*.\n\n• Once *Diversion* is activated, press the *Active Ability Button 1* while crouched and motionless to throw a pebble, which creates a distraction for The Killer at a distance of 20 meters.\n\n\n• The perk timer resets once the ability has been activated.\n\n\nThe distraction consists of:\n\n• A loud noise notification\n• Scratch marks\n",
         "image": "UI/Icons/Perks/Haiti/iconPerks_diversion.png",
         "role": "survivor"
     },
@@ -433,7 +433,7 @@
     },
     {
         "id": "Fixated",
-        "name": "Self-Aware",
+        "name": "Fixated",
         "character": 17,
         "description": "When you have a goal in mind, there’s no turning back: better to ask forgiveness than permission.\n\nYou can see your own scratch marks at all times.\n\nYou walk **20**% faster.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_fixated.png",
@@ -451,7 +451,7 @@
         "id": "ForcedPenance",
         "name": "Forced Penance",
         "character": 268435475,
-        "description": "Those who stand in the way of duty will&nbsp;suffer&nbsp;harsh judgment.\n\nSurvivors&nbsp;who take a protection hit are&nbsp;inflicted with the **Broken** status effect for **80**&nbsp;seconds.\n\nBroken prevents Survivors from being healed.",
+        "description": "Those who stand in the way of duty will suffer harsh judgment.\n\nSurvivors who take a protection hit are inflicted with the **Broken** status effect for **80** seconds.\n\nBroken prevents Survivors from being healed.",
         "image": "UI/Icons/Perks/Wales/iconPerks_forcedPenance.png",
         "role": "killer"
     },
@@ -475,7 +475,7 @@
         "id": "FurtiveChase",
         "name": "Furtive Chase",
         "character": 268435471,
-        "description": "You lurk in the shadows, eliminating your victims one by one.\n\nYou become **obsessed** with one Survivor. When your Obsession is hooked, *Furtive Chase* receives a token, up to a maximum of **4** tokens.\n\nEach token decreases your Terror Radius by **4** meters while in a chase.\n\nWhen a Survivor rescues the Obsession from a hook, the rescuer becomes the Obsession.\n\nThe Killer can only be **obsessed** with one Survivor at a time.",
+        "description": "You lurk in the shadows, eliminating your victims one by one.\n\nYou become **obsessed** with one Survivor. When your Obsession is hooked, gain the **Undetectable** status effect and a **5**% **Haste** status effect for **18** seconds.\n\nWhen a Survivor rescues the Obsession from a hook, the rescuer becomes the Obsession.\n\nThe Killer can only be **obsessed** with one Survivor at a time.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.\n\nHaste increases Killer movement speed.",
         "image": "UI/Icons/Perks/Oman/iconPerks_furtiveChase.png",
         "role": "killer"
     },
@@ -483,7 +483,7 @@
         "id": "Gearhead",
         "name": "Gearhead",
         "character": 268435474,
-        "description": "You’ve got an ear for&nbsp;well-oiled gears.\n\nAfter a survivor loses a health state by any means, *Gearhead* activates for **30** seconds.\n\nWhile *Gearhead* is active, every time a Survivor performs a good Skill Check while repairing, their aura is revealed to you for **8** seconds.",
+        "description": "You’ve got an ear for well-oiled gears.\n\nAfter a survivor loses a health state by any means, *Gearhead* activates for **30** seconds.\n\nWhile *Gearhead* is active, every time a Survivor performs a good Skill Check while repairing, their aura is revealed to you for **8** seconds.",
         "image": "UI/Icons/Perks/Ukraine/iconPerks_gearHead.png",
         "role": "killer"
     },
@@ -609,9 +609,9 @@
     },
     {
         "id": "InnerStrength",
-        "name": "Inner Healing",
+        "name": "Inner Strength",
         "character": 17,
-        "description": "You look inward and trust your instincts when you feel lost and alone.\n\nEach time you complete a Totem cleanse action, *Inner Healing* activates. If you are already afflicted by the **Broken** status effect, *Inner Healing* does not activate.\n\nWhile&nbsp;*Inner Healing* is active, hiding inside a locker for **8** seconds while injured automatically heals you from injured to healthy.\n\n*Inner Healing*&nbsp;becomes deactivated as soon as it has successfully triggered.",
+        "description": "You look inward and trust your instincts when you feel lost and alone.\n\nEach time you complete a Totem cleanse action, *Inner Strength* activates. If you are already afflicted by the **Broken** status effect, *Inner Strength* does not activate.\n\nWhile *Inner Strength* is active, hiding inside a locker for **8** seconds while injured automatically heals you from injured to healthy.\n\n*Inner Strength* becomes deactivated as soon as it has successfully triggered.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_innerStrength.png",
         "role": "survivor"
     },
@@ -619,7 +619,7 @@
         "id": "Insidious",
         "name": "Insidious",
         "character": null,
-        "description": "Unlocks the stealth ability.\n\nStanding still for **2**&nbsp;seconds grants you the **Undetectable** status effect until you move or act again.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
+        "description": "Unlocks the stealth ability.\n\nStanding still for **2** seconds grants you the **Undetectable** status effect until you move or act again.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
         "image": "UI/Icons/Perks/iconPerks_insidious.png",
         "role": "killer"
     },
@@ -659,7 +659,7 @@
         "id": "K22P01",
         "name": "Hoarder",
         "character": 268435477,
-        "description": "You protect what little you have and are attentive to any disturbance of your stockpiles.\n\nSurvivors reveal their location when they interact with a&nbsp;chest&nbsp;or when they pick up an item within&nbsp;**64** meters of your location.\n\nThe trial begins with up to&nbsp;**2** additional&nbsp;Chests in the environment.",
+        "description": "You protect what little you have and are attentive to any disturbance of your stockpiles.\n\nSurvivors reveal their location when they interact with a chest or when they pick up an item within **64** meters of your location.\n\nThe trial begins with up to **2** additional Chests in the environment.",
         "image": "UI/Icons/Perks/Aurora/iconPerks_Hoarder.png",
         "role": "killer"
     },
@@ -667,7 +667,7 @@
         "id": "K22P02",
         "name": "Oppression",
         "character": 268435477,
-        "description": "Life has been difficult for you,&nbsp;so you’ll make it difficult for others.\n\nWhen you damage a generator, up to&nbsp;**3** other random generators also begin regressing.\n\nIf the affected generators are being repaired, any Survivors repairing them receive a difficult Skill Check.\n\n*Oppression* has a cooldown of **80** seconds.",
+        "description": "Life has been difficult for you, so you’ll make it difficult for others.\n\nWhen you damage a generator, up to **3** other random generators also begin regressing.\n\nIf the affected generators are being repaired, any Survivors repairing them receive a difficult Skill Check.\n\n*Oppression* has a cooldown of **80** seconds.",
         "image": "UI/Icons/Perks/Aurora/iconPerks_Oppression.png",
         "role": "killer"
     },
@@ -675,7 +675,7 @@
         "id": "K22P03",
         "name": "Coup de Grâce",
         "character": 268435477,
-        "description": "As the&nbsp;end nears,&nbsp;you go in for the kill.\n\nEach time a generator is completed, Coup de Grâce grows in power. Gain 2 tokens, with a maximum of 5 tokens maximum.\n\nConsume one token to increase the distance of your next lunge attack by **80**%.",
+        "description": "As the end nears, you go in for the kill.\n\nEach time a generator is completed, Coup de Grâce grows in power. Gain 2 tokens, with a maximum of 5 tokens maximum.\n\nConsume one token to increase the distance of your next lunge attack by **80**%.",
         "image": "UI/Icons/Perks/Aurora/iconPerks_coupDeGrace.png",
         "role": "killer"
     },
@@ -944,10 +944,34 @@
         "role": "killer"
     },
     {
+        "id": "K34P01",
+        "name": "Hex: Two Can Play",
+        "character": 268435489,
+        "description": "A Hex that teaches those who mess with you a lesson.\n\nAnytime you are stunned or blinded by any Survivor **2** times, if there is no Hex Totem associated with *Hex: Two Can Play*, a Dull Totem becomes a Hex Totem.\n\nSurvivors who stun or blind you are blinded for **1.5** seconds. This does not affect carried Survivors.\n\n*The Hex effects persist as long as the related Hex Totem is standing.*\n\n“From now on, no more Mr. Good Guy.” – Chucky",
+        "image": "UI/Icons/Perks/Yerkes/iconPerks_twoCanPlay.png",
+        "role": "killer"
+    },
+    {
+        "id": "K34P02",
+        "name": "Friends ‘Til the End",
+        "character": 268435489,
+        "description": "You’ll kill anyone who gets between you and your target.\n\nYou become **obsessed** with one Survivor.\n\nWhen you hook a Survivor that is not the Obsession, the Obsession becomes **Exposed** for **20** seconds and reveals their aura for **10** seconds.\n\nWhen you hook the Obsession, another random Survivor screams and reveals their position and becomes the Obsession.\n\n\"I got some fresh meat lined up, and I'm not gonna let you spoil it, not this time!\" – Chucky",
+        "image": "UI/Icons/Perks/Yerkes/iconPerks_friendsTillTheEnd.png",
+        "role": "killer"
+    },
+    {
+        "id": "K34P03",
+        "name": "Batteries Included",
+        "character": 268435489,
+        "description": "Being somewhere between man and machine has its upsides.\n\nWhen within **12** meters of a completed generator, you have **5**% **Haste**.\n\nThe movement speed bonus lingers for **5** seconds after leaving the generator's range.\n\nHaste increases Killer movement speed.\n\n“Surprise! Did you miss me, Andy?” – Chucky",
+        "image": "UI/Icons/Perks/Yerkes/iconPerks_batteriesIncluded.png",
+        "role": "killer"
+    },
+    {
         "id": "Kindred",
         "name": "Kindred",
         "character": null,
-        "description": "Unlocks potential in one's aura reading ability. While you are on the hook, all Survivor's auras are revealed to all other Survivors. If The Killer is within a **16** meter range, The Killer's aura is revealed to all other Survivors.\n\nWhile a Survivor other than you is on the hook, all other Survivors’ auras are revealed to you. If The Killer is within a **16** meter range of the hooked Survivor, The Killer's aura is revealed to you.",
+        "description": "Unlocks potential in one's aura reading ability. While you are on the hook, all Survivor's auras are revealed to all other Survivors. If The Killer is within a **16** meter range, The Killer's aura is revealed to you and all other Survivors.\n\nWhile a Survivor other than you is on the hook, all other Survivors’ auras are revealed to you. If The Killer is within a **16** meter range of the hooked Survivor, The Killer's aura is revealed to you.",
         "image": "UI/Icons/Perks/iconPerks_kindred.png",
         "role": "survivor"
     },
@@ -1017,9 +1041,9 @@
     },
     {
         "id": "Mindbreaker",
-        "name": "Fearmonger",
+        "name": "Mindbreaker",
         "character": 268435472,
-        "description": "Your distressing presence drains and weakens your prey.\n\nWhile repairing generators, Survivors are afflicted by the **Blindness** and **Exhausted** status effect.\n\nAny existing **Exhausted** status effect timers are paused while the Survivor is repairing a generator. After ending the repair action, the Survivor is afflicted by the **Blindness** and **Exhausted** status effect for&nbsp;**5** seconds.\n\nBlindness prevents Survivors from seeing auras.\n\nExhausted prevents Survivors from activating exhausting perks.",
+        "description": "Your distressing presence drains and weakens your prey.\n\nWhile repairing generators, Survivors are afflicted by the **Blindness** and **Exhausted** status effect.\n\nAny existing **Exhausted** status effect timers are paused while the Survivor is repairing a generator. After ending the repair action, the Survivor is afflicted by the **Blindness** and **Exhausted** status effect for **5** seconds.\n\nBlindness prevents Survivors from seeing auras.\n\nExhausted prevents Survivors from activating exhausting perks.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_mindBreaker.png",
         "role": "killer"
     },
@@ -1035,7 +1059,7 @@
         "id": "Monstrous_Shrine",
         "name": "Scourge Hook: Monstrous Shrine",
         "character": null,
-        "description": "Your fervent care of the hooks found in the basement have aroused The Entity's interest.\n\nAt the start of the trial, up to **4** random hooks are changed into scourge hooks. You see their auras in white.\n\n• Scourge Hooks grant&nbsp;**20**%&nbsp;faster Entity progression if the Killer is not within 24 meters.\n\n\nBasement hooks count as Scourge Hooks.",
+        "description": "Your fervent care of the hooks found in the basement have aroused The Entity's interest.\n\nAt the start of the trial, up to **4** random hooks are changed into scourge hooks. You see their auras in white.\n\n• Scourge Hooks grant **20**% faster Entity progression if the Killer is not within 24 meters.\n\n\nBasement hooks count as Scourge Hooks.",
         "image": "UI/Icons/Perks/iconPerks_monstrousShrine.png",
         "role": "killer"
     },
@@ -1043,7 +1067,7 @@
         "id": "Nemesis",
         "name": "Nemesis",
         "character": 268435473,
-        "description": "You seek retribution on those who have wronged you.\n\nA Survivor who blinds you or stuns you using a pallet or locker becomes your Obsession. Anytime a new Survivor becomes the Obsession, they are affected by the Oblivious status effect for **60**&nbsp;seconds and their aura is shown to you for **4**&nbsp;seconds.\n\nThe Killer can only be **obsessed** with one Survivor at a time.\n\nOblivious prevents Survivors from hearing or being affected by the Killer's Terror Radius.",
+        "description": "You seek retribution on those who have wronged you.\n\nA Survivor who blinds you or stuns you using a pallet or locker becomes your Obsession. Anytime a new Survivor becomes the Obsession, they are affected by the Oblivious status effect for **60** seconds and their aura is shown to you for **4** seconds.\n\nThe Killer can only be **obsessed** with one Survivor at a time.\n\nOblivious prevents Survivors from hearing or being affected by the Killer's Terror Radius.",
         "image": "UI/Icons/Perks/Sweden/iconPerks_nemesis.png",
         "role": "killer"
     },
@@ -1059,7 +1083,7 @@
         "id": "No_One_Escapes_Death",
         "name": "Hex: No One Escapes Death",
         "character": null,
-        "description": "A Hex rooting its power on hope. You are animated by the power of your Hex Totem when the Survivors are on the verge of escaping.\n\nOnce the exit gates are powered, if there is a Dull Totem remaining on the map, this Hex is applied to it.\n\n\nWhile this Hex is active,• Survivors suffer from the **Exposed** status effect.\n• Your movement speed is increased by **4**%.\n\n\nOnce the Hex's effect is revealed to the Survivors, its Hex Totem's aura is shown to the Survivors at a range of&nbsp;4 meters. This range increases steadily over the next 30 seconds to 24 meters.\n\nThe Hex effects persist as long as the related Hex Totem is standing.\n\nExposed Survivors will be downed by basic attacks even if uninjured.",
+        "description": "A Hex rooting its power on hope. You are animated by the power of your Hex Totem when the Survivors are on the verge of escaping.\n\nOnce the exit gates are powered, if there is a Dull Totem remaining on the map, this Hex is applied to it.\n\n\nWhile this Hex is active,• Survivors suffer from the **Exposed** status effect.\n• Your movement speed is increased by **4**%.\n\n\nOnce the Hex's effect is revealed to the Survivors, its Hex Totem's aura is shown to the Survivors at a range of 4 meters. This range increases steadily over the next 30 seconds to 24 meters.\n\nThe Hex effects persist as long as the related Hex Totem is standing.\n\nExposed Survivors will be downed by basic attacks even if uninjured.",
         "image": "UI/Icons/Perks/iconPerks_noOneEscapesDeath.png",
         "role": "killer"
     },
@@ -1067,7 +1091,7 @@
         "id": "No_One_Left_Behind",
         "name": "No One Left Behind",
         "character": null,
-        "description": "It is inconceivable to leave someone behind. Once the exit gates are powered, you gain the following effects:\n\n• **100**%&nbsp;additional Bloodpoints for healing and unhooking other Survivors.\n• **50**%&nbsp;bonus action speed when healing and unhooking other Survivors.\n• When unhooking a Survivor, they gain a 7% movement bonus for 10 seconds.\n• The auras of all other Survivors are revealed to you.\n",
+        "description": "It is inconceivable to leave someone behind. Once the exit gates are powered, you gain the following effects:\n\n• **100**% additional Bloodpoints for healing and unhooking other Survivors.\n• **50**% bonus action speed when healing and unhooking other Survivors.\n• When unhooking a Survivor, they gain a 7% movement bonus for 10 seconds.\n• The auras of all other Survivors are revealed to you.\n",
         "image": "UI/Icons/Perks/iconPerks_noOneLeftBehind.png",
         "role": "survivor"
     },
@@ -1211,7 +1235,7 @@
         "id": "RepressedAlliance",
         "name": "Repressed&nbsp;Alliance",
         "character": 21,
-        "description": "You’re accustomed to being hunted by malicious&nbsp;forces, and you’ve begun using it to your advantage.\n\n*Repressed Alliance*&nbsp;activates after repairing generators for a total of **45**&nbsp;seconds.\n\nWhen repairing a generator while the perk is active, press the *Active Ability Button 1* to call upon The Entity to block the generator for **30**&nbsp;seconds. The perk deactivates.\n\nThis interaction is not available if other Survivors are repairing the generator.\n\nAffected generators will be revealed by a white aura to all Survivors.",
+        "description": "You’re accustomed to being hunted by malicious forces, and you’ve begun using it to your advantage.\n\n*Repressed Alliance* activates after repairing generators for a total of **45** seconds.\n\nWhen repairing a generator while the perk is active, press the *Active Ability Button 1* to call upon The Entity to block the generator for **30** seconds. The perk deactivates.\n\nThis interaction is not available if other Survivors are repairing the generator.\n\nAffected generators will be revealed by a white aura to all Survivors.",
         "image": "UI/Icons/Perks/Wales/iconPerks_repressedAlliance.png",
         "role": "survivor"
     },
@@ -1235,7 +1259,7 @@
         "id": "S24P02",
         "name": "Deception",
         "character": 23,
-        "description": "Your&nbsp;adventurous lifestyle&nbsp;requires&nbsp;moments of&nbsp;crafty misdirection.\n\nInteracting with a locker while sprinting will trigger a loud noise notification at your location and cause you to leave no scratch marks for&nbsp;**3** seconds.\n\nYou no longer enter lockers while sprinting and while this perk is active.\n\n*Deception* can only be triggered once every&nbsp;**40** seconds.",
+        "description": "Your adventurous lifestyle requires moments of crafty misdirection.\n\nInteracting with a locker while sprinting will trigger a loud noise notification at your location and cause you to leave no scratch marks for **3** seconds.\n\nYou no longer enter lockers while sprinting and while this perk is active.\n\n*Deception* can only be triggered once every **40** seconds.",
         "image": "UI/Icons/Perks/Aurora/iconPerks_deception.png",
         "role": "survivor"
     },
@@ -1291,7 +1315,7 @@
         "id": "S26P03",
         "name": "Blast Mine",
         "character": 25,
-        "description": "When direct combat isn't an option, you still find ways to strike back.\n\n*Blast Mine* activates after completing a total of **50**% worth of repair progress on generators.\n\nPress the *Active Ability Button 1* to install a trap which stays active for **120** seconds.\n\nAffected generators will be revealed to all Survivors by a yellow aura. Only one Blast Mine can be active on a generator.\n\n• When the Killer damages the trapped generator, the trap explodes, stunning them and blinding anyone nearby.\n• *Blast Mine* deactivates when the trapped generator is damaged by the Killer or when the timer expires.\n",
+        "description": "When direct combat isn't an option, you still find ways to strike back.\n\n*Blast Mine* activates after completing a total of **50**% worth of repair progress on generators.\n\nWhen standing next to a generator, press the *Active Ability Button 1* to install a *Blast Mine* which stays active for **120** seconds.\n\nAffected generators will be revealed to all Survivors by a yellow aura. Only one *Blast Mine* can be active on a generator.\n\n• When the Killer damages the generator, the *Blast Mine* explodes, stunning them and blinding anyone nearby.\n• *Blast Mine* deactivates when the generator is damaged by the Killer or when the timer expires.\n",
         "image": "UI/Icons/Perks/Eclipse/iconPerks_BlastMine.png",
         "role": "survivor"
     },
@@ -1419,7 +1443,7 @@
         "id": "S32P01",
         "name": "Wiretap",
         "character": 31,
-        "description": "You know that the best way to stay one step ahead is to keep tabs on the competition.\n\n*Wiretap* activates after completing a total of **50**% worth of repair progress on generators.\n\nPress the *Active Ability button 1* to install a Wiretap, which stays active for **120** seconds.\n\nAffected generators will be revealed to all Survivors by a yellow aura. Only one trap can be active on a generator.\n\n• When the Killer enters within **14** meters of the trapped generator, their aura is revealed to all Survivors.<ul><li>*Wiretap* deactivates when the trapped generator is damaged by the Killer or when the timer expires.\n</ul></li>",
+        "description": "You know that the best way to stay one step ahead is to keep tabs on the competition.\n\n*Wiretap* activates after completing a total of **50**% worth of repair progress on generators.\n\nWhen standing next to a generator, press the *Active Ability button 1* to install a *Wiretap*, which stays active for **120** seconds.\n\nAffected generators will be revealed to all Survivors by a yellow aura. Only one *Wiretap* can be active on a generator.\n\n• When the Killer enters within **14** meters of the generator, their aura is revealed to all Survivors.<ul><li>*Wiretap* deactivates when the generator is damaged by the Killer or when the timer expires.\n</ul></li>",
         "image": "UI/Icons/Perks/Orion/iconPerks_Wiretap.png",
         "role": "survivor"
     },
@@ -1491,7 +1515,7 @@
         "id": "S35P01",
         "name": "Cut Loose",
         "character": 34,
-        "description": "You get in enough trouble. You know how to get out of it.\n\nAfter performing a rushed vault in a chase, this perk activates.\n\nWhile this perk is active, your rushed vaults are silent for up to **6** seconds and successfully performing a rushed vault during that time resets the timer.\n\nThis perk goes on cool-down for **45** seconds.&nbsp;",
+        "description": "You get in enough trouble. You know how to get out of it.\n\nAfter performing a rushed vault in a chase, this perk activates.\n\nWhile this perk is active, your rushed vaults are silent for up to **6** seconds and successfully performing a rushed vault during that time resets the timer.\n\nThis perk goes on cool-down for **45** seconds. ",
         "image": "UI/Icons/Perks/Saturn/iconPerks_CutLoose.png",
         "role": "survivor"
     },
@@ -1499,7 +1523,7 @@
         "id": "S35P02",
         "name": "Friendly Competition",
         "character": 34,
-        "description": "You revel in the community spirit of a competition, and inspire others to follow suit.\n\nWhenever you finish repairing a generator with at least one other Survivor, this perk activates.\n\nYou and other survivors who finished repairing the generator with you get **5**% increased repair progress speed&nbsp;for **75** seconds.\n\n*Survivors can only have one instance of this perk's ability active at once.*",
+        "description": "You revel in the community spirit of a competition, and inspire others to follow suit.\n\nWhenever you finish repairing a generator with at least one other Survivor, this perk activates.\n\nYou and other survivors who finished repairing the generator with you get **5**% increased repair progress speed for **75** seconds.\n\n*Survivors can only have one instance of this perk's ability active at once.*",
         "image": "UI/Icons/Perks/Saturn/iconPerks_FriendlyCompetition.png",
         "role": "survivor"
     },
@@ -1507,7 +1531,7 @@
         "id": "S35P03",
         "name": "Teamwork: Power of Two",
         "character": 34,
-        "description": "It’s hard to keep up with you, but it doesn’t stop people from trying.\n\nWhenever you finish healing another Survivor, you both move&nbsp;**5**%&nbsp;faster as&nbsp;long as you stay within **12** meters&nbsp;of the Survivor you healed or until one of you loses a health state.\n\n*Teamwork: Power of Two* can only trigger once every **140** seconds.\n\nSurvivors can only be affected by one *Teamwork: Power of Two* effect at a time.",
+        "description": "It’s hard to keep up with you, but it doesn’t stop people from trying.\n\nWhenever you finish healing another Survivor, you both move **5**% faster as long as you stay within **12** meters of the Survivor you healed or until one of you loses a health state.\n\n*Teamwork: Power of Two* can only trigger once every **140** seconds.\n\nSurvivors can only be affected by one *Teamwork: Power of Two* effect at a time.",
         "image": "UI/Icons/Perks/Saturn/iconPerks_TeamworkPowerOfTwo.png",
         "role": "survivor"
     },
@@ -1515,7 +1539,7 @@
         "id": "S36P01",
         "name": "Background Player",
         "character": 35,
-        "description": "You're not usually the center of attention. In some cases, this can be a good thing.\n\nWhen the Killer picks-up another Survivor, *Background Player* activates for **10** seconds.\n\nWhen you start running, break into a sprint at **150**% of your normal Running Movement speed for **4** seconds.\n\n*This perk cannot be used while Exhausted.*\n\nThis perk causes the Exhausted status effect for **40** seconds.&nbsp;\n\nExhausted prevents Survivors from activating exhausting perks.",
+        "description": "You're not usually the center of attention. In some cases, this can be a good thing.\n\nWhen the Killer picks-up another Survivor, *Background Player* activates for **10** seconds.\n\nWhen you start running, break into a sprint at **200**% of your normal Running Movement speed for **5** seconds.\n\n*This perk cannot be used while Exhausted.*\n\nThis perk causes the Exhausted status effect for **40** seconds. \n\nExhausted prevents Survivors from activating exhausting perks.",
         "image": "UI/Icons/Perks/Saturn/iconPerks_BackgroundPlayer.png",
         "role": "survivor"
     },
@@ -1523,7 +1547,7 @@
         "id": "S36P02",
         "name": "Blood Rush",
         "character": 35,
-        "description": "Your mind and body are honed for great feats, allowing you to push through with extra effort when necessary.\n\nThis perk activates once you are one hook away from instant death.\n\nWhile healthy, running, and suffering from Exhaustion, press the *Active Ability Button 1* to lose a health state and recover from Exhaustion instantly and gain the Broken status effect for **20** seconds.\n\nYou are automatically healed from injured to healthy after **20** seconds. Being put into the dying state will cancel the healing effect.\n\n*Activating Blood Rush will disable it for the remainder of the trial.*\n\nExhaustion prevents Survivors from activating other perks that cause Exhaustion.\n\nBroken prevents Survivors from being healed.",
+        "description": "Your mind and body are honed for great feats, allowing you to push through with extra effort when necessary.\n\nThis perk activates once you are one hook away from instant death.\n\nWhile healthy, running, and suffering from Exhausted, press the *Active Ability Button 1* to lose a health state and recover from Exhausted instantly and gain the Broken status effect for **20** seconds.\n\nYou are automatically healed from injured to healthy after **20** seconds. Being put into the dying state will cancel the healing effect.\n\n*Activating Blood Rush will disable it for the remainder of the trial.*\n\nExhausted prevents Survivors from activating other perks that cause Exhausted.\n\nBroken prevents Survivors from being healed.",
         "image": "UI/Icons/Perks/Saturn/iconPerks_BloodRush.png",
         "role": "survivor"
     },
@@ -1531,7 +1555,7 @@
         "id": "S36P03",
         "name": "Teamwork: Collective Stealth",
         "character": 35,
-        "description": "When someone helps you out, you respond in kind.\n\nWhenever another Survivor finishes healing you, you both leave no scratch marks as&nbsp;long as you stay within **12** meters&nbsp;of the Survivor who healed you or until one of you loses a health state.\n\n*Teamwork: Collective Stealth* can only trigger once every **140** seconds.\n\nSurvivors can only be affected by one *Teamwork: Collective Stealth* effect at a time.",
+        "description": "When someone helps you out, you respond in kind.\n\nWhenever another Survivor finishes healing you, you both leave no scratch marks as long as you stay within **12** meters of the Survivor who healed you or until one of you loses a health state.\n\n*Teamwork: Collective Stealth* can only trigger once every **140** seconds.\n\nSurvivors can only be affected by one *Teamwork: Collective Stealth* effect at a time.",
         "image": "UI/Icons/Perks/Saturn/iconPerks_TeamworkCollectiveStealth.png",
         "role": "survivor"
     },
@@ -1547,7 +1571,7 @@
         "id": "S37P02",
         "name": "Made for This",
         "character": 36,
-        "description": "You were born to survive, and raised to adapt.\n\n*Made for This* activates while you are in the injured state.\n\n• You run **3**% faster.\n• After you finish healing another Survivor, gain the **Endurance** status effect for **10** seconds.\n\n\n*Made for This cannot be used when suffering from Exhaustion, but does not cause the Exhausted Status Effect.*\n\nEndurance prevents a survivor from being downed, inflicting Deep Wound instead.\n\nDeep Wound will put a Survivor in the dying state unless it is mended before the timer runs out.",
+        "description": "You were born to survive, and raised to adapt.\n\n*Made for This* activates while you are in the injured state.\n\n• After you finish healing another Survivor, gain the **Endurance** status effect for **10** seconds.\n• While affected by **Deep Wound**, you run **3**% faster.\n\n\nEndurance prevents a Survivor from being downed, inflicting Deep Wound instead.\n\nDeep Wound will put a Survivor in the dying state unless it is mended before the timer runs out.",
         "image": "UI/Icons/Perks/Umbra/IconPerks_madeForThis.png",
         "role": "survivor"
     },
@@ -1563,7 +1587,7 @@
         "id": "S38P01",
         "name": "Dramaturgy",
         "character": 37,
-        "description": "When people bring you on to their project, they do so because of the unexpected magic you bring to your performance.\n\n*Dramaturgy* activates while you are healthy.\n\nWhile running, press the *active ability button 2* to run with knees high for 0.5 seconds and then gain **25**% Haste for **2** seconds, followed by a unknown effect.\n\n<ul>• Become **Exposed** for **12** seconds;\n• Gain **25**% **Haste** for **2** seconds;\n• Scream, but nothing happens;\n• Gain a random rare item, with random add-ons, and drop any held item.\n</ul>*The same effect cannot happen twice in a row.*\n\n*Dramaturgy* causes **exhaustion** for **40** seconds. Can't be used while exhausted.\n\nExposed Survivors will be downed by basic attacks even if uninjured.\n\nHaste increases Survivor movement speed.\n\nExhaustion prevents Survivors from activating other perks that cause Exhaustion.",
+        "description": "When people bring you on to their project, they do so because of the unexpected magic you bring to your performance.\n\n*Dramaturgy* activates while you are healthy.\n\nWhile running, press the *active ability button 2* to run with knees high for 0.5 seconds and then gain **25**% Haste for **2** seconds, followed by a unknown effect.\n\n<ul>• Become **Exposed** for **12** seconds;\n• Gain **25**% **Haste** for **2** seconds;\n• Scream, but nothing happens;\n• Gain a random rare item, with random add-ons, and drop any held item.\n</ul>*The same effect cannot happen twice in a row.*\n\n*Dramaturgy* causes **Exhausted** for **40** seconds. Can't be used while Exhausted.\n\nExposed Survivors will be downed by basic attacks even if uninjured.\n\nHaste increases Survivor movement speed.\n\nExhausted prevents Survivors from activating other perks that cause Exhausted.",
         "image": "UI/Icons/Perks/Venus/iconPerks_Dramaturgy.png",
         "role": "survivor"
     },
@@ -1595,7 +1619,7 @@
         "id": "S39P02",
         "name": "Chemical Trap",
         "character": 38,
-        "description": "In the Fog, an officer must adapt to the materials at hand.\n\nAfter completing **50**% progress on any generator, this perk activates.\n\nWhile standing next to a dropped pallet, press the *Active Ability Button 2* to install a Trap, which stays active for **120** seconds.\n\nThe aura of trapped pallets are revealed in yellow to all Survivors.\n\nWhen the Killer performs the break action on the trapped pallet, the trap explodes, and they are slowed by **50**% for **4** seconds.\n\n“How do we kill it, Ash?” –Ellen Ripley",
+        "description": "In the Fog, an officer must adapt to the materials at hand.\n\n*Chemical Trap* activates after completing a total of **50**% worth of progress on generators.\n\nWhile standing next to a dropped pallet, press the *Active Ability Button 2* to install a Trap, which stays active for **120** seconds.\n\nAffected pallets will be revealed to all Survivors by a yellow aura. Only one *Chemical trap* can be active on a pallet.\n\nWhen the Killer performs the break action on the pallet, the *Chemical trap* explodes, and they are slowed by **50**% for **4** seconds.\n\n“How do we kill it, Ash?” –Ellen Ripley",
         "image": "UI/Icons/Perks/Wormhole/iconPerks_ChemicalTrap.png",
         "role": "survivor"
     },
@@ -1625,9 +1649,9 @@
     },
     {
         "id": "SecondWind",
-        "name": "Renewal",
+        "name": "Second Wind",
         "character": 18,
-        "description": "When you have healed other Survivors for the equivalent of one health state, *Renewal* activates. If you are already afflicted by the **Broken** status effect, *Renewal* does not activate.\n\nWhile *Renewal* is activated, the next time you are unhooked or you unhook yourself, you are affected by the **Broken** status effect.&nbsp;After a total duration of&nbsp;**20** seconds,&nbsp;*Renewal* automatically heals you from injured to healthy.\n\n*Renewal*&nbsp;deactivates once you become healthy or if you are put into the dying state before *Renewal* successfully triggers. You lose the **Broken** status effect.\n\nBroken prevents Survivors from being healed.",
+        "description": "When you have healed other Survivors for the equivalent of one health state, *Second Wind* activates. If you are already afflicted by the **Broken** status effect, *Second Wind* does not activate.\n\nWhile *Second Wind* is activated, the next time you are unhooked or you unhook yourself, you are affected by the **Broken** status effect. After a total duration of **20** seconds, *Second Wind* automatically heals you from injured to healthy.\n\n*Second Wind* deactivates once you become healthy or if you are put into the dying state before *Second Wind* successfully triggers. You lose the **Broken** status effect.\n\nBroken prevents Survivors from being healed.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_secondWind.png",
         "role": "survivor"
     },
@@ -1643,7 +1667,7 @@
         "id": "Self_Care",
         "name": "Self-Care",
         "character": 2,
-        "description": "Unlocks the ability to heal yourself without a healing item at&nbsp;**35**%&nbsp;the normal healing speed.",
+        "description": "Unlocks the ability to heal yourself without a healing item at **35**% the normal healing speed.",
         "image": "UI/Icons/Perks/iconPerks_selfCare.png",
         "role": "survivor"
     },
@@ -1723,7 +1747,7 @@
         "id": "SpiritFury",
         "name": "Spirit Fury",
         "character": 268435468,
-        "description": "Each pallet you break magnifies the wrath&nbsp;of The Entity.\n\nAfter you break **2** pallets, the next time you are stunned by a pallet,&nbsp;The Entity will instantly break the pallet.\n\nYou still suffer from the stun effect penalty.",
+        "description": "Each pallet you break magnifies the wrath of The Entity.\n\nAfter you break **2** pallets, the next time you are stunned by a pallet, The Entity will instantly break the pallet.\n\nYou still suffer from the stun effect penalty.",
         "image": "UI/Icons/Perks/Haiti/iconPerks_spiritFury.png",
         "role": "killer"
     },
@@ -1761,9 +1785,9 @@
     },
     {
         "id": "Surge",
-        "name": "Jolt",
+        "name": "Surge",
         "character": 268435472,
-        "description": "Your eerie presence charges the air and interferes with technology.\n\nPutting a Survivor into the dying state with a *basic attack* causes all generators within a 32-meter radius to explode instantly and begin regressing. Generators affected by *Jolt* immediately lose **8**% of their progress.",
+        "description": "Your eerie presence charges the air and interferes with technology.\n\nPutting a Survivor into the dying state with a *basic attack* causes all generators within a 32-meter radius to explode instantly and begin regressing. Generators affected by *Surge* immediately lose **8**% of their progress.",
         "image": "UI/Icons/Perks/Qatar/iconPerks_surge.png",
         "role": "killer"
     },
@@ -1803,7 +1827,7 @@
         "id": "Thanatophobia",
         "name": "Thanatophobia",
         "character": 268435459,
-        "description": "Their courage fades in the face of undeniable mortality.\n\n• For each injured, dying, or hooked Survivor, all Survivors receive a penalty of **2**% to repair, sabotage and Totem-cleansing speeds.\n• If there are&nbsp;4 injured, dying or hooked Survivors, there is an additional&nbsp;12%&nbsp;penalty to repair, sabotage and Totem-cleansing speeds.\n",
+        "description": "Their courage fades in the face of undeniable mortality.\n\n• For each injured, dying, or hooked Survivor, all Survivors receive a penalty of **2**% to repair, sabotage and Totem-cleansing speeds.\n• If there are 4 injured, dying or hooked Survivors, there is an additional 12% penalty to repair, sabotage and Totem-cleansing speeds.\n",
         "image": "UI/Icons/Perks/iconPerks_thatanophobia.png",
         "role": "killer"
     },
@@ -1835,7 +1859,7 @@
         "id": "Tinkerer",
         "name": "Tinkerer",
         "character": 268435458,
-        "description": "Whenever a generator is repaired to **70**%&nbsp;progress, it triggers a loud noise notification and you are granted the **Undetectable** status effect for the next **16**&nbsp;seconds. This effect can only be triggered once on each generator.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
+        "description": "Whenever a generator is repaired to **70**% progress, it triggers a loud noise notification and you are granted the **Undetectable** status effect for the next **16** seconds. This effect can only be triggered once on each generator.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
         "image": "UI/Icons/Perks/iconPerks_tinkerer.png",
         "role": "killer"
     },
@@ -1843,7 +1867,7 @@
         "id": "TrailofTorment",
         "name": "Trail of Torment",
         "character": 268435475,
-        "description": "You guide your victims along a path of pain and punishment.\n\nAfter damaging a generator, you become **Undetectable** until the generator stops regressing.&nbsp;During this time, the generator’s yellow aura is revealed to Survivors.\n\nThis effect can only trigger once every **60**&nbsp;seconds.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
+        "description": "You guide your victims along a path of pain and punishment.\n\nAfter damaging a generator, you become **Undetectable** until the generator stops regressing. During this time, the generator’s yellow aura is revealed to Survivors.\n\nThis effect can only trigger once every **60** seconds.\n\nUndetectable hides the Killer's aura, Terror Radius, and Red Stain.",
         "image": "UI/Icons/Perks/Wales/iconPerks_trailOfTorment.png",
         "role": "killer"
     },
@@ -1931,7 +1955,7 @@
         "id": "WindowsOfOpportunity",
         "name": "Windows of Opportunity",
         "character": 10,
-        "description": "Unlocks potential in one's aura reading ability. Auras of pallets and vault locations are revealed to you when within a **32** meter range.\n\n*Windows of Opportunity* has a cooldown of&nbsp;**20** seconds after vaulting or dropping a pallet.",
+        "description": "Unlocks potential in one's aura reading ability. Auras of pallets, breakable walls, and vault locations are revealed to you when within a **32** meter range.",
         "image": "UI/Icons/Perks/Kate/iconPerks_windowsOfOpportunity.png",
         "role": "survivor"
     },
