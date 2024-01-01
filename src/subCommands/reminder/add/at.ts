@@ -44,6 +44,6 @@ export default class SubCommand extends BaseSubCommandRunner {
     if (DateTime.now().toMillis() > timeToRemind)
       return interaction.reply({ content: "That time is in the past", ephemeral: true });
 
-    client.saveReminder(interaction, message, timeToRemind);
+    client.reminders.save(interaction, message, timeToRemind);
   }
 }

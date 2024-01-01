@@ -10,7 +10,7 @@ import { BaseCommand } from "./utils/BaseCommand";
 import BaseSlashSubCommand from "./utils/BaseSlashSubCommand";
 import ExtendedClient from "./utils/Client";
 
-type messageProps = {
+type messageCommandProps = {
   run(message: Message, args: string[], client?: ExtendedClient): void;
   conf: {
     aliases: Array<string>;

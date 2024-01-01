@@ -44,7 +44,7 @@ export default class SubCommand extends BaseSubCommandRunner {
       if (index % 2 === 0) fields.push({ name: "\u200B", value: "\u200B", inline: true });
       fields.push({
         name: `Perk #${index + 1}`,
-        value: client.dbdPerks.filter((perk) => perk.id === val.id)[0]?.name ?? "not found",
+        value: client.dbd.perks.filter((perk) => perk.id === val.id)[0]?.name ?? "not found",
         inline: true,
       });
     });

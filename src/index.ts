@@ -3,11 +3,8 @@ import ExtendedClient from "./utils/Client";
 import fsPromise from "node:fs/promises";
 import fs from "node:fs";
 import path from "node:path";
-import { DateTime } from "luxon";
 import { registerCommands, registerContextCommands, registerSubCommands } from "./utils/Registry";
-
 import config from "./config.json";
-import { DEFAULT, GREEN } from "./utils/ConsoleText";
 import env from "dotenv";
 
 env.config({ path: path.join(__dirname, "..", ".env") });
@@ -51,62 +48,20 @@ const loadEvents = async (currPath = eventsPath) => {
 
 loadEvents();
 
-const messagesPath = path.join(__dirname, "message_commands");
-const messagesFiles = fs.readdirSync(messagesPath);
-let messageCommandsCount = 0;
-messagesFiles.forEach(async (file) => {
-  messageCommandsCount++;
-  const props = await import(path.join(messagesPath, file));
-  console.log(
-    `${GREEN}[${DateTime.now().toFormat(
-      "yyyy-MM-DD HH:mm:ss"
-    )}]: ${DEFAULT}Loading command #${messageCommandsCount}: ${props.help.name}`
-  );
-  client.messageCommands.set(props.help.name, props);
-  props.conf.aliases.forEach((alias: string) => {
-    client.aliases.set(alias, props.help.name);
-  });
-});
-
 async function registerJSONs(client: ExtendedClient) {
   try {
     await registerCommands(client);
     await registerSubCommands(client);
     await registerContextCommands(client);
 
-    const allServersCommandJSONs = client.commands
-      .filter((cmd) => cmd.all)
-      .map((cmd) => cmd.getSlashCommandJSON());
-    const allServersSubCommandJSONs = client.subCommands
-      .filter((cmd) => cmd.all)
-      .map((cmd) => cmd.getSlashCommandJSON());
-    const allServersContextJSONs = client.contextCommands
-      .filter((cmd) => cmd.all)
-      .map((cmd) => cmd.getContextCommandJSON());
-
-    const privateCommandJSONs = client.commands
-      .filter((cmd) => !cmd.all)
-      .map((cmd) => cmd.getSlashCommandJSON());
-    const privateSubCommandJSONs = client.subCommands
-      .filter((cmd) => !cmd.all)
-      .map((cmd) => cmd.getSlashCommandJSON());
-    const privateContextJSONs = client.contextCommands
-      .filter((cmd) => !cmd.all)
-      .map((cmd) => cmd.getContextCommandJSON());
-
-    if (
-      allServersCommandJSONs === undefined ||
-      allServersSubCommandJSONs === undefined ||
-      allServersContextJSONs === undefined
-    )
-      return;
+    const { publicCommands, privateCommands } = client.commandManager.getCommandJSON();
 
     await client.rest.put(Routes.applicationCommands(config.clientID), {
-      body: [...allServersCommandJSONs, ...allServersSubCommandJSONs, ...allServersContextJSONs],
+      body: publicCommands,
     });
 
     await client.rest.put(Routes.applicationGuildCommands(config.clientID, config.testGuild), {
-      body: [...privateCommandJSONs, ...privateSubCommandJSONs, ...privateContextJSONs],
+      body: privateCommands,
     });
     // const registeredCommands = await client.rest.get(Routes.applicationCommands(config.clientID));
   } catch (error) {

@@ -1,75 +1,36 @@
-import {
-  ChannelType,
-  ChatInputCommandInteraction,
-  Client,
-  ClientOptions,
-  Collection,
-  Message,
-  PermissionsBitField,
-  TextChannel,
-} from "discord.js";
+import { ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-import {
-  Command,
-  BaseSubCommand,
-  ContextCommand,
-  messageProps,
-  ReminderDetails,
-  OSRSWikiData,
-  DBDPerk,
-  DBDCharacter,
-  DBDDLC,
-  DBDPower,
-  ReminderSaveType,
-} from "../types";
+import { OSRSWikiData } from "../types";
 import { DateTime } from "luxon";
 import Modifiers, { DEFAULT } from "./ConsoleText";
 import axios, { AxiosRequestConfig } from "axios";
-
-const dbdApiUrl = "https://dbd.tricky.lol/api/";
+import DBDManager from "./DBDManager";
+import ReminderManager from "./ReminderManager";
+import CommandManager from "./CommandManager";
 
 export default class ExtendedClient extends Client {
-  public commands: Collection<string, Command>;
-  public subCommands: Collection<string, BaseSubCommand>;
-  public contextCommands: Collection<string, ContextCommand>;
-  public messageCommands: Collection<string, messageProps>;
-  public aliases: Collection<string, string>;
-  public reminders: Collection<string, Array<ReminderDetails>>;
-  public reminderTimeouts: NodeJS.Timeout[];
   public osrsItems: Array<{ name: string; value: string }>;
-  public dbdPerks: DBDPerk[];
-  public dbdChars: DBDCharacter[];
-  public dbdDLC: DBDDLC[];
-  public dbdPowers: DBDPower[];
+  public dbd: DBDManager;
+  public reminders: ReminderManager;
+  public commandManager: CommandManager;
+
   public aiEnabled: boolean;
   public aiQueue: { userID: string; interactionID: string }[];
   public ownerID: string;
 
-  private _reminderPath: string;
-
   constructor(options: ClientOptions, ownerID: string, token: string, aiEnabled = false) {
     super(options);
-    this.commands = new Collection();
-    this.subCommands = new Collection();
-    this.contextCommands = new Collection();
-    this.messageCommands = new Collection();
-    this.aliases = new Collection();
-    this.reminders = new Collection();
-    this.reminderTimeouts = [];
+    const dataPath = path.join(__dirname, "..", "data");
+
     this.aiQueue = [];
     this.aiEnabled = aiEnabled;
     this.ownerID = ownerID;
-
-    const dataPath = path.join(__dirname, "..", "data");
-
-    this._reminderPath = path.join(dataPath, "reminders.json");
+    this.dbd = new DBDManager(dataPath);
+    this.reminders = new ReminderManager(this, dataPath);
+    this.commandManager = new CommandManager(this, ownerID);
 
     const osrsItemsPath = path.join(dataPath, "itemIDs.json");
-    const dbdPerkFilePath = path.join(dataPath, "dbdPerks.json");
-    const dbdCharFilePath = path.join(dataPath, "dbdChars.json");
-    const dbdDLCFilePath = path.join(dataPath, "dbdDLC.json");
-    const dbdPowerFilePath = path.join(dataPath, "dbdPower.json");
 
     this.rest.setToken(token);
 
@@ -78,64 +39,8 @@ export default class ExtendedClient extends Client {
       this.getOSRSItems();
     } else
       this.osrsItems = Object.entries(JSON.parse(fs.readFileSync(osrsItemsPath, "utf-8"))).map(
-        (item) => {
-          return { name: item[0] as string, value: item[1] as string };
-        }
+        (item) => ({ name: item[0], value: item[1] as string })
       );
-
-    this.dbdPerks = [];
-    this.dbdChars = [];
-    this.dbdDLC = [];
-    this.dbdPowers = [];
-
-    if (!fs.existsSync(dbdPerkFilePath)) this.getDBDPerks();
-    else this.dbdPerks = JSON.parse(fs.readFileSync(dbdPerkFilePath, "utf-8"));
-
-    if (!fs.existsSync(dbdCharFilePath)) this.getDBDChars();
-    else this.dbdChars = JSON.parse(fs.readFileSync(dbdCharFilePath, "utf-8"));
-
-    if (!fs.existsSync(dbdDLCFilePath)) this.getDBDDLC();
-    else this.dbdDLC = JSON.parse(fs.readFileSync(dbdDLCFilePath, "utf-8"));
-
-    if (!fs.existsSync(dbdPowerFilePath)) this.getDBDPowers();
-    else this.dbdPowers = JSON.parse(fs.readFileSync(dbdPowerFilePath, "utf-8"));
-  }
-
-  public async reload(command: string) {
-    const messagesPath = path.join(__dirname, "..", "message_commands");
-
-    const cmdPath = path.join(messagesPath, command);
-    const cmd = await import(cmdPath);
-    return new Promise((resolve) => {
-      delete require.cache[require.resolve(cmdPath)];
-      this.aliases.forEach((cmd, alias) => {
-        if (cmd === command) this.aliases.delete(alias);
-      });
-      this.messageCommands.set(command, cmd);
-      cmd.conf.aliases.forEach((alias: string) => {
-        this.aliases.set(alias, cmd.help.name);
-      });
-      resolve(null);
-    });
-  }
-
-  public elevation(message: Message) {
-    let permlevel = 0;
-    if (message.author.id === this.ownerID) return 4;
-    if (message.guild === null) return 0;
-
-    const flags = PermissionsBitField.Flags;
-    const hasPerm = (flag: bigint) => message.member?.permissions.has(flag);
-
-    if (
-      hasPerm(flags.ManageRoles) &&
-      hasPerm(flags.ManageChannels) &&
-      hasPerm(flags.ManageMessages)
-    )
-      permlevel = 2;
-    if (hasPerm(flags.Administrator)) permlevel = 3;
-
-    return permlevel;
   }
 
   public log(location: string, message: string, color: string = DEFAULT) {
@@ -169,135 +74,6 @@ export default class ExtendedClient extends Client {
   public async sendToChannel(channelID: string, message: string) {
     const channel = (await this.channels.fetch(channelID)) as TextChannel;
     channel.send(message);
-  }
-
-  public executeReminder(reminder: ReminderDetails, userID: string) {
-    this.sendToChannel(reminder.channel, `<@!${userID}>: ${reminder.message}`);
-
-    if (!reminder.recurring) this.deleteReminder(reminder.id, userID);
-    else {
-      if (!reminder.details) throw "Recurring details missing in reminder";
-      const { day, hour, minute } = reminder.details;
-      let newReminderTime = DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m");
-      if (newReminderTime.toMillis() < DateTime.now().toMillis())
-        newReminderTime = newReminderTime.plus({ days: 7 });
-      reminder.timeToRemind = newReminderTime.toMillis();
-    }
-
-    this.reloadTimeouts();
-    this.exportReminders();
-  }
-
-  public deleteReminder(reminderID: number, userID: string) {
-    const reminders = this.reminders.get(userID);
-    if (!reminders) throw "user has no reminders to delete";
-
-    const reminderToDelete = reminders.findIndex((r) => r.id === reminderID);
-    if (reminderToDelete === -1) throw "cannot find reminder to delete";
-
-    reminders.splice(reminderToDelete, 1);
-    if (reminders.length < 1) this.reminders.delete(userID);
-
-    this.exportReminders();
-  }
-
-  public reloadTimeouts() {
-    for (const timeout of this.reminderTimeouts) clearTimeout(timeout);
-    this.reminderTimeouts = [];
-    this.reminders.forEach((reminders, userID) => {
-      reminders.forEach((reminder) => {
-        const timeout = setTimeout(() => {
-          this.executeReminder(reminder, userID);
-        }, reminder.timeToRemind - DateTime.now().toMillis());
-        this.reminderTimeouts.push(timeout);
-      });
-    });
-  }
-
-  public async saveReminder(
-    interaction: ChatInputCommandInteraction,
-    message: string,
-    timeToRemind: number
-  ): Promise<void>;
-  public async saveReminder(
-    interaction: ChatInputCommandInteraction,
-    message: string,
-    timeToRemind: number,
-    recurring: true,
-    day: string,
-    hour: number,
-    minute: number
-  ): Promise<void>;
-  public async saveReminder(
-    interaction: ChatInputCommandInteraction,
-    message: string,
-    timeToRemind: number,
-    recurring = false,
-    day?: string,
-    hour?: number,
-    minute?: number
-  ): Promise<void> {
-    const userID = interaction.user.id;
-    const reminders = this.reminders.ensure(userID, () => []);
-
-    if (!interaction.channel) throw "No idea how this error occurred";
-    const saveDetails = {
-      id: DateTime.now().toMillis() + parseInt(userID),
-      channel: interaction.channel.id,
-      message: message,
-      timeToRemind: timeToRemind,
-      recurring: recurring,
-      ...(recurring && {
-        details: {
-          day,
-          hour,
-          minute,
-        },
-      }),
-    } as ReminderDetails;
-
-    reminders.push(saveDetails);
-    this.reminders.set(userID, reminders);
-
-    try {
-      const successful = this.exportReminders();
-      if (!successful) throw "Check Client.ts: 268";
-
-      if (saveDetails.recurring) {
-        interaction.reply({
-          content: `\`RECURRING\` Reminder [${saveDetails.id}] set! Reminding you <t:${Math.floor(
-            timeToRemind / 1000
-          )}:R> (Every ${DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m").toFormat(
-            "EEEE 'at' H':'mm"
-          )})`,
-        });
-        return;
-      }
-      interaction.reply({
-        content: `Reminder \`${saveDetails.id}\` set! Reminding you <t:${Math.floor(
-          timeToRemind / 1000
-        )}:R>`,
-      });
-
-      setTimeout(() => {
-        this.executeReminder(saveDetails, userID);
-      }, saveDetails.timeToRemind - DateTime.now().toMillis());
-    } catch (err) {
-      interaction.reply({ content: "Sorry, something went wrong", ephemeral: true });
-    }
-  }
-
-  private exportReminders() {
-    try {
-      fs.writeFileSync(
-        this._reminderPath,
-        JSON.stringify(Array.from(this.reminders.entries()) as ReminderSaveType, null, 4)
-      );
-      return true;
-    } catch (e) {
-      console.error(e);
-      return false;
-    }
   }
 
   public isJSONString(str: unknown) {
@@ -338,176 +114,5 @@ export default class ExtendedClient extends Client {
       if (err) throw err;
       console.log("OSRS Items updated");
     });
-  }
-
-  private sanitizeHTML = (str: string) => {
-    return str
-      .replace(/<b>(.*?)<\/b>/g, "**$1**")
-      .replace(/<br>/g, "\n")
-      .replace(/<i>(.*?)<\/i>/g, "*$1*")
-      .replace(/<li>(.*?)<\/li>/g, "• $1\n")
-      .replace(/&nbsp;/g, " ");
-  };
-
-  private async getDBDPerks() {
-    interface ObjTunables {
-      [key: string]: string[];
-    }
-
-    interface PerkData extends DBDPerk {
-      categories: string[] | null;
-      tunables: string[][] | ObjTunables;
-      modifier: string;
-      teachable: number;
-    }
-
-    interface DBDPerkApiData {
-      [k: string]: PerkData;
-    }
-
-    const perkData = await axios.get<DBDPerkApiData>(dbdApiUrl + "perks", {
-      headers: {
-        "User-Agent": "Discord Bot - birbkiwi",
-      },
-    });
-
-    if (perkData.status !== 200) return console.error(perkData);
-
-    const dbdPerks = Object.entries(perkData.data).map(([perkID, perk]) => {
-      let tunables: ObjTunables = {};
-      if (Array.isArray(perk.tunables)) {
-        for (let i = 0; i < perk.tunables.length; i++) {
-          tunables[i] = [perk.tunables[i][perk.tunables[i].length - 1]];
-        }
-      } else tunables = perk.tunables;
-
-      for (const key in perk.tunables) {
-        perk.description = perk.description.replace(
-          new RegExp("\\{" + key + "\\}", "gi"),
-          `<b>${tunables[key][tunables[key].length - 1]}</b>`
-        );
-      }
-
-      return {
-        id: perkID,
-        name: perk.name,
-        character: perk.character,
-        description: this.sanitizeHTML(perk.description),
-        image: perk.image,
-        role: perk.role,
-      } as DBDPerk;
-    });
-
-    this.dbdPerks = dbdPerks;
-
-    const dbdPerkFilePath = path.join(__dirname, "..", "data", "dbdPerks.json");
-    fs.writeFile(dbdPerkFilePath, JSON.stringify(dbdPerks, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("DBD perks retrieved");
-    });
-  }
-
-  private async getDBDChars() {
-    interface DBDCharApiData {
-      [k: string]: Omit<DBDCharacter, "charid">;
-    }
-
-    const charData = await axios.get<DBDCharApiData>(dbdApiUrl + "characters", {
-      headers: {
-        "User-Agent": "Discord Bot - birbkiwi",
-      },
-    });
-
-    if (charData.status !== 200) return console.error(charData);
-
-    const dbdChars = Object.entries(charData.data).map(
-      ([key, char]) =>
-        ({
-          charid: key,
-          name: char.name,
-          role: char.role,
-          id: char.id,
-          gender: char.gender,
-          dlc: char.dlc,
-          image: char.image,
-          item: char.item,
-        } as DBDCharacter)
-    );
-
-    this.dbdChars = dbdChars;
-
-    const dbdCharFilePath = path.join(__dirname, "..", "data", "dbdChars.json");
-    fs.writeFile(dbdCharFilePath, JSON.stringify(dbdChars, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("DBD chars retrieved");
-    });
-  }
-
-  private async getDBDDLC() {
-    interface DBDDLCApiData {
-      [k: string]: Omit<DBDDLC, "id">;
-    }
-    const dlcData = await axios.get<DBDDLCApiData>(dbdApiUrl + "dlc", {
-      headers: {
-        "User-Agent": "Discord Bot - birbkiwi",
-      },
-    });
-    if (dlcData.status !== 200) return console.error(dlcData);
-
-    const dbdDlc = Object.entries(dlcData.data).map(([key, dlc]) => {
-      return {
-        id: key,
-        name: dlc.name,
-        steamid: dlc.steamid,
-        time: dlc.time,
-      } as DBDDLC;
-    });
-
-    this.dbdDLC = dbdDlc;
-
-    const dbdDLCFilePath = path.join(__dirname, "..", "data", "dbdDLC.json");
-    fs.writeFile(dbdDLCFilePath, JSON.stringify(dbdDlc, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("DBD dlcs retrieved");
-    });
-  }
-
-  private async getDBDPowers() {
-    interface DBDPowerApiData {
-      [k: string]: Omit<DBDPower, "id">;
-    }
-
-    const powerData = await axios.get<DBDPowerApiData>(dbdApiUrl + "items", {
-      headers: {
-        "User-Agent": "Discord Bot - birbkiwi",
-      },
-      params: {
-        role: "killer",
-        type: "power",
-      },
-    });
-    if (powerData.status !== 200) return console.error(powerData);
-
-    const dbdPower = Object.entries(powerData.data).map(([key, power]) => ({
-      id: key,
-      name: this.sanitizeHTML(power.name),
-      description: this.sanitizeHTML(power.description),
-      image: power.image,
-    }));
-
-    this.dbdPowers = dbdPower;
-
-    const dbdPowerFilePath = path.join(__dirname, "..", "data", "dbdPower.json");
-    fs.writeFile(dbdPowerFilePath, JSON.stringify(dbdPower, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("DBD Powers retrieved");
-    });
-  }
-
-  public async getDBDData() {
-    this.getDBDPerks();
-    this.getDBDChars();
-    this.getDBDDLC();
-    this.getDBDPowers();
   }
 }

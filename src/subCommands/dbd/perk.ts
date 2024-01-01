@@ -21,7 +21,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
     const focusedValue = interaction.options.getFocused() ?? "";
-    const filtered = client.dbdPerks.filter((perk) =>
+    const filtered = client.dbd.perks.filter((perk) =>
       perk.name.toLowerCase().includes(focusedValue.toLowerCase())
     );
 
@@ -40,7 +40,7 @@ export default class SubCommand extends BaseSubCommandRunner {
     if (!selectedPerk)
       return interaction.reply({ content: "idk how that happened", ephemeral: true });
 
-    const perk: DBDPerk[] = client.dbdPerks.filter((perk) =>
+    const perk: DBDPerk[] = client.dbd.perks.filter((perk) =>
       perk.name.toLowerCase().includes(selectedPerk.toLowerCase())
     );
     if (perk.length < 1) return interaction.reply({ content: "Perk not found", ephemeral: true });
@@ -53,7 +53,7 @@ export default class SubCommand extends BaseSubCommandRunner {
       },
     ];
 
-    const charPerk = client.dbdChars.filter(
+    const charPerk = client.dbd.characters.filter(
       (char) => char.charid === perk[0].character?.toString()
     );
 
@@ -65,7 +65,7 @@ export default class SubCommand extends BaseSubCommandRunner {
       });
 
       if (charPerk[0].dlc !== null) {
-        const dlc = client.dbdDLC.filter((dlc) => dlc.id === charPerk[0].dlc)[0];
+        const dlc = client.dbd.DLCs.filter((dlc) => dlc.id === charPerk[0].dlc)[0];
         embedFields.push(
           {
             name: "DLC",

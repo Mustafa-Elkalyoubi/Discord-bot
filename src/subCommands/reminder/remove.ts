@@ -57,8 +57,8 @@ export default class SubCommand extends BaseSubCommandRunner {
         ephemeral: true,
       });
 
-    client.deleteReminder(reminderID, userID);
+    client.reminders.remove(reminderID, userID);
     interaction.reply({ content: `Removed reminder [${reminderID}]` });
-    client.reloadTimeouts();
+    client.reminders.reloadTimeouts();
   }
 }

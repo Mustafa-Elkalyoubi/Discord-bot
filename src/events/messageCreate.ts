@@ -49,20 +49,7 @@ export = {
     }
 
     if (!message.content.startsWith(config.prefix)) return;
-    const command = message.content.split(" ")[0].slice(config.prefix.length).toLowerCase();
-    const args = message.content.split(" ").slice(1);
-    const perms = client.elevation(message);
-    let cmd;
-
-    if (client.messageCommands?.has(command)) cmd = client.messageCommands.get(command);
-    else if (client.aliases?.has(command))
-      cmd = client.messageCommands?.get(client.aliases.get(command)!);
-
-    if (cmd) {
-      if (perms < cmd.conf.permLevel)
-        return message.reply("You don't have the permissions to use that");
-      cmd.run(message, args, client);
-    }
+    client.commandManager.runMessageCommand(message);
   },
 };
 

@@ -27,7 +27,7 @@ async function registerCommands(client: ExtendedClient, dir = "../commands") {
     if (file.endsWith(".js") || file.endsWith(".ts")) {
       const { default: Command } = await import(path.join(filePath, file));
       const cmd = new Command();
-      client.commands?.set(cmd.name, cmd);
+      client.commandManager.addCommand(cmd.name, cmd);
       log(`${GREEN}Registering command: ${DEFAULT}${cmd.name}`);
     }
   }
@@ -54,7 +54,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
           fs.existsSync(baseFile) ? baseFile : path.join(folderPath, file + ".ts")
         );
         const subCommand = new BaseSubCommand();
-        client.subCommands?.set(file, subCommand);
+        client.commandManager.addSubcommand(file, subCommand);
 
         for (const group of subCommand.groups) {
           for (const command of group.subCommands) {
@@ -77,8 +77,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
           if (subCommandFile.endsWith(".json")) continue;
           const { default: SubCommand } = await import(path.join(folderPath, subCommandFile));
           const cmd = new SubCommand(file, null, subCommandFile.split(".")[0]);
-          const subCommandInstance = client.subCommands?.get(file);
-          subCommandInstance?.groupCommands.set(cmd.name, cmd);
+          client.commandManager.addGroupcommand(file, cmd.name, cmd);
         }
       } catch (err) {
         console.log(err);
@@ -101,7 +100,7 @@ async function registerContextCommands(client: ExtendedClient, dir = "../context
     if (file.endsWith(".js") || file.endsWith(".ts")) {
       const { default: Command } = await import(filePath);
       const cmd = new Command();
-      client.contextCommands?.set(cmd.name, cmd);
+      client.commandManager.addContextcommand(cmd.name, cmd);
       log(`${GREEN}Registering context command: ${DEFAULT}${cmd.name}`);
     }
   }

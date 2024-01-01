@@ -11,7 +11,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
     const focusedValue = interaction.options.getFocused() ?? "";
-    const filtered = client.dbdChars.filter(
+    const filtered = client.dbd.characters.filter(
       (char) =>
         char.name.toLowerCase().includes(focusedValue.toLowerCase()) && char.role === "killer"
     );
@@ -27,7 +27,7 @@ export default class SubCommand extends BaseSubCommandRunner {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    const killer = client.dbdChars.find(
+    const killer = client.dbd.characters.find(
       (char) => char.name === interaction.options.getString("killer")!
     ) as dbdKiller;
     if (!killer)
@@ -36,7 +36,7 @@ export default class SubCommand extends BaseSubCommandRunner {
         ephemeral: true,
       });
 
-    const power = client.dbdPowers.find((power) => power.id === killer.item);
+    const power = client.dbd.powers.find((power) => power.id === killer.item);
     if (!power)
       return interaction.reply({
         content: "Sorry, couldn't find the power for some reason",

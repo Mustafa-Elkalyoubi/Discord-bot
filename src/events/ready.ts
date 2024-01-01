@@ -1,11 +1,4 @@
-import {
-  ActivityType,
-  Collection,
-  Events,
-  GuildTextBasedChannel,
-  TextChannel,
-  codeBlock,
-} from "discord.js";
+import { ActivityType, Events, GuildTextBasedChannel, TextChannel, codeBlock } from "discord.js";
 import { FineData } from "../types";
 import { DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
 import path from "path";
@@ -28,10 +21,7 @@ export = {
   run: async (client: ExtendedClient) => {
     if (!client.user) throw "What? (check ready.ts)";
     const dataPath = path.join(__dirname, "..", "data");
-    const reminderPath = path.join(dataPath, "reminders.json");
-    client.reminders = new Collection(JSON.parse(fs.readFileSync(reminderPath, "utf-8")));
     console.log(`${LIGHT_BLUE}Ready, logged in as ${client.user.tag + DEFAULT}`);
-    client.reloadTimeouts();
 
     const miscPath = path.join(dataPath, "misc.json");
     const misc = (await JSON.parse(fs.readFileSync(miscPath, "utf-8"))) as MiscFile;
