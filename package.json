@@ -1,10 +1,11 @@
 {
-  "name": "ts-bot",
+  "name": "ts-discord-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "My discord bot",
   "main": "dist/index.js",
+  "private": true,
   "scripts": {
-    "dev": "nodemon --config nodemon.json src/index.ts",
+    "dev": "nodemon src/index.ts",
     "norerun": "ts-node ./src",
     "build": "tsc",
     "start": "node ./dist/",
@@ -15,6 +16,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/ffmpeg": "^1.0.7",
+    "@types/fluent-ffmpeg": "^2.1.24",
     "@types/luxon": "^3.3.0",
     "@types/node": "^18.15.11",
     "@types/ping": "^0.4.1",
@@ -23,15 +26,22 @@
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.48.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.3.2"
+    "typescript": "^5.4.2"
   },
   "dependencies": {
+    "@pm2/io": "^5.0.2",
+    "@types/ps-tree": "^1.1.6",
     "axios": "^1.3.5",
     "discord.js": "^14.14.1",
     "dotenv": "^16.0.3",
+    "events": "^3.3.0",
+    "fluent-ffmpeg": "^2.1.2",
     "luxon": "^3.3.0",
     "ping": "^0.4.4",
+    "ps-tree": "^1.2.0",
     "sharp": "^0.32.1",
-    "url-file-size": "^1.0.5-1"
+    "typed-emitter": "^2.1.0",
+    "url-file-size": "^1.0.5-1",
+    "ytdl-core": "^4.11.5"
   }
 }

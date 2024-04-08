@@ -2,12 +2,9 @@ import { ActivityType, Message } from "discord.js";
 import ExtendedClient from "../utils/Client";
 
 exports.run = async function run(message: Message, args: string[], client: ExtendedClient) {
-  client.aiEnabled = !client.aiEnabled;
-  client.user?.setActivity(
-    client.aiEnabled ? "Text2Img is enabled :)" : "Text2Img is disabled :(",
-    { type: ActivityType.Playing }
-  );
-  message.reply(`text2img is now ${client.aiEnabled ? "enabled" : "disabled"}`);
+  const onOrOff = client.toggleAI();
+
+  message.reply(`text2img is now ${onOrOff ? "enabled" : "disabled"}`);
 };
 
 exports.conf = {

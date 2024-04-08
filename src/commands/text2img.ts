@@ -5,78 +5,10 @@ import {
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand";
 import ExtendedClient from "../utils/Client";
-import axios, { AxiosResponse } from "axios";
-
-interface apiPostResponseJSON {
-  images: [string];
-  parameters: apiPostRequestPayload;
-  info: string;
-}
-
-interface apiPostRequestPayload {
-  enable_hr?: boolean;
-  denoising_strength?: number;
-  firstphase_width?: number;
-  firstphase_height?: number;
-  hr_scale?: number;
-  hr_upscaler?: string;
-  hr_second_pass_steps?: number;
-  hr_resize_x?: number;
-  hr_resize_y?: number;
-  prompt: string;
-  styles?: string[];
-  seed?: number;
-  subseed?: number;
-  subseed_strength?: number;
-  seed_resize_from_h?: number;
-  seed_resize_from_w?: number;
-  sampler_name?: string;
-  batch_size?: number;
-  n_iter?: number;
-  steps?: number;
-  cfg_scale?: number;
-  width?: number;
-  height?: number;
-  restore_faces?: boolean;
-  tiling?: boolean;
-  do_not_save_samples?: boolean;
-  do_not_save_grid?: boolean;
-  negative_prompt?: string;
-  eta?: number;
-  s_churn?: number;
-  s_tmax?: number;
-  s_tmin?: number;
-  s_noise?: number;
-  override_settings?: { [k: string]: string };
-  override_settings_restore_afterwards?: boolean;
-  script_args?: [];
-  sampler_index?: string;
-  script_name?: string;
-  send_images?: boolean;
-  save_images?: boolean;
-  alwayson_scripts?: { [k: string]: string };
-}
-
-interface apiGetProgressResponseJSON {
-  progress: number;
-  eta_relative: number;
-  state: {
-    skipped: boolean;
-    interrupted: boolean;
-    job: string;
-    job_count: number;
-    job_timestamp: string;
-    job_no: number;
-    sampling_step: number;
-    sampling_steps: number;
-  };
-  current_image: string;
-  textinfo: string;
-}
 
 export default class Command extends BaseCommand {
   constructor() {
-    super("text2img");
+    super("text2img", true);
   }
 
   LORAs: { name: string; fileName: string; trigger: string }[] = [
@@ -237,14 +169,14 @@ export default class Command extends BaseCommand {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    if (!client.aiEnabled && interaction.user.id !== client.ownerID)
+    if (!client.aiProcess && interaction.user.id !== client.ownerID)
       return interaction.reply({
         content: "This command is temporarily disabled (my poor gpu man cmon)",
         ephemeral: true,
       });
 
     const queue = client.aiQueue;
-    const prompt = interaction.options.getString("prompt");
+    const prompt = interaction.options.getString("prompt")!;
     const negativePrompt = interaction.options.getString("negativeprompt") ?? "";
     const seed = interaction.options.getInteger("seed") ?? -1;
     const cfg_scale = interaction.options.getNumber("cfgscale") ?? 7;
@@ -274,115 +206,24 @@ export default class Command extends BaseCommand {
       hr_scale < 1
     )
       return interaction.reply({ content: "Fucking read the things idiot", ephemeral: true });
-    if (
-      queue.map((q) => q.userID).includes(interaction.user.id) &&
-      interaction.user.id !== client.ownerID
-    )
-      return interaction.reply({
-        content: "Wait for your previous thing to finish madge",
-        ephemeral: true,
-      });
 
-    await interaction.deferReply();
+    if (queue.idle) await interaction.reply("Waiting for your turn");
+    else await interaction.deferReply();
 
-    const data: apiPostRequestPayload = {
-      enable_hr: true,
-      hr_scale: hr_scale,
-      hr_upscaler: "Latent",
-      prompt:
-        "(masterpiece, best quality, ultra-detailed, best shadow), (detailed background), high contrast, (best illumination), colorful, hyper detail, intricate details, (" +
-        prompt +
-        ")" +
-        ", " +
-        formattedLora +
-        `${addDetailLora && "<lora:add_detail:1>"}`,
-      negative_prompt: "(worst quality, low quality:1.4), monochrome, zombie," + negativePrompt,
-      sampler_index: "DPM++ 2M Karras",
-      steps: 25,
-      height: height,
-      width: width,
-      cfg_scale: cfg_scale,
-      denoising_strength: denoising_strength,
-      seed: seed,
-    };
-
-    queue.push({ userID: interaction.user.id, interactionID: interaction.id });
-
-    const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
-
-    let result: Promise<AxiosResponse<apiPostResponseJSON>> | undefined;
-    try {
-      result = axios.post<apiPostResponseJSON>(apiURL + "txt2img", data, {
-        headers: { "Content-Type": "application/json" },
-      });
-      // eslint-disable-next-line
-    } catch (err: any) {
-      if (!err) return;
-      queue.shift();
-      if (axios.isAxiosError(err)) {
-        if (err.cause && err.cause.name === "ECONNREFUSED")
-          return interaction.editReply(
-            "Sorry, I forgot to turn the model on lmao (feel free to spam me if im afk)"
-          );
-        console.error(err);
-      }
-
-      if (!err.response) {
-        console.log(err);
-        interaction.editReply("Sorry, something went wrong");
-        return;
-      }
-      if (err.response.data.error === "OutOfMemoryError") {
-        return interaction.editReply("Sorry, ran out of memory :(");
-      }
-      console.log(err.detail);
-      interaction.editReply("Sorry, something went wrong");
-    }
-
-    if (queue[0].interactionID !== interaction.id) {
-      interaction.editReply("Waiting for your turn...");
-    }
-    while (queue[0].interactionID !== interaction.id) {
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-    }
-
-    const updater = setInterval(async () => {
-      const update = await axios.get<apiGetProgressResponseJSON>(apiURL + "progress", {
-        headers: { "Content-Type": "application/json" },
-      });
-      if (update.data.current_image !== null) {
-        const stream = Buffer.from(update.data.current_image, "base64");
-        interaction.editReply({
-          content: `${
-            update.data.state.job_no === 1 ? "**Upscaling**\n" : "**Generating**\n"
-          }Progress: \`${Math.floor(update.data.progress * 100)}%\``,
-          files: [{ attachment: stream, name: "img.png" }],
-        });
-      }
-    }, 7000);
-
-    if (!result) {
-      queue.shift();
-      return interaction.editReply(`An unknown error has occurred`);
-    }
-
-    await Promise.all([result]).then((_res) => {
-      clearInterval(updater);
-      const res = _res[0];
-
-      if (res.status !== 200) {
-        queue.shift();
-        return interaction.editReply(`Error code \`${res.status}\``);
-      }
-
-      const stream = Buffer.from(res.data.images[0], "base64");
-      interaction.editReply({
-        content: `**Seed**: \`${JSON.parse(res.data.info).seed}\``,
-        files: [{ attachment: stream, name: "img.png" }],
-      });
-      queue.shift();
-      return;
+    client.activeCommands.inc();
+    queue.add({
+      interaction,
+      addDetailLora,
+      cfg_scale,
+      denoising_strength,
+      formattedLora,
+      height,
+      width,
+      negativePrompt,
+      prompt,
+      seed,
+      hr_scale,
+      client,
     });
-    clearInterval(updater);
   }
 }

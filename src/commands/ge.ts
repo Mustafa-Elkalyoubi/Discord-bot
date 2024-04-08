@@ -113,6 +113,22 @@ export default class Command extends BaseCommand {
 
     const spriteURL = `https://secure.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${itemID}`;
 
+    const hourFields: { name: string; value: string; inline: boolean }[] = [];
+
+    if (prices.highPriceVolume > 0)
+      hourFields.push({
+        name: `High Avg (Volume: ${abbreviate(prices.highPriceVolume)})`,
+        value: `**${abbreviate(prices.avgHighPrice)}** gp`,
+        inline: true,
+      });
+
+    if (prices.lowPriceVolume > 0)
+      hourFields.push({
+        name: `Low Avg (Volume: ${abbreviate(prices.lowPriceVolume)})`,
+        value: `**${abbreviate(prices.avgLowPrice)}** gp`,
+        inline: true,
+      });
+
     const embed = new EmbedBuilder()
       .setColor("Random")
       .setTitle(itemName)
@@ -132,19 +148,7 @@ export default class Command extends BaseCommand {
         { name: `High <t:${prices.highTime}:R>`, value: `**${abbreviate(prices.high)}** gp` },
         { name: `Low <t:${prices.lowTime}:R>`, value: `**${abbreviate(prices.low)}** gp` }
       );
-    else if (tf === "hour")
-      embed.addFields(
-        {
-          name: `High Avg (Volume: ${abbreviate(prices.highPriceVolume)})`,
-          value: `**${abbreviate(prices.avgHighPrice)}** gp`,
-          inline: true,
-        },
-        {
-          name: `Low Avg (Volume: ${abbreviate(prices.lowPriceVolume)})`,
-          value: `**${abbreviate(prices.avgLowPrice)}** gp`,
-          inline: true,
-        }
-      );
+    else if (tf === "hour") embed.addFields(...hourFields);
 
     return interaction.editReply({ embeds: [embed] });
   }

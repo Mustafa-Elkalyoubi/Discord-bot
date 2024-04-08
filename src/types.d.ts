@@ -1,4 +1,4 @@
-import {
+import type {
   Message,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   MessageContextMenuCommandInteraction,
@@ -6,9 +6,9 @@ import {
   AutocompleteInteraction,
   Snowflake,
 } from "discord.js";
-import { BaseCommand } from "./utils/BaseCommand";
-import BaseSlashSubCommand from "./utils/BaseSlashSubCommand";
-import ExtendedClient from "./utils/Client";
+import type { BaseCommand } from "./utils/BaseCommand";
+import type BaseSlashSubCommand from "./utils/BaseSlashSubCommand";
+import type ExtendedClient from "./utils/Client";
 
 type messageCommandProps = {
   run(message: Message, args: string[], client?: ExtendedClient): void;
@@ -50,8 +50,8 @@ export type ReminderSaveType = Array<[Snowflake, Array<ReminderDetails>]>;
 
 interface Command extends BaseCommand {
   getSlashCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;
-  run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): void;
-  autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): void;
+  run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): Promise<void>;
+  autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): Promise<void>;
 }
 
 export declare interface BaseSubCommand extends BaseSlashSubCommand {
@@ -60,15 +60,15 @@ export declare interface BaseSubCommand extends BaseSlashSubCommand {
 
 export interface SubCommand {
   server: Snowflake;
-  run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): void;
-  autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): void;
+  run(interaction: ChatInputCommandInteraction, client?: ExtendedClient): Promise<void>;
+  autocomplete?(interaction: AutocompleteInteraction, client?: ExtendedClient): Promise<void>;
 }
 
 export declare interface ContextCommand {
   all: boolean;
   constructor: void;
   getContextCommandJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody;
-  run(interaction: MessageContextMenuCommandInteraction, client?: ExtendedClient): void;
+  run(interaction: MessageContextMenuCommandInteraction, client?: ExtendedClient): Promise<void>;
 }
 
 type UserFineData = {

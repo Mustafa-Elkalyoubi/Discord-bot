@@ -30,7 +30,7 @@ export = {
     }
 
     client.user.setActivity(
-      client.aiEnabled ? "Text2Img is enabled :)" : "Text2Img is disabled :(",
+      client.aiProcess ? "Text2Img is enabled :)" : "Text2Img is disabled :(",
       { type: ActivityType.Playing }
     );
 

@@ -40,6 +40,7 @@ const loadEvents = async (currPath = eventsPath) => {
     if (stat.isDirectory()) loadEvents(path.join(currPath, file));
     else
       import(filePath).then((event) => {
+        client.log("", `Loading Event: ${event.name}`);
         if (event.once) client.once(event.name, (...args) => event.run(...args, client));
         else client.on(event.name, (...args) => event.run(...args, client));
       });

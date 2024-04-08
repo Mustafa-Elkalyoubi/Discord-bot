@@ -1,6 +1,6 @@
 import { Events, Message } from "discord.js";
 import ExtendedClient from "../utils/Client";
-import { CYAN, DEFAULT, YELLOW } from "../utils/ConsoleText";
+import Modifiers from "../utils/ConsoleText";
 import config from "../config.json";
 import fs from "node:fs";
 import path from "node:path";
@@ -10,6 +10,8 @@ import { beautifyNumber, calcAndSaveFine } from "../utils/FineHelper";
 export = {
   name: Events.MessageCreate,
   async run(message: Message, client: ExtendedClient) {
+    client.messagesLogged.inc();
+
     const attachments = message.attachments;
 
     const log = client.log;
@@ -20,7 +22,7 @@ export = {
       if (message.guild)
         return log(
           message.guild.name,
-          `BOT ${CYAN}${message.author.username}: ${DEFAULT}${message.content}`
+          `BOT ${Modifiers.CYAN}${message.author.username}: ${Modifiers.DEFAULT}${message.content}`
         );
     }
 
@@ -29,7 +31,7 @@ export = {
     if (message.channel.isDMBased() || !message.guild) {
       log(
         `DM`,
-        `${YELLOW}${message.author.username}: ${DEFAULT}${message.content} ${
+        `${Modifiers.YELLOW}${message.author.username}: ${Modifiers.DEFAULT}${message.content} ${
           attachments.size > 0 ? `|| File: ${attachments.map((c) => c.url)}` : ""
         }`
       );
@@ -42,7 +44,7 @@ export = {
     } else {
       log(
         `${message.guild.name}`,
-        `${CYAN}${message.author.username}: ${DEFAULT}${message.content}${
+        `${Modifiers.CYAN}${message.author.username}: ${Modifiers.DEFAULT}${message.content}${
           attachments.size > 0 ? `|| File: ${attachments.map((c) => c.url)}` : ""
         }`
       );

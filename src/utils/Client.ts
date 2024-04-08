@@ -1,30 +1,44 @@
-import { ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
+import axios, { AxiosRequestConfig } from "axios";
+import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
+import { DateTime } from "luxon";
+import { ChildProcess, spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import psTree from "ps-tree";
 import { OSRSWikiData } from "../types";
-import { DateTime } from "luxon";
-import Modifiers, { DEFAULT } from "./ConsoleText";
-import axios, { AxiosRequestConfig } from "axios";
+import Modifiers from "./ConsoleText";
+
+import CommandManager from "./CommandManager";
 import DBDManager from "./DBDManager";
 import ReminderManager from "./ReminderManager";
-import CommandManager from "./CommandManager";
+
+import io from "@pm2/io";
+import Counter from "@pm2/io/build/main/utils/metrics/counter";
+import generateAIImage from "./GenerateAIImage";
+import Queue from "./Queue";
 
 export default class ExtendedClient extends Client {
+  private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
+  private aiFile = `${this.aiDIR}\\webui.bat`;
+
   public osrsItems: Array<{ name: string; value: string }>;
   public dbd: DBDManager;
   public reminders: ReminderManager;
   public commandManager: CommandManager;
 
-  public aiEnabled: boolean;
-  public aiQueue: { userID: string; interactionID: string }[];
+  public aiProcess: ChildProcess | null = null;
+  public aiQueue = new Queue(generateAIImage);
   public ownerID: string;
 
-  constructor(options: ClientOptions, ownerID: string, token: string, aiEnabled = false) {
+  public messagesLogged: Counter;
+  public commandsUsed: Counter;
+  public activeCommands: Counter;
+  public erroredCommands: Counter;
+
+  constructor(options: ClientOptions, ownerID: string, token: string) {
     super(options);
     const dataPath = path.join(__dirname, "..", "data");
 
-    this.aiQueue = [];
-    this.aiEnabled = aiEnabled;
     this.ownerID = ownerID;
     this.dbd = new DBDManager(dataPath);
     this.reminders = new ReminderManager(this, dataPath);
@@ -41,13 +55,35 @@ export default class ExtendedClient extends Client {
       this.osrsItems = Object.entries(JSON.parse(fs.readFileSync(osrsItemsPath, "utf-8"))).map(
         (item) => ({ name: item[0], value: item[1] as string })
       );
+
+    io.init({
+      tracing: {
+        enabled: true,
+      },
+    });
+
+    this.messagesLogged = io.counter({
+      name: "Messages Logged",
+    });
+
+    this.commandsUsed = io.counter({
+      name: "Commands Used",
+    });
+
+    this.activeCommands = io.counter({
+      name: "Active Commands",
+    });
+
+    this.erroredCommands = io.counter({
+      name: "Errored Commands",
+    });
   }
 
-  public log(location: string, message: string, color: string = DEFAULT) {
+  public log(location: string, message: string, color: string = Modifiers.DEFAULT) {
     console.log(
-      `${Modifiers.MAGENTA}${location} [${DateTime.now().toFormat(
-        "HH:mm:ss"
-      )}] ${color}${message}${DEFAULT}`
+      `${Modifiers.MAGENTA}${location} [${DateTime.now().toFormat("HH:mm:ss")}] ${color}${message}${
+        Modifiers.DEFAULT
+      }`
     );
   }
 
@@ -114,5 +150,38 @@ export default class ExtendedClient extends Client {
       if (err) throw err;
       console.log("OSRS Items updated");
     });
+  }
+
+  public toggleAI() {
+    this.user?.setActivity(this.aiProcess ? "Text2Img is enabled :)" : "Text2Img is disabled :(", {
+      type: ActivityType.Playing,
+    });
+
+    if (!this.aiProcess) {
+      try {
+        this.aiProcess = spawn(
+          "call",
+          [this.aiFile, "--api", "--api-log", "--nowebui", "--medvram"],
+          {
+            cwd: this.aiDIR,
+            shell: true,
+            detached: true,
+          }
+        );
+
+        if (!this.aiProcess.pid) throw "no pid";
+      } catch (e) {
+        if (e) throw e;
+      }
+    } else {
+      psTree(this.aiProcess.pid!, (err, children) => {
+        children.forEach((child) => process.kill(parseInt(child.PID), "SIGINT"));
+      });
+      if (this.aiProcess.pid) process.kill(this.aiProcess.pid, "SIGINT");
+
+      this.aiProcess = null;
+    }
+
+    return Boolean(this.aiProcess);
   }
 }

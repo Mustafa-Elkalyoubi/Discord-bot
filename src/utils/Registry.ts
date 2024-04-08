@@ -2,12 +2,16 @@ import path from "path";
 import fs from "node:fs";
 import fsPromise from "node:fs/promises";
 import { Collection } from "discord.js";
-import { DEFAULT, GREEN } from "./ConsoleText";
+import Modifiers from "./ConsoleText";
 import { DateTime } from "luxon";
 import ExtendedClient from "./Client";
 
 const log = (message: string) => {
-  console.log(`${GREEN}[${DateTime.now().toFormat("yyyy-MM-DD HH:mm:ss")}]: ${DEFAULT}${message}`);
+  console.log(
+    `${Modifiers.GREEN}[${DateTime.now().toFormat("yyyy-MM-DD HH:mm:ss")}]: ${
+      Modifiers.DEFAULT
+    }${message}`
+  );
 };
 
 async function registerCommands(client: ExtendedClient, dir = "../commands") {
@@ -28,7 +32,7 @@ async function registerCommands(client: ExtendedClient, dir = "../commands") {
       const { default: Command } = await import(path.join(filePath, file));
       const cmd = new Command();
       client.commandManager.addCommand(cmd.name, cmd);
-      log(`${GREEN}Registering command: ${DEFAULT}${cmd.name}`);
+      log(`${Modifiers.GREEN}Registering command: ${Modifiers.DEFAULT}${cmd.name}`);
     }
   }
 }
@@ -39,7 +43,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
   const files = await fsPromise.readdir(filePath);
 
   for (const file of files) {
-    log(`${GREEN}Registering subcommand: ${DEFAULT}${file}`);
+    log(`${Modifiers.GREEN}Registering subcommand: ${Modifiers.DEFAULT}${file}`);
     const folderPath = path.join(filePath, file);
     const stat = await fsPromise.lstat(folderPath);
     if (stat.isDirectory()) {
@@ -101,7 +105,7 @@ async function registerContextCommands(client: ExtendedClient, dir = "../context
       const { default: Command } = await import(filePath);
       const cmd = new Command();
       client.commandManager.addContextcommand(cmd.name, cmd);
-      log(`${GREEN}Registering context command: ${DEFAULT}${cmd.name}`);
+      log(`${Modifiers.GREEN}Registering context command: ${Modifiers.DEFAULT}${cmd.name}`);
     }
   }
 }

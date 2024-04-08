@@ -23,20 +23,20 @@ export default class DBDManager {
     this.DLCs = [];
     this.powers = [];
 
-    if (!fs.existsSync(perkFilePath)) this.getPerks();
+    if (!fs.existsSync(perkFilePath)) this.#getPerks();
     else this.perks = JSON.parse(fs.readFileSync(perkFilePath, "utf-8"));
 
-    if (!fs.existsSync(charFilePath)) this.getCharacters();
+    if (!fs.existsSync(charFilePath)) this.#getCharacters();
     else this.characters = JSON.parse(fs.readFileSync(charFilePath, "utf-8"));
 
-    if (!fs.existsSync(dlcFilePath)) this.getDLCs();
+    if (!fs.existsSync(dlcFilePath)) this.#getDLCs();
     else this.DLCs = JSON.parse(fs.readFileSync(dlcFilePath, "utf-8"));
 
-    if (!fs.existsSync(powerFilePath)) this.getPowers();
+    if (!fs.existsSync(powerFilePath)) this.#getPowers();
     else this.powers = JSON.parse(fs.readFileSync(powerFilePath, "utf-8"));
   }
 
-  private sanitizeHTML = (str: string) =>
+  #sanitizeHTML = (str: string) =>
     str
       .replace(/<b>(.*?)<\/b>/g, "**$1**")
       .replace(/<br>/g, "\n")
@@ -44,7 +44,7 @@ export default class DBDManager {
       .replace(/<li>(.*?)<\/li>/g, "• $1\n")
       .replace(/&nbsp;/g, " ");
 
-  private async getPerks() {
+  async #getPerks() {
     interface ObjTunables {
       [key: string]: string[];
     }
@@ -87,7 +87,7 @@ export default class DBDManager {
         id: perkID,
         name: perk.name,
         character: perk.character,
-        description: this.sanitizeHTML(perk.description),
+        description: this.#sanitizeHTML(perk.description),
         image: perk.image,
         role: perk.role,
       } as DBDPerk;
@@ -102,7 +102,7 @@ export default class DBDManager {
     });
   }
 
-  private async getCharacters() {
+  async #getCharacters() {
     interface DBDCharApiData {
       [k: string]: Omit<DBDCharacter, "charid">;
     }
@@ -138,7 +138,7 @@ export default class DBDManager {
     });
   }
 
-  private async getDLCs() {
+  async #getDLCs() {
     interface DBDDLCApiData {
       [k: string]: Omit<DBDDLC, "id">;
     }
@@ -167,7 +167,7 @@ export default class DBDManager {
     });
   }
 
-  private async getPowers() {
+  async #getPowers() {
     interface DBDPowerApiData {
       [k: string]: Omit<DBDPower, "id">;
     }
@@ -185,8 +185,8 @@ export default class DBDManager {
 
     const dbdPower = Object.entries(powerData.data).map(([key, power]) => ({
       id: key,
-      name: this.sanitizeHTML(power.name),
-      description: this.sanitizeHTML(power.description),
+      name: this.#sanitizeHTML(power.name),
+      description: this.#sanitizeHTML(power.description),
       image: power.image,
     }));
 
@@ -199,10 +199,10 @@ export default class DBDManager {
     });
   }
 
-  public async getData() {
-    this.getPerks();
-    this.getCharacters();
-    this.getDLCs();
-    this.getPowers();
+  async getData() {
+    this.#getPerks();
+    this.#getCharacters();
+    this.#getDLCs();
+    this.#getPowers();
   }
 }
