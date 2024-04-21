@@ -6,6 +6,7 @@ import path from "node:path";
 import { registerCommands, registerContextCommands, registerSubCommands } from "./utils/Registry";
 import config from "./config.json";
 import env from "dotenv";
+import { saveLastMessageID } from "./utils/FineHelper";
 
 env.config({ path: path.join(__dirname, "..", ".env") });
 const { DISCORD_TOKEN: token } = process.env;
@@ -72,3 +73,11 @@ async function registerJSONs(client: ExtendedClient) {
 
 registerJSONs(client);
 client.login(token);
+
+["SIGINT", "SIGTERM", "SIGQUIT"].forEach((signal) =>
+  process.on(signal, async () => {
+    await saveLastMessageID(client);
+
+    process.exit();
+  })
+);
