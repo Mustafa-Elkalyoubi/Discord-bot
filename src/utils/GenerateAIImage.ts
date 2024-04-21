@@ -1,6 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 import { ChatInputCommandInteraction } from "discord.js";
-import { done } from "fastq";
 import ExtendedClient from "./Client";
 
 const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
@@ -8,7 +7,6 @@ const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
 interface apiPostResponseJSON {
   images: [string];
   parameters: apiPostRequestPayload;
-  //@ts-ignore
   info: Stringified<Text2ImageInfo>;
 }
 
