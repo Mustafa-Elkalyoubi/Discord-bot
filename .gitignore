@@ -6,3 +6,4 @@ node_modules
 src/config.json
 src/assets
 src/data/dbd*
+tmp
