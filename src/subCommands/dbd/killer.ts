@@ -1,8 +1,7 @@
-import ExtendedClient from "../../utils/Client";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import path from "node:path";
-import { dbdKiller } from "../../types";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
+import ExtendedClient from "../../utils/Client";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {
@@ -11,50 +10,29 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
     const focusedValue = interaction.options.getFocused() ?? "";
-    const filtered = client.dbd.characters.filter(
-      (char) =>
-        char.name.toLowerCase().includes(focusedValue.toLowerCase()) && char.role === "killer"
-    );
+    const characters = await client.dbd.findCharacterByName(focusedValue, 25, "killer");
 
-    if (!filtered) return interaction.respond([]);
-
-    if (filtered.length <= 25)
-      return interaction.respond(filtered.map((char) => ({ name: char.name, value: char.name })));
-
-    interaction.respond(
-      filtered.slice(0, 25).map((perk) => ({ name: perk.name, value: perk.name }))
-    );
+    return interaction.respond(characters.map((char) => ({ name: char.name, value: char.name })));
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    const killer = client.dbd.characters.find(
-      (char) => char.name === interaction.options.getString("killer")!
-    ) as dbdKiller;
-    if (!killer)
-      return interaction.reply({
-        content: "Sorry, couldn't find the killer for some reason",
-        ephemeral: true,
-      });
+    const killer = await client.dbd.findCharacterByName(interaction.options.getString("killer")!);
 
-    const power = client.dbd.powers.find((power) => power.id === killer.item);
-    if (!power)
-      return interaction.reply({
-        content: "Sorry, couldn't find the power for some reason",
-        ephemeral: true,
-      });
+    if (!killer || !killer.item)
+      return interaction.reply({ content: "Killer not found in db", ephemeral: true });
 
     const assetPath = path.join(__dirname, "..", "..", "assets");
     const killerImgPath = path.join(assetPath, killer.image);
     const killerImgName = path.basename(killerImgPath);
 
-    const powerImgPath = path.join(assetPath, power.image);
+    const powerImgPath = path.join(assetPath, killer.item.image);
     const powerImgName = path.basename(powerImgPath);
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
       .setColor("Random")
       .setTitle(killer.name)
-      .setDescription(`__**${power.name}**__\n\n${power.description}`)
+      .setDescription(`__**${killer.item.name}**__\n\n${killer.item.description}`)
       .setImage(`attachment://${powerImgName}`)
       .setThumbnail(`attachment://${killerImgName}`)
       .setTimestamp();

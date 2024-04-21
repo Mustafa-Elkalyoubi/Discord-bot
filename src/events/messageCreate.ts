@@ -1,11 +1,10 @@
+import BigNumber from "bignumber.js";
 import { Events, Message } from "discord.js";
+import config from "../config.json";
+import UserData from "../models/UserData";
 import ExtendedClient from "../utils/Client";
 import Modifiers from "../utils/ConsoleText";
-import config from "../config.json";
-import fs from "node:fs";
-import path from "node:path";
-import { FineData } from "../types";
-import { beautifyNumber, calcAndSaveFine } from "../utils/FineHelper";
+import { beautifyNumber, calcFine, fineChannel, fineReaction } from "../utils/FineHelper";
 
 export = {
   name: Events.MessageCreate,
@@ -56,58 +55,65 @@ export = {
 };
 
 async function forFun(message: Message) {
-  if (message.channel.id !== "852270452142899213") return;
-  const finePath = path.join(__dirname, "..", "data", "fines.json");
-  const authorID = message.author.id;
-  const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as FineData;
+  if (message.channel.id !== fineChannel) return;
 
-  const lastMessageSent = message.id;
-  fines.lastMessageID = lastMessageSent;
+  const authorID = message.author.id;
+
+  let user = await UserData.findOne({ userID: authorID });
+  if (!user) user = new UserData({ userID: authorID });
+
+  user.username = message.author.username;
 
   if (message.content.includes("🥹")) {
-    const thisFine = calcAndSaveFine(message, fines);
+    const { fines } = user;
+    const cap = BigNumber(fines.fineCap, 35);
 
-    const { capReached, fineCap, fineAmount } = fines.userFineData[authorID];
+    const thisFine = calcFine(BigNumber(fines.fineAmount, 35), cap);
+    if (!thisFine) return message.react(fineReaction);
 
-    if (capReached) {
-      fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
-      return message.reply(
-        `You have reached the fine limit ( ***${beautifyNumber(
-          fineCap
-        )}*** ), you must post <:waaah:1016423553320628284> to pay for your crimes`
-      );
-    }
+    if (thisFine.plus(BigNumber(fines.fineAmount, 35)).isGreaterThanOrEqualTo(cap))
+      user.fines.capReached = true;
 
-    fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
+    fines.fineAmount = BigNumber(fines.fineAmount, 35).plus(thisFine).toString(35);
+
+    user.save();
+
     return message.reply(
-      `Do not 🥹 (${beautifyNumber(thisFine)} fine). Your total is **${beautifyNumber(fineAmount)}**`
+      fines.capReached
+        ? `You have reached the fine limit ( ***${beautifyNumber(
+            BigNumber(fines.fineCap, 35)
+          )}*** ), you must post <:waaah:1016423553320628284> to pay for your crimes`
+        : `Do not 🥹 (${beautifyNumber(thisFine)} fine). Your total is **${beautifyNumber(
+            BigNumber(fines.fineAmount, 35)
+          )}**`
     );
   }
 
   if (message.content.includes("<:waaah:1016423553320628284>")) {
-    const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as FineData;
+    const user = await UserData.findOne({ userID: authorID });
 
-    if (!fines.userFineData[authorID]) return;
-    if (fines.userFineData[authorID].fineAmount <= 0) return;
+    if (!user) return;
+    const { fines } = user;
 
-    const { fineAmount: prevFine, capReached } = fines.userFineData[authorID];
+    if (BigNumber(fines.fineAmount).isLessThanOrEqualTo(0, 10)) return;
+
     // in case user changed username
-    fines.userFineData[authorID].username = message.author.username;
-    fines.userFineData[authorID].fineAmount = 0;
+    user.username = message.author.username;
+    const prevFine = fines.fineAmount;
 
-    if (capReached) fines.userFineData[authorID].fineCap *= 2;
-    fines.userFineData[authorID].capReached = false;
-    fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
+    if (fines.capReached)
+      fines.fineCap = BigNumber(fines.fineCap, 35).multipliedBy(2, 10).toString(35);
+    fines.fineAmount = "0";
+    fines.capReached = false;
+
+    user.save();
+
     return message.reply(
-      `Your fines have all been paid (**${BigInt(prevFine)}**)${
-        BigInt(capReached)
-          ? `, fine cap has increased to ${BigInt(fines.userFineData[message.author.id].fineCap)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+      `Your fines have all been paid (**${beautifyNumber(BigNumber(prevFine, 35))}**)${
+        fines.capReached
+          ? `, fine cap has increased to ${beautifyNumber(BigNumber(user.fines.fineCap, 35))}`
           : ``
       }`
     );
   }
-
-  fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
 }

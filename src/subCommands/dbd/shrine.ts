@@ -1,7 +1,7 @@
-import ExtendedClient from "../../utils/Client";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
-import { APIEmbedField, ChatInputCommandInteraction, EmbedBuilder, RestOrArray } from "discord.js";
 import axios from "axios";
+import { APIEmbedField, ChatInputCommandInteraction, EmbedBuilder, RestOrArray } from "discord.js";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
+import ExtendedClient from "../../utils/Client";
 
 const apiURL = "https://dbd.tricky.lol/api/shrine";
 interface apiData {
@@ -40,11 +40,22 @@ export default class SubCommand extends BaseSubCommandRunner {
       },
     ];
 
+    const perks = await client.dbd.findPerkById(res.data.perks.map((p) => p.id));
+
+    if (!perks || perks.length < 4) {
+      console.error(
+        `One or more missing perks from db. Stored: [${perks
+          .map((p) => p.id)
+          .toString()}], API: [${res.data.perks.map((p) => p.id).toString()}]`
+      );
+      return interaction.editReply("Failed to fetch perks");
+    }
+
     res.data.perks.forEach((val, index) => {
       if (index % 2 === 0) fields.push({ name: "\u200B", value: "\u200B", inline: true });
       fields.push({
         name: `Perk #${index + 1}`,
-        value: client.dbd.perks.filter((perk) => perk.id === val.id)[0]?.name ?? "not found",
+        value: perks.find((p) => p.id === val.id)?.name ?? "not found",
         inline: true,
       });
     });

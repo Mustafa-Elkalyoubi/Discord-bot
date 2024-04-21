@@ -1,104 +1,50 @@
-import { ActivityType, Events, GuildTextBasedChannel, TextChannel, codeBlock } from "discord.js";
-import { FineData } from "../types";
-import { DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
-import path from "path";
-import fs from "node:fs";
+import BigNumber from "bignumber.js";
+import { ActivityType, Events, Snowflake, TextChannel, codeBlock } from "discord.js";
+import { Document } from "mongoose";
+import Misc, { IMisc } from "../models/Misc";
+import UserData from "../models/UserData";
 import ExtendedClient from "../utils/Client";
-import { beautifyNumber, calcAndSaveFine } from "../utils/FineHelper";
-
-interface MiscFile {
-  reboot: {
-    time: number;
-    channelID: string;
-    messageID: string;
-    shouldMessage: boolean;
-  };
-}
+import { DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
+import { beautifyNumber, calcFine, getFineChannel } from "../utils/FineHelper";
 
 export = {
   name: Events.ClientReady,
   once: true,
   run: async (client: ExtendedClient) => {
     if (!client.user) throw "What? (check ready.ts)";
-    const dataPath = path.join(__dirname, "..", "data");
-    console.log(`${LIGHT_BLUE}Ready, logged in as ${client.user.tag + DEFAULT}`);
-
-    const miscPath = path.join(dataPath, "misc.json");
-    const misc = (await JSON.parse(fs.readFileSync(miscPath, "utf-8"))) as MiscFile;
-    if (misc.reboot && misc.reboot.shouldMessage) {
-      await editRebootMessage(misc, client);
-    }
-
     client.user.setActivity(
       client.aiProcess ? "Text2Img is enabled :)" : "Text2Img is disabled :(",
       { type: ActivityType.Playing }
     );
 
-    const finePath = path.join(__dirname, "..", "data", "fines.json");
-    const fines = (await JSON.parse(fs.readFileSync(finePath, "utf-8"))) as FineData;
-    if (!fines.lastMessageID) return;
-    const fineChannel = (await client.channels.fetch(
-      "852270452142899213"
-    )) as GuildTextBasedChannel;
-    const missedMessages = await fineChannel.messages.fetch({ after: fines.lastMessageID });
+    console.log(`${LIGHT_BLUE}Ready, logged in as ${client.user.tag + DEFAULT}`);
 
-    const finesToAddUp: {
-      length: number;
-      fines: { [k: string]: { amount: number; username: string; id: string } };
-    } = { length: 0, fines: {} };
-    missedMessages.forEach(async (message) => {
-      if (!message.content.includes("🥹") || message.author.bot) return;
+    const misc = await Misc.findOne();
+    if (!misc) {
+      new Misc({
+        shouldUpdateItems: false,
+        reboot: {
+          time: Date.now(),
+          channelID: "",
+          messageID: "",
+          shouldMessage: false,
+        },
+        lastMessageID: "",
+      }).save();
 
-      const thisFine = calcAndSaveFine(message, fines);
-
-      if (!finesToAddUp.fines[message.author.id]) {
-        finesToAddUp.fines[message.author.id] = {
-          amount: thisFine,
-          username: message.author.username,
-          id: message.author.id,
-        };
-        finesToAddUp.length++;
-        return;
-      }
-      finesToAddUp.fines[message.author.id].amount += thisFine;
-    });
-
-    if (finesToAddUp.length < 1) return;
-    if (finesToAddUp.length === 1) {
-      const onlyGuy = Object.values(finesToAddUp.fines)[0];
-      const amount = beautifyNumber(onlyGuy.amount);
-      const capReached = fines.userFineData[onlyGuy.id].capReached;
-      const fineAmount = beautifyNumber(fines.userFineData[onlyGuy.id].fineAmount);
-      fineChannel.send(
-        `You shouldnt be sending 🥹 even while I'm gone, ${
-          Object.values(finesToAddUp.fines)[0].username
-        }\nYou've earned ${amount} fines${
-          capReached
-            ? " and you've hit the cap: send <:waaah:1016423553320628284> to pay for your crimes"
-            : `, your total is ${fineAmount}`
-        }`
-      );
-    } else {
-      const msgs = [];
-      for (const userFine of Object.values(finesToAddUp.fines)) {
-        const amount = beautifyNumber(userFine.amount);
-        const capReached = fines.userFineData[userFine.id].capReached;
-        const fineAmount = beautifyNumber(fines.userFineData[userFine.id].fineAmount);
-        msgs.push(
-          `• ${userFine.username} has gotten ${amount} fines${
-            capReached ? ` and has hit the cap` : `, with total ${fineAmount}`
-          }`
-        );
-      }
-
-      fineChannel.send(codeBlock(msgs.join("\n")));
+      return;
     }
-    fines.lastMessageID = "";
-    fs.writeFileSync(finePath, JSON.stringify(fines, null, 4));
+
+    if (misc.reboot && misc.reboot.shouldMessage) await editRebootMessage(misc, client);
+
+    handleFines(client, misc.lastMessageID);
   },
 };
 
-async function editRebootMessage(misc: MiscFile, client: ExtendedClient) {
+async function editRebootMessage(
+  misc: Document<unknown, object, IMisc> & IMisc,
+  client: ExtendedClient
+) {
   const { messageID, channelID, time } = misc.reboot;
 
   const timeDiff = ((Date.now() - time) / 1000).toLocaleString("en-US", { notation: "compact" });
@@ -110,7 +56,108 @@ async function editRebootMessage(misc: MiscFile, client: ExtendedClient) {
     await messageObj.edit(`Reboot complete! Reboot took ${timeDiff} seconds`);
 
   misc.reboot.shouldMessage = false;
+  misc.save();
+}
 
-  const miscPath = path.join(__dirname, "..", "data", "misc.json");
-  fs.writeFileSync(miscPath, JSON.stringify(misc, null, 4));
+async function handleFines(client: ExtendedClient, lastMessageID: Snowflake) {
+  if (!lastMessageID) return;
+
+  const fineChannel = await getFineChannel(client);
+  const missedMessages = (await fineChannel.messages.fetch({ after: lastMessageID }))
+    .filter((message) => message.content.includes("🥹") && !message.author.bot)
+    .reverse();
+
+  if (missedMessages.size < 1) return;
+
+  const users = await UserData.find({ userID: { $in: missedMessages.map((m) => m.author.id) } });
+
+  const finesToAddUp: {
+    length: number;
+    fines: { [k: string]: { amount: string; username: string } };
+  } = { length: 0, fines: {} };
+
+  missedMessages.forEach(async (message) => {
+    const authorID = message.author.id;
+
+    let user = users.find((user) => user.userID === authorID);
+
+    if (!user) {
+      user = new UserData({ userID: authorID, username: message.author.username });
+      users.push(user);
+    } else user.username = message.author.username;
+
+    const thisFine = calcFine(
+      BigNumber(user.fines.fineAmount, 35),
+      BigNumber(user.fines.fineCap, 35)
+    );
+
+    if (!thisFine) return message.react(`855089585919098911`);
+
+    if (
+      thisFine
+        .plus(BigNumber(user.fines.fineAmount, 35))
+        .isGreaterThanOrEqualTo(BigNumber(user.fines.fineCap, 35))
+    )
+      user.fines.capReached = true;
+    user.fines.fineAmount = BigNumber(user.fines.fineAmount, 35).plus(thisFine).toString(35);
+
+    if (authorID in finesToAddUp.fines) {
+      finesToAddUp.fines[authorID].amount = BigNumber(finesToAddUp.fines[authorID].amount, 35)
+        .plus(thisFine)
+        .toString(35);
+    } else {
+      finesToAddUp.fines[authorID] = {
+        amount: thisFine.toString(35),
+        username: message.author.username,
+      };
+      finesToAddUp.length++;
+    }
+  });
+
+  if (finesToAddUp.length < 1) return;
+
+  if (finesToAddUp.length === 1) {
+    const [onlyGuyID, onlyGuyFine] = Object.entries(finesToAddUp.fines)[0];
+
+    const onlyGuy = users.find((u) => u.userID === onlyGuyID)!;
+
+    const amount = beautifyNumber(BigNumber(onlyGuyFine.amount, 35));
+    const capReached = onlyGuy.fines.capReached;
+    const fineAmount = beautifyNumber(BigNumber(onlyGuy.fines.fineAmount, 35));
+
+    fineChannel.send(
+      `You shouldnt be sending 🥹 even while I'm gone, ${
+        Object.values(finesToAddUp.fines)[0].username
+      }\nYou've earned ${amount} fines${
+        capReached
+          ? " and you've hit the cap: send <:waaah:1016423553320628284> to pay for your crimes"
+          : `, your total is ${fineAmount}`
+      }`
+    );
+  } else {
+    const msgs = [];
+    for (const [userID, userFine] of Object.entries(finesToAddUp.fines)) {
+      const user = users.find((u) => u.id === userID)!;
+      const amount = beautifyNumber(BigNumber(userFine.amount, 35));
+      const capReached = user.fines.capReached;
+      const fineAmount = beautifyNumber(BigNumber(user.fines.fineAmount, 35));
+      msgs.push(
+        `• ${userFine.username} has gotten ${amount} fines${
+          capReached ? ` and has hit the cap` : `, with total ${fineAmount}`
+        }`
+      );
+    }
+
+    fineChannel.send(codeBlock(msgs.join("\n")));
+  }
+
+  await UserData.bulkWrite(
+    users.map((u) => ({
+      updateOne: {
+        filter: { _id: u._id, userID: u.userID },
+        update: u.toObject(),
+        upsert: true,
+      },
+    }))
+  );
 }

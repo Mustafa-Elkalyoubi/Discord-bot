@@ -1,27 +1,33 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
-import { DateTime } from "luxon";
-import { ChildProcess, spawn } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
-import psTree from "ps-tree";
-import { OSRSWikiData } from "../types";
-import Modifiers from "./ConsoleText";
-
-import CommandManager from "./CommandManager";
-import DBDManager from "./DBDManager";
-import ReminderManager from "./ReminderManager";
-
 import io from "@pm2/io";
 import Counter from "@pm2/io/build/main/utils/metrics/counter";
+import axios, { AxiosRequestConfig } from "axios";
+import { ChartJSNodeCanvas } from "chartjs-node-canvas";
+import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
+import { DateTime } from "luxon";
+import mongoose from "mongoose";
+import { ChildProcess, spawn } from "node:child_process";
+import psTree from "ps-tree";
+import OsrsItem from "../models/OsrsItem";
+import { OSRSWikiData } from "../types";
+import CommandManager from "./CommandManager";
+import Modifiers from "./ConsoleText";
+import DBDManager from "./DBDManager";
 import generateAIImage from "./GenerateAIImage";
+import "./LuxonAdapter";
 import Queue from "./Queue";
+import ReminderManager from "./ReminderManager";
 
 export default class ExtendedClient extends Client {
   private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
   private aiFile = `${this.aiDIR}\\webui.bat`;
+  private db: mongoose.Connection;
 
-  public osrsItems: Array<{ name: string; value: string }>;
+  public GECanvas = new ChartJSNodeCanvas({
+    height: 600,
+    width: 1200,
+    type: "svg",
+    backgroundColour: "#27292e",
+  });
   public dbd: DBDManager;
   public reminders: ReminderManager;
   public commandManager: CommandManager;
@@ -37,30 +43,28 @@ export default class ExtendedClient extends Client {
 
   constructor(options: ClientOptions, ownerID: string, token: string) {
     super(options);
-    const dataPath = path.join(__dirname, "..", "data");
+
+    mongoose.connect("mongodb://localhost:27017", {
+      appName: "discord-bot",
+      dbName: "discord-bot",
+    });
+    this.db = mongoose.connection;
+
+    // this.db.once("open", async () => {
+    // });
+
+    this.db.on("error", (err) => {
+      console.error(err);
+    });
 
     this.ownerID = ownerID;
-    this.dbd = new DBDManager(dataPath);
-    this.reminders = new ReminderManager(this, dataPath);
+    this.dbd = new DBDManager();
+    this.reminders = new ReminderManager(this);
     this.commandManager = new CommandManager(this, ownerID);
-
-    const osrsItemsPath = path.join(dataPath, "itemIDs.json");
 
     this.rest.setToken(token);
 
-    if (!fs.existsSync(osrsItemsPath)) {
-      this.osrsItems = [];
-      this.getOSRSItems();
-    } else
-      this.osrsItems = Object.entries(JSON.parse(fs.readFileSync(osrsItemsPath, "utf-8"))).map(
-        (item) => ({ name: item[0], value: item[1] as string })
-      );
-
-    io.init({
-      tracing: {
-        enabled: true,
-      },
-    });
+    io.init();
 
     this.messagesLogged = io.counter({
       name: "Messages Logged",
@@ -109,6 +113,11 @@ export default class ExtendedClient extends Client {
 
   public async sendToChannel(channelID: string, message: string) {
     const channel = (await this.channels.fetch(channelID)) as TextChannel;
+    if (!channel) {
+      console.error(`Failed to find channel with ID ${channelID}`);
+      return;
+    }
+
     channel.send(message);
   }
 
@@ -137,19 +146,23 @@ export default class ExtendedClient extends Client {
         else console.log("Failed to connect to wiki servers");
       }
     });
-    if (!res) return;
+    if (!res) return false;
 
-    const items = Object.fromEntries(res.data.map((item) => [item.name, `${item.id}`]));
-    const osrsItemPath = path.join(__dirname, "..", "data", "itemIDs.json");
+    const ops = res.data.map((item) => ({
+      updateOne: {
+        filter: { id: item.id },
+        update: { id: item.id, name: item.name },
+        upsert: true,
+      },
+    }));
 
-    this.osrsItems = res.data.map((item) => {
-      return { name: item.name, value: `${item.id}` };
-    });
-
-    fs.writeFile(osrsItemPath, JSON.stringify(items, null, 4), { flag: "w" }, (err) => {
-      if (err) throw err;
-      console.log("OSRS Items updated");
-    });
+    try {
+      const result = await OsrsItem.bulkWrite(ops);
+      if (result.ok) return true;
+    } catch (e) {
+      if (e) console.log(e);
+      return false;
+    }
   }
 
   public toggleAI() {

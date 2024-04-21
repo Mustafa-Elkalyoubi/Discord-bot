@@ -39,9 +39,9 @@ export default class SubCommand extends BaseSubCommandRunner {
       ...(year && { year: year }),
       ...(hour && { hour: hour }),
       ...(minute && { minute: minute }),
-    }).toMillis();
+    });
 
-    if (DateTime.now().toMillis() > timeToRemind)
+    if (DateTime.now() >= timeToRemind)
       return interaction.reply({ content: "That time is in the past", ephemeral: true });
 
     client.reminders.save(interaction, message, timeToRemind);

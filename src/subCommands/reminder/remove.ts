@@ -1,6 +1,8 @@
 import ExtendedClient from "../../utils/Client";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 import { AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js";
+import UserData from "../../models/UserData";
+import { Types } from "mongoose";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {
@@ -8,57 +10,54 @@ export default class SubCommand extends BaseSubCommandRunner {
   }
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
-    const reminders = client.reminders.get(interaction.user.id);
+    const reminders = await client.reminders.getUserReminders(interaction.user.id);
     if (!reminders) return interaction.respond([]);
 
     const focusedValue = interaction.options.getFocused();
 
     const filtered = reminders.filter((reminder) =>
-      reminder.id.toString().startsWith(focusedValue.toString())
+      reminder._id.toString().startsWith(focusedValue.toString())
     );
 
     if (filtered.length <= 25)
       return await interaction.respond(
         filtered.map((reminder) => ({
-          name: `${reminder.id} (${reminder.message.slice(0, 20).trim()}${
+          name: `${reminder._id} (${reminder.message.slice(0, 20).trim()}${
             reminder.message.length > 20 ? "..." : ""
           })`,
-          value: `${reminder.id}`,
+          value: `${reminder._id}`,
         }))
       );
 
     if (focusedValue.length === 0)
       await interaction.respond(
         reminders.slice(0, 25).map((reminder) => ({
-          name: `${reminder.id} (${reminder.message.slice(0, 20).trim()}${
+          name: `${reminder._id} (${reminder.message.slice(0, 20).trim()}${
             reminder.message.length > 20 ? "..." : ""
           })`,
-          value: `${reminder.id}`,
+          value: `${reminder._id}`,
         }))
       );
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     const userID = interaction.user.id;
-    const reminders = client.reminders.get(userID);
-    const reminderID = parseInt(interaction.options.getString("id")!);
+    const reminderID = interaction.options.getString("id")!;
+    const user = await UserData.findOne({ userID });
 
-    if (!reminders)
+    if (!user || !user.reminders || user.reminders.length < 1)
       return interaction.reply({
         content: "You havent set any reminders",
         ephemeral: true,
       });
 
-    const reminderToRemove = reminders.find((reminder) => reminder.id === reminderID);
-
-    if (!reminderToRemove)
+    if (!user.reminders.some((reminder) => reminder._id.toString() === reminderID))
       return interaction.reply({
         content: `Could not find a reminder with id [${reminderID}]`,
         ephemeral: true,
       });
 
-    client.reminders.remove(reminderID, userID);
+    await client.reminders.remove(new Types.ObjectId(reminderID), userID);
     interaction.reply({ content: `Removed reminder [${reminderID}]` });
-    client.reminders.reloadTimeouts();
   }
 }

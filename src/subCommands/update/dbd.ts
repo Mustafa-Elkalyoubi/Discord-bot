@@ -9,7 +9,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     await interaction.deferReply();
-    client.dbd.getData();
-    interaction.editReply("DBD data updated");
+    const successful = await client.dbd.updateDB();
+    interaction.editReply(successful ? "DBD data updated" : "Failed to update DBD data");
   }
 }

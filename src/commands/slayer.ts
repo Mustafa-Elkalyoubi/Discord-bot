@@ -4,9 +4,8 @@ import {
   SlashCommandBuilder,
   codeBlock,
 } from "discord.js";
+import OsrsSlayer from "../models/OsrsSlayer";
 import { BaseCommand } from "../utils/BaseCommand";
-import fs from "node:fs";
-import path from "node:path";
 
 export default class Command extends BaseCommand {
   constructor() {
@@ -30,45 +29,77 @@ export default class Command extends BaseCommand {
   }
 
   async autocomplete(interaction: AutocompleteInteraction) {
-    const monsterPath = path.join(__dirname, "..", "data", "slayer_monsters.json");
-    const monsters: string[] = await JSON.parse(fs.readFileSync(monsterPath, "utf-8"));
-
     const focusedValue = interaction.options.getFocused() ?? "";
-    const filtered = monsters.filter((monster) =>
-      monster.toLowerCase().includes(focusedValue.toLowerCase())
-    );
 
-    if (filtered.length <= 25)
-      return interaction.respond(filtered.map((monster) => ({ name: monster, value: monster })));
+    const monsterNames = await OsrsSlayer.aggregate([
+      {
+        $project: {
+          item: 1,
+          monsters: {
+            $objectToArray: "$monsters",
+          },
+        },
+      },
+      {
+        $unwind: "$monsters",
+      },
+      {
+        $group: {
+          _id: null,
+          monsters: {
+            $addToSet: "$monsters.k",
+          },
+        },
+      },
+      {
+        $unwind: "$monsters",
+      },
+      {
+        $sort: {
+          monsters: 1,
+        },
+      },
+      ...(focusedValue
+        ? [
+            {
+              $match: {
+                monsters: {
+                  $regex: focusedValue,
+                  $options: "i",
+                },
+              },
+            },
+          ]
+        : []),
+      {
+        $limit: 25,
+      },
+      {
+        $group: {
+          _id: null,
+          monsters: {
+            $push: "$monsters",
+          },
+        },
+      },
+    ]);
 
-    interaction.respond(
-      filtered.slice(0, 25).map((monster) => ({ name: monster, value: monster }))
+    return interaction.respond(
+      monsterNames[0].monsters.map((monster: string) => ({ name: monster, value: monster }))
     );
   }
 
   async run(interaction: ChatInputCommandInteraction) {
     const monster = interaction.options.getString("monster")!;
 
-    const masterPath = path.join(__dirname, "..", "data", "slayer_masters.json");
-    const masters: { [k: string]: { [k: string]: number } } = await JSON.parse(
-      fs.readFileSync(masterPath, "utf-8")
-    );
+    const prop = `monsters.${monster}`;
+    const masters = (await OsrsSlayer.find({ [prop]: { $exists: true } })).map((m) => ({
+      ...m.toObject(),
+      weight: m.monsters.get(monster)!,
+      total: m.total,
+    }));
 
-    const valid = [];
-    for (const [master, monsters] of Object.entries(masters)) {
-      if (
-        Object.keys(monsters)
-          .map((monster) => monster.toLowerCase())
-          .includes(monster.toLowerCase())
-      )
-        valid.push({
-          master: master,
-          weight: monsters[monster],
-          total: Object.values(monsters).reduce((acc, curr) => acc + curr, 0),
-        });
-    }
-
-    const sorted = valid.sort((b, a) => a.weight / a.total - b.weight / b.total);
+    const sorted = masters.sort((b, a) => a.weight / a.total - b.weight / b.total);
     return interaction.reply(
       codeBlock(
         "js",

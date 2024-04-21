@@ -9,7 +9,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     await interaction.deferReply();
-    client.getOSRSItems();
-    interaction.editReply("OSRS Items retrieved");
+    const result = await client.getOSRSItems();
+    interaction.editReply(result ? "OSRS Items retrieved" : "Failed to update osrs items");
   }
 }

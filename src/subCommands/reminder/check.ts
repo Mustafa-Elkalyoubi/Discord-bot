@@ -1,17 +1,19 @@
-import ExtendedClient from "../../utils/Client";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import { DateTime } from "luxon";
+import UserData from "../../models/UserData";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {
     super(baseCommand, group, name);
   }
 
-  async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
+  async run(interaction: ChatInputCommandInteraction) {
     const userID = interaction.user.id;
-    const reminders = client.reminders.get(userID);
+    const user = await UserData.findOne({ userID });
+    const reminders = user?.reminders;
 
-    if (!reminders)
+    if (!user || !reminders || reminders.length < 1)
       return interaction.reply({ content: "You haven't set any reminders", ephemeral: true });
 
     const reminderEmbed = new EmbedBuilder()
@@ -25,9 +27,9 @@ export default class SubCommand extends BaseSubCommandRunner {
       .addFields(
         reminders.map((reminder) => {
           return {
-            name: `ID: \`${reminder.id}\``,
+            name: `ID: \`${reminder._id.toString()}\``,
             value: `${reminder.recurring ? "`Recurring` " : ""}Message <t:${Math.floor(
-              reminder.timeToRemind / 1000
+              DateTime.fromISO(reminder.timeToRemind.toISOString()).toSeconds()
             )}:R>: ${reminder.message}`,
             inline: true,
           };

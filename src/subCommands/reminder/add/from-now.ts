@@ -27,11 +27,14 @@ export default class SubCommand extends BaseSubCommandRunner {
         ephemeral: true,
       });
 
-    const timeToRemind = DateTime.now()
-      .plus({ days: days, hours: hours, minutes: minutes, seconds: seconds })
-      .toMillis();
+    const timeToRemind = DateTime.now().plus({
+      days: days,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    });
 
-    if (DateTime.now().toMillis() > timeToRemind)
+    if (DateTime.now() >= timeToRemind)
       return interaction.reply({ content: "That time is in the past", ephemeral: true });
 
     client.reminders.save!(interaction, message, timeToRemind);

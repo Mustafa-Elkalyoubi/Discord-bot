@@ -1,48 +1,60 @@
-import { Message } from "discord.js";
-import { FineData } from "../types";
+import BigNumber from "bignumber.js";
+import { GuildTextBasedChannel } from "discord.js";
+import Misc from "../models/Misc";
+import ExtendedClient from "./Client";
 
-export const beautifyNumber = (number: number) => {
-  return BigInt(number)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+export const fineChannel = "852270452142899213"; // kiwi
+// export const fineChannel = "515209238566404116"; // dev
+export const fineReaction = "855089585919098911";
+
+export const beautifyNumber = (number: BigNumber) => {
+  return number.toFormat({ groupSeparator: ",", groupSize: 3 });
 };
 
-export const calcAndSaveFine = (message: Message, fines: FineData) => {
-  const authorID = message.author.id;
-
-  if (!message.content.includes("🥹")) return 0;
-
-  if (!fines.userFineData[authorID])
-    fines.userFineData[authorID] = {
-      username: message.author.username,
-      fineAmount: 0,
-      fineCap: 5000,
-      capReached: false,
-    };
-
-  const { fineAmount: currentFine, fineCap: cap } = fines.userFineData[authorID];
-
-  if (currentFine >= cap) {
-    message.react(`855089585919098911`);
-    return 0;
+export const calcFine = (current: BigNumber, cap: BigNumber) => {
+  if (current.isGreaterThanOrEqualTo(cap)) {
+    // message.react(`855089585919098911`);
+    return null;
   }
 
-  // in case user changed username
-  fines.userFineData[authorID].username = message.author.username;
+  console.log(current, cap);
+
+  let percentageOfCap = cap
+    .minus(1_000_000_000, 10)
+    .multipliedBy((0.2 - 0.1) / (5_000 - 1_000_000_000), 10)
+    .plus(0.1, 10);
 
   // Percentage of max is 20% - 10%
-  let percentageOfCap = ((0.2 - 0.1) / (5000 - 1000000000)) * (cap - 1000000000) + 0.1;
-  if (percentageOfCap < 0.1) percentageOfCap = 0.1;
+  if (percentageOfCap.isLessThan(0.1, 10)) percentageOfCap = BigNumber(0.1, 10);
+
   // Random for cap between max % of cap and 3.5% of the cap
-  const randomAmount = Math.floor(Math.random() * (cap * percentageOfCap) + cap * 0.035);
-  const thisFine =
-    randomAmount + currentFine >= cap
-      ? cap - fines.userFineData[authorID].fineAmount
-      : randomAmount;
-  fines.userFineData[authorID].fineAmount += thisFine;
+  const randomAmount = cap
+    .multipliedBy(percentageOfCap, 10)
+    .multipliedBy(Math.random(), 10)
+    .plus(cap.multipliedBy(0.035), 10)
+    .decimalPlaces(0);
 
-  if (fines.userFineData[authorID].fineAmount >= cap)
-    fines.userFineData[authorID].capReached = true;
-
-  return thisFine;
+  return randomAmount.plus(current).isGreaterThanOrEqualTo(cap) ? cap.minus(current) : randomAmount;
 };
+
+export const saveLastMessageID = async (
+  client: ExtendedClient,
+  reboot?: { time: number; channelID: string; messageID: string; shouldMessage: boolean }
+) => {
+  console.log("Saving last message...");
+  const fineChannel = getFineChannel(client);
+  const lastMessageID = (await fineChannel).lastMessageId!;
+
+  let misc = await Misc.findOne();
+
+  if (!misc) misc = new Misc();
+
+  misc.lastMessageID = lastMessageID;
+  misc.shouldUpdateItems = false;
+  if (reboot) misc.reboot = reboot;
+
+  await misc.save();
+};
+
+export const getFineChannel = (client: ExtendedClient) =>
+  client.channels.fetch(fineChannel) as Promise<GuildTextBasedChannel>;
