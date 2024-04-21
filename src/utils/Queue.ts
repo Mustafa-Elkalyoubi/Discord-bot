@@ -1,25 +1,27 @@
 import { EventEmitter } from "events";
 import TypedEventEmitter from "typed-emitter";
 
-type QueueEvents<T extends any[], Q> = {
-  added: (...args: T[]) => void;
-  started: (...args: T[]) => void;
-  finished: (ret: Q, ...args: T[]) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TFunction = (...args: any[]) => any;
+
+type QueueEvents<T extends TFunction> = {
+  added: (...args: Parameters<T>) => void;
+  started: (...args: Parameters<T>) => void;
+  finished: (ret: ReturnType<T>, ...args: Parameters<T>) => void;
   idle: () => void;
   paused: () => void;
   resumed: () => void;
 };
 
-class Queue<T extends any[], Q> extends (EventEmitter as new <
-  T extends any[],
-  Q
->() => TypedEventEmitter<QueueEvents<T, Q>>)<T, Q> {
-  queue: T[] = [];
-  #callback: (...args: T) => Promise<Q>;
+class Queue<T extends TFunction> extends (EventEmitter as new <
+  T extends TFunction
+>() => TypedEventEmitter<QueueEvents<T>>)<T> {
+  queue: Parameters<T>[] = [];
+  #callback: T;
   paused: boolean = false;
   idle: boolean = true;
 
-  constructor(callback: (...args: T) => Promise<Q>) {
+  constructor(callback: T) {
     super();
 
     this.#callback = callback;
@@ -29,7 +31,7 @@ class Queue<T extends any[], Q> extends (EventEmitter as new <
     return this.queue.length;
   }
 
-  add(...args: T) {
+  add(...args: Parameters<T>) {
     this.queue.push(args);
     this.emit("added", ...args);
     if (!this.paused && this.idle) this.#run();
@@ -39,7 +41,7 @@ class Queue<T extends any[], Q> extends (EventEmitter as new <
     if (!this.queue.length || this.paused) return;
 
     this.idle = false;
-    const args = this.queue.shift() as T;
+    const args = this.queue.shift() as Parameters<T>;
     this.emit("started", ...args);
     const ret = await this.#callback(...args);
     this.emit("finished", ret, ...args);
