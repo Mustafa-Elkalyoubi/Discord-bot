@@ -206,7 +206,8 @@ export default class CommandManager {
       console.error(err);
       client.activeCommands.dec();
       client.erroredCommands.inc();
-      interaction.reply({ content: "There was an error running this command", ephemeral: true });
+      if (interaction && !interaction.replied && !interaction.deferred)
+        interaction.reply({ content: "There was an error running this command", ephemeral: true });
     }
   }
 
