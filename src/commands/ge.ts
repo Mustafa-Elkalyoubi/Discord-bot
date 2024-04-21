@@ -1,12 +1,44 @@
+import axios from "axios";
 import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
+  AttachmentBuilder,
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
   EmbedBuilder,
+  SlashCommandBuilder,
 } from "discord.js";
+import { DateTime } from "luxon";
+import sharp from "sharp";
+import OsrsItem from "../models/OsrsItem";
 import { BaseCommand } from "../utils/BaseCommand";
 import ExtendedClient from "../utils/Client";
-import axios from "axios";
+
+type GETimeseriesResponse = {
+  data: {
+    timestamp: number;
+    avgHighPrice: number;
+    avgLowPrice: number;
+    highPriceVolume: number;
+    lowPriceVolume: number;
+  }[];
+};
+
+type GELatestResponse = {
+  data: {
+    [k: string]: {
+      high: number;
+      low: number;
+      highTime: number;
+      lowTime: number;
+    };
+  };
+};
+
+enum TimeFrame {
+  "1 day" = "5m",
+  "7 days" = "1h",
+  "30 days" = "6h",
+  "1 year" = "24h",
+}
 
 export default class Command extends BaseCommand {
   constructor() {
@@ -29,34 +61,27 @@ export default class Command extends BaseCommand {
           .setName("timeframe")
           .setDescription("pick the timeframe")
           .addChoices(
-            { name: "Latest", value: "latest" },
-            { name: "Hour (Default)", value: "hour" }
+            { name: "1 day (default)", value: "1 day" },
+            { name: "7 days", value: "7 days" },
+            { name: "30 days", value: "30 days" },
+            { name: "1 year", value: "1 year" }
           )
           .setRequired(false)
       )
       .toJSON();
   }
 
-  async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {
-    const items = client.osrsItems;
-
+  async autocomplete(interaction: AutocompleteInteraction) {
     const focusedValue = interaction.options.getFocused() ?? "";
-    const filtered = items?.filter((item) =>
-      item.name.toLowerCase().includes(focusedValue.toLowerCase())
-    );
 
-    if (!filtered) return;
+    const items = await OsrsItem.find({ name: { $regex: focusedValue, $options: "i" } })
+      .sort({ name: "asc" })
+      .limit(25);
 
-    if (filtered.length <= 25)
-      return interaction.respond(
-        filtered.map((item) => ({
-          name: item.name,
-          value: item.name,
-        }))
-      );
+    if (!items) return interaction.respond([]);
 
-    interaction.respond(
-      filtered.slice(0, 25).map((item) => ({
+    return interaction.respond(
+      items.map((item) => ({
         name: item.name,
         value: item.name,
       }))
@@ -64,9 +89,9 @@ export default class Command extends BaseCommand {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    const item = client.osrsItems.find(
-      (item) => item.name.toLowerCase() === interaction.options.getString("item")!.toLowerCase()
-    );
+    const item = await OsrsItem.findOne({
+      name: { $regex: interaction.options.getString("item")!, $options: "i" },
+    });
 
     if (!item)
       return interaction.reply({
@@ -76,59 +101,34 @@ export default class Command extends BaseCommand {
 
     await interaction.deferReply();
 
-    const { name: itemName, value: itemID } = item;
+    const { name: itemName, id: itemID } = item;
 
-    enum timeFrame {
-      latest = "latest",
-      hour = "1h",
-    }
-    const tf = (interaction.options.getString("timeframe") ?? "hour") as keyof typeof timeFrame;
+    const tf = (interaction.options.getString("timeframe") ?? "1 day") as keyof typeof TimeFrame;
 
-    const url = `https://prices.runescape.wiki/api/v1/osrs/${timeFrame[tf]}`;
-    const config = {
-      headers: { "User-Agent": "Discord Bot - birbkiwi" },
-      params: { id: itemID },
-    };
+    const url = `https://prices.runescape.wiki/api/v1/osrs`;
 
-    let prices;
-    try {
-      prices = await axios
-        .get(url, config)
-        .then(async function (res) {
-          const obj = res.data;
-          return obj.data[itemID];
-        })
-        .catch((e: Error) => console.error(e));
-    } catch (error) {
-      if (!axios.isAxiosError(error))
-        return interaction.editReply("Sorry, the servers seem to be having issues");
-      console.error(error);
-    }
+    const seriesRes = axios
+      .get<GETimeseriesResponse>(`${url}/timeseries`, {
+        headers: { "User-Agent": "Discord Bot - birbkiwi" },
+        params: { timestep: TimeFrame[tf], id: itemID },
+      })
+      .then(async function (res) {
+        const obj = res.data;
+        return obj.data;
+      })
+      .catch((e: Error) => console.error(e));
 
-    if (!prices) {
-      return interaction.editReply(
-        "Sorry, that item hasnt been traded in the past hour, try changing the timeframe to latest"
-      );
-    }
+    const latestRes = axios
+      .get<GELatestResponse>(`${url}/latest`, {
+        headers: { "User-Agent": "Discord Bot - birbkiwi" },
+        params: { id: itemID },
+      })
+      .then((res) => res.data.data[itemID]!)
+      .catch((e: Error) => console.error(e));
+
+    const [series, latest] = await Promise.all([seriesRes, latestRes]);
 
     const spriteURL = `https://secure.runescape.com/m=itemdb_oldschool/obj_big.gif?id=${itemID}`;
-
-    const hourFields: { name: string; value: string; inline: boolean }[] = [];
-
-    if (prices.highPriceVolume > 0)
-      hourFields.push({
-        name: `High Avg (Volume: ${abbreviate(prices.highPriceVolume)})`,
-        value: `**${abbreviate(prices.avgHighPrice)}** gp`,
-        inline: true,
-      });
-
-    if (prices.lowPriceVolume > 0)
-      hourFields.push({
-        name: `Low Avg (Volume: ${abbreviate(prices.lowPriceVolume)})`,
-        value: `**${abbreviate(prices.avgLowPrice)}** gp`,
-        inline: true,
-      });
-
     const embed = new EmbedBuilder()
       .setColor("Random")
       .setTitle(itemName)
@@ -138,20 +138,135 @@ export default class Command extends BaseCommand {
       .setThumbnail(spriteURL)
       .setTimestamp();
 
-    if (tf === "latest")
+    if (latest) {
       embed.addFields(
         {
           name: "Average",
-          value: `**${abbreviate((prices.high + prices.low) / 2)}**`,
+          value: `**${abbreviate((latest.high + latest.low) / 2)}**`,
+        },
+        {
+          name: `High <t:${latest.highTime}:R>`,
+          value: `**${abbreviate(latest.high)}** gp`,
           inline: true,
         },
-        { name: `High <t:${prices.highTime}:R>`, value: `**${abbreviate(prices.high)}** gp` },
-        { name: `Low <t:${prices.lowTime}:R>`, value: `**${abbreviate(prices.low)}** gp` }
+        {
+          name: `Low <t:${latest.lowTime}:R>`,
+          value: `**${abbreviate(latest.low)}** gp`,
+          inline: true,
+        }
       );
-    else if (tf === "hour") embed.addFields(...hourFields);
+    }
+
+    if (series && series.length > 0) {
+      const chart = await generateChart(series, tf, client);
+      const img = await svgToPng(chart);
+      if (img) {
+        const attachment = new AttachmentBuilder(img, { name: "chart.png" });
+
+        embed.addFields({ name: `Timeframe`, value: tf });
+        embed.setImage(`attachment://chart.png`);
+
+        return interaction.editReply({ embeds: [embed], files: [attachment] });
+      }
+    }
 
     return interaction.editReply({ embeds: [embed] });
   }
+}
+
+async function generateChart(
+  data: GETimeseriesResponse["data"],
+  tf: keyof typeof TimeFrame,
+  client: ExtendedClient
+) {
+  const labels: DateTime[] = [];
+  const highPrices: (number | null)[] = [];
+  const lowPrices: (number | null)[] = [];
+
+  data.forEach((dataPoint) => {
+    highPrices.push(dataPoint.avgHighPrice);
+    lowPrices.push(dataPoint.avgLowPrice);
+    labels.push(DateTime.fromSeconds(dataPoint.timestamp));
+  });
+
+  let unit: "hour" | "day" | "week" | "month" = "hour";
+  switch (tf) {
+    case "1 day":
+      break;
+    case "7 days":
+      unit = "day";
+      break;
+    case "30 days":
+      unit = "week";
+      break;
+    case "1 year":
+      unit = "month";
+      break;
+  }
+
+  return client.GECanvas.renderToBufferSync({
+    type: "line",
+    options: {
+      backgroundColor: "#FF0000",
+      color: "white",
+      scales: {
+        y: {
+          grid: {
+            drawTicks: false,
+            color: "#FFFFFF30",
+            lineWidth: 1,
+          },
+          ticks: {
+            color: "white",
+            includeBounds: true,
+          },
+        },
+        x: {
+          type: "time",
+          time: {
+            unit,
+          },
+          grid: {
+            color: "#FFFFFF30",
+            drawTicks: false,
+            lineWidth: 1,
+          },
+          ticks: {
+            color: "white",
+            includeBounds: true,
+            maxTicksLimit: 7,
+          },
+        },
+      },
+    },
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "High Price",
+          data: highPrices,
+          backgroundColor: "#ffa430",
+          borderColor: "#ffa430",
+          cubicInterpolationMode: "default",
+          borderWidth: 1,
+          pointRadius: 2,
+        },
+        {
+          label: "Low Price",
+          data: lowPrices,
+          backgroundColor: "#31ff5f",
+          borderColor: "#31ff5f",
+          cubicInterpolationMode: "default",
+          borderWidth: 1,
+          pointRadius: 2,
+        },
+      ],
+    },
+  });
+}
+
+function svgToPng(svg: Buffer): Promise<Buffer> {
+  return sharp(svg, { animated: false }).png().toBuffer();
 }
 
 function abbreviate(num: number) {
