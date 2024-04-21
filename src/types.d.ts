@@ -9,6 +9,7 @@ import type {
 import type { BaseCommand } from "./utils/BaseCommand";
 import type BaseSlashSubCommand from "./utils/BaseSlashSubCommand";
 import type ExtendedClient from "./utils/Client";
+import { Types } from "mongoose";
 
 type messageCommandProps = {
   run(message: Message, args: string[], client?: ExtendedClient): void;
@@ -24,9 +25,9 @@ type messageCommandProps = {
 };
 
 interface BaseReminder {
-  id: number;
+  _id: Types.ObjectId;
   message: string;
-  timeToRemind: number;
+  timeToRemind: Date;
   channel: Snowflake;
   recurring: boolean;
 }
@@ -42,7 +43,6 @@ interface RecurringReminder extends BaseReminder {
 
 interface RegularReminder extends BaseReminder {
   recurring: false;
-  details: undefined;
 }
 
 export type ReminderDetails = RegularReminder | RecurringReminder;
@@ -85,11 +85,13 @@ export interface FineData {
   };
 }
 
+export type DbdRole = "killer" | "survivor";
+
 export interface DBDPerk {
   id: string;
   name: string;
   description: string;
-  role: "killer" | "survivor";
+  role: DbdRole;
   character: number | null;
   image: string;
 }
@@ -105,9 +107,10 @@ interface DBDChar {
   id: string;
   charid: string;
   name: string;
-  gender: "male" | "female" | "nothuman";
+  gender: "male" | "female" | "nothuman" | "multiple";
   dlc: string | null;
   image: string;
+  perks: [string, string, string];
 }
 
 export interface dbdSurvivor extends DBDChar {
