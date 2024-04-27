@@ -1,13 +1,15 @@
 import { EventEmitter } from "events";
 import TypedEventEmitter from "typed-emitter";
+import { nanoid } from "nanoid";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TFunction = (...args: any[]) => any;
 
 type QueueEvents<T extends TFunction> = {
-  added: (...args: Parameters<T>) => void;
-  started: (...args: Parameters<T>) => void;
-  finished: (ret: ReturnType<T>, ...args: Parameters<T>) => void;
+  added: (id: string) => void;
+  removed: (id: string) => void;
+  started: (id: string) => void;
+  finished: (ret: ReturnType<T>, id: string) => void;
   idle: () => void;
   paused: () => void;
   resumed: () => void;
@@ -16,7 +18,7 @@ type QueueEvents<T extends TFunction> = {
 class Queue<T extends TFunction> extends (EventEmitter as new <
   T extends TFunction
 >() => TypedEventEmitter<QueueEvents<T>>)<T> {
-  queue: Parameters<T>[] = [];
+  queue: { id: string; args: Parameters<T> }[] = [];
   #callback: T;
   paused: boolean = false;
   idle: boolean = true;
@@ -32,19 +34,25 @@ class Queue<T extends TFunction> extends (EventEmitter as new <
   }
 
   add(...args: Parameters<T>) {
-    this.queue.push(args);
-    this.emit("added", ...args);
+    const id = nanoid();
+    this.queue.push({ id, args });
+    this.emit("added", id);
     if (!this.paused && this.idle) this.#run();
+  }
+
+  remove(id: string) {
+    this.queue = this.queue.filter((item) => item.id !== id);
+    this.emit("removed", id);
   }
 
   async #run() {
     if (!this.queue.length || this.paused) return;
 
     this.idle = false;
-    const args = this.queue.shift() as Parameters<T>;
-    this.emit("started", ...args);
-    const ret = await this.#callback(...args);
-    this.emit("finished", ret, ...args);
+    const item = this.queue.shift()!;
+    this.emit("started", item.id);
+    const ret = await this.#callback(...item.args);
+    this.emit("finished", ret, item.id);
 
     if (this.queue.length) this.#run();
     else {

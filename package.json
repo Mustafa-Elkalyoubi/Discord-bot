@@ -44,6 +44,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "luxon": "^3.3.0",
     "mongoose": "^8.3.0",
+    "nanoid": "^5.0.7",
     "node-schedule": "^2.1.1",
     "ping": "^0.4.4",
     "ps-tree": "^1.2.0",
