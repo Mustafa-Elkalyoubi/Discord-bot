@@ -90,7 +90,7 @@ export default class Command extends BaseCommand {
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
     const item = await OsrsItem.findOne({
-      name: { $regex: interaction.options.getString("item")!, $options: "i" },
+      name: interaction.options.getString("item")!,
     });
 
     if (!item)
