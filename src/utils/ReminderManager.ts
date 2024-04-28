@@ -1,8 +1,9 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { DateTime } from "luxon";
 import { RecurrenceRule, scheduleJob, scheduledJobs } from "node-schedule";
-
+import cronstrue from "cronstrue";
 import mongoose, { Types } from "mongoose";
+
 import UserData from "../models/UserData";
 import type { ReminderDetails } from "../types";
 import ExtendedClient from "./Client";
@@ -121,10 +122,10 @@ export default class ReminderManager {
         interaction.reply({
           content: `\`RECURRING\` Reminder [${
             saveDetails._id
-          }] set! Reminding you every ${DateTime.fromFormat(
-            `${details.day} ${details.hour} ${details.minute}`,
-            "ccc H m"
-          ).toFormat("EEEE 'at' H':'mm")})`,
+          }] set! Reminding you ${cronstrue.toString(
+            `${details.minute} ${details.hour} * * ${details.day}`,
+            { verbose: true }
+          )}})`,
         });
       } else {
         interaction.reply({

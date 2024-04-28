@@ -18,11 +18,10 @@ export default class SubCommand extends BaseSubCommandRunner {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    interaction.reply("not built yet");
     const message = interaction.options.getString("message", true);
     const day = Recurring[interaction.options.getString("day", true) as keyof typeof Recurring];
     let hour = interaction.options.getInteger("hour", true);
-    const minute = interaction.options.getInteger("minute", true);
+    const minute = interaction.options.getInteger("minute") ?? 0;
     const meridiem = interaction.options.getString("meridiem");
 
     if (meridiem) {

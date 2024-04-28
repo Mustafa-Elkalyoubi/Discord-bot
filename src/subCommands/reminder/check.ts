@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { DateTime } from "luxon";
 import UserData from "../../models/UserData";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
+import cronstrue from "cronstrue";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {
@@ -26,6 +27,15 @@ export default class SubCommand extends BaseSubCommandRunner {
       .setTitle(`Reminders`)
       .addFields(
         reminders.map((reminder) => {
+          if (reminder.recurring)
+            return {
+              name: `ID: \`${reminder._id.toString()}\``,
+              value: `**${cronstrue.toString(
+                `${reminder.details.minute} ${reminder.details.hour} * * ${reminder.details.day}`,
+                { verbose: true }
+              )}**\n${reminder.message}`,
+              inline: true,
+            };
           return {
             name: `ID: \`${reminder._id.toString()}\``,
             value: `${reminder.recurring ? "`Recurring` " : ""}Message <t:${Math.floor(
