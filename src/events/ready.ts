@@ -7,7 +7,7 @@ import ExtendedClient from "../utils/Client";
 import { DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
 import { beautifyNumber, calcFine, getFineChannel } from "../utils/FineHelper";
 
-export = {
+export default {
   name: Events.ClientReady,
   once: true,
   run: async (client: ExtendedClient) => {

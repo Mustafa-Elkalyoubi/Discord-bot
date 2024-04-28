@@ -31,4 +31,4 @@ const help = {
   usage: "~tc h m s",
 };
 
-export { run, conf, help };
+export default { run, conf, help };

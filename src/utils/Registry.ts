@@ -5,6 +5,7 @@ import { Collection } from "discord.js";
 import Modifiers from "./ConsoleText";
 import { DateTime } from "luxon";
 import ExtendedClient from "./Client";
+import { dynamicImport } from "./general";
 
 const log = (message: string) => {
   console.log(
@@ -29,7 +30,7 @@ async function registerCommands(client: ExtendedClient, dir = "../commands") {
     }
     // create new command object, and add to client.commands
     if (file.endsWith(".js") || file.endsWith(".ts")) {
-      const { default: Command } = await import(path.join(filePath, file));
+      const Command = await dynamicImport(path.join(filePath, file));
       const cmd = new Command();
       client.commandManager.addCommand(cmd.name, cmd);
       log(`${Modifiers.GREEN}Registering command: ${Modifiers.DEFAULT}${cmd.name}`);
@@ -54,7 +55,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
       subCommandDirectoryFiles.splice(indexFilePos, 1);
       try {
         const baseFile = path.join(folderPath, file + ".js");
-        const { default: BaseSubCommand } = await import(
+        const BaseSubCommand = await dynamicImport(
           fs.existsSync(baseFile) ? baseFile : path.join(folderPath, file + ".ts")
         );
         const subCommand = new BaseSubCommand();
@@ -62,9 +63,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
 
         for (const group of subCommand.groups) {
           for (const command of group.subCommands) {
-            const { default: SubCommand } = await import(
-              path.join(folderPath, group.name, command)
-            );
+            const SubCommand = await dynamicImport(path.join(folderPath, group.name, command));
             let subCommandGroupMap = subCommand.groupCommands.get(group.name);
             if (subCommandGroupMap)
               subCommandGroupMap.set(command, new SubCommand(file, group.name, command));
@@ -79,7 +78,7 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
         }
         for (const subCommandFile of subCommandDirectoryFiles) {
           if (subCommandFile.endsWith(".json")) continue;
-          const { default: SubCommand } = await import(path.join(folderPath, subCommandFile));
+          const SubCommand = await dynamicImport(path.join(folderPath, subCommandFile));
           const cmd = new SubCommand(file, null, subCommandFile.split(".")[0]);
           client.commandManager.addGroupcommand(file, cmd.name, cmd);
         }
@@ -102,7 +101,7 @@ async function registerContextCommands(client: ExtendedClient, dir = "../context
       log(`Closing folder ${file}`);
     }
     if (file.endsWith(".js") || file.endsWith(".ts")) {
-      const { default: Command } = await import(filePath);
+      const Command = await dynamicImport(filePath);
       const cmd = new Command();
       client.commandManager.addContextcommand(cmd.name, cmd);
       log(`${Modifiers.GREEN}Registering context command: ${Modifiers.DEFAULT}${cmd.name}`);

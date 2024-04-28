@@ -5,7 +5,7 @@ import {
 } from "discord.js";
 import ExtendedClient from "../utils/Client";
 
-export = {
+export default {
   name: Events.InteractionCreate,
   async run(
     interaction: MessageContextMenuCommandInteraction | ChatInputCommandInteraction,

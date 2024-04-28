@@ -6,7 +6,7 @@ import ExtendedClient from "../utils/Client";
 import Modifiers from "../utils/ConsoleText";
 import { beautifyNumber, calcFine, fineChannel, fineReaction } from "../utils/FineHelper";
 
-export = {
+export default {
   name: Events.MessageCreate,
   async run(message: Message, client: ExtendedClient) {
     client.messagesLogged.inc();

@@ -1,7 +1,7 @@
 import { Events, MessageReaction, User } from "discord.js";
 import ExtendedClient from "../../utils/Client";
 
-export = {
+export default {
   name: Events.MessageReactionRemove,
   async run(messageReaction: MessageReaction, user: User) {
     if (messageReaction.emoji.name !== "📌" || !messageReaction.message.guildId) return;

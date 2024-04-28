@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import ExtendedClient from "../utils/Client";
 import { saveLastMessageID } from "../utils/FineHelper";
 
-exports.run = async (message: Message, client: ExtendedClient) => {
+const run = async (message: Message, client: ExtendedClient) => {
   const msg = await message.channel.send("Rebooting...");
 
   await saveLastMessageID(client, {
@@ -15,13 +15,15 @@ exports.run = async (message: Message, client: ExtendedClient) => {
   process.exit(1);
 };
 
-exports.conf = {
+const conf = {
   aliases: ["restart"],
   permLevel: 4,
 };
 
-exports.help = {
+const help = {
   name: "reboot",
   description: "Restarts bot and indicates the reboot time.",
   usage: "reboot",
 };
+
+export default { run, conf, help };

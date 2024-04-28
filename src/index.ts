@@ -4,9 +4,7 @@ import fsPromise from "node:fs/promises";
 import fs from "node:fs";
 import path from "node:path";
 import { registerCommands, registerContextCommands, registerSubCommands } from "./utils/Registry";
-import config from "./config.json";
-import env from "dotenv";
-import { saveLastMessageID } from "./utils/FineHelper";
+import { dynamicImport } from "./utils/general";
 
 env.config({ path: path.join(__dirname, "..", ".env") });
 const { DISCORD_TOKEN: token } = process.env;
@@ -40,7 +38,7 @@ const loadEvents = async (currPath = eventsPath) => {
 
     if (stat.isDirectory()) loadEvents(path.join(currPath, file));
     else
-      import(filePath).then((event) => {
+      dynamicImport(filePath).then((event) => {
         client.log("", `Loading Event: ${event.name}`);
         if (event.once) client.once(event.name, (...args) => event.run(...args, client));
         else client.on(event.name, (...args) => event.run(...args, client));

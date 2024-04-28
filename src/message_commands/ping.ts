@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import ping from "ping";
 
-exports.run = async (message: Message, args: string[]) => {
+const run = async (message: Message, args: string[]) => {
   message.channel.sendTyping();
   const world = parseInt(args[0].replace("w", "")) - 300;
   const url = `oldschool${world}.runescape.com`;
@@ -12,13 +12,15 @@ exports.run = async (message: Message, args: string[]) => {
   });
 };
 
-exports.conf = {
+const conf = {
   aliases: ["p"],
   permLevel: 4,
 };
 
-exports.help = {
+const help = {
   name: "ping",
   description: "Ping an osrs world",
   usage: "~ping [world number]",
 };
+
+export default { run, conf, help };

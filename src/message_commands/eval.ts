@@ -1,9 +1,8 @@
-import config from "../config.json";
-import { Message } from "discord.js";
-import { codeBlock } from "discord.js";
+import { Message, codeBlock } from "discord.js";
 
-exports.run = async (message: Message, args: string[]) => {
-  if (message.author.id !== config.ownerID) return;
+const run = async (message: Message, args: string[]) => {
+  const { OWNER_ID } = process.env;
+  if (message.author.id !== OWNER_ID) return;
 
   const clean = (text: string) => {
     if (typeof text === "string")
@@ -25,13 +24,15 @@ exports.run = async (message: Message, args: string[]) => {
   }
 };
 
-exports.conf = {
+const conf = {
   aliases: ["e"],
   permLevel: 4,
 };
 
-exports.help = {
+const help = {
   name: "eval",
   description: "Evaluates any string as javascript code, then executes it",
   usage: "eval **command**",
 };
+
+export default { run, conf, help };

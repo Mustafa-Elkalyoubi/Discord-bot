@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import ExtendedClient from "../utils/Client";
 
-exports.run = (message: Message, args: string[], client: ExtendedClient) => {
+const run = (message: Message, args: string[], client: ExtendedClient) => {
   const command = client.commandManager.getMessageCommand(args[0]);
 
   if (!command) return message.reply(`I cannot find the command: ${args[0]}`);
@@ -16,13 +16,15 @@ exports.run = (message: Message, args: string[], client: ExtendedClient) => {
   });
 };
 
-exports.conf = {
+const conf = {
   aliases: ["r", "R"],
   permLevel: 4,
 };
 
-exports.help = {
+const help = {
   name: "reload",
   description: "Reloads the command file, if it's been updated or modified.",
   usage: "reload <commandname>",
 };
+
+export default { run, conf, help };

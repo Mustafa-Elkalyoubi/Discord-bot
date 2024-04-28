@@ -19,6 +19,7 @@ import type {
 } from "../types";
 import ExtendedClient from "./Client";
 import Modifiers from "./ConsoleText";
+import { dynamicImport } from "./general";
 
 export default class CommandManager {
   #client: ExtendedClient;
@@ -41,7 +42,7 @@ export default class CommandManager {
     const messagesPath = path.join(__dirname, "..", "message_commands");
     const messagesFiles = fs.readdirSync(messagesPath);
     messagesFiles.forEach(async (file, index) => {
-      const props = await import(path.join(messagesPath, file));
+      const props = await dynamicImport(path.join(messagesPath, file));
       console.log(
         `${Modifiers.GREEN}[${DateTime.now().toFormat("yyyy-MM-DD HH:mm:ss")}]: ${
           Modifiers.DEFAULT
@@ -106,7 +107,7 @@ export default class CommandManager {
     const messagesPath = path.join(__dirname, "..", "message_commands");
 
     const cmdPath = path.join(messagesPath, command);
-    const cmd = await import(cmdPath);
+    const cmd = await dynamicImport(cmdPath);
     return new Promise((resolve) => {
       delete require.cache[require.resolve(cmdPath)];
       this.#aliases.forEach((cmd, alias) => {
