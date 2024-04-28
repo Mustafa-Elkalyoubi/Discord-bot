@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { Events, Message } from "discord.js";
-import config from "../config.json";
 import UserData from "../models/UserData";
 import ExtendedClient from "../utils/Client";
 import Modifiers from "../utils/ConsoleText";
@@ -9,6 +8,7 @@ import { beautifyNumber, calcFine, fineChannel, fineReaction } from "../utils/Fi
 export default {
   name: Events.MessageCreate,
   async run(message: Message, client: ExtendedClient) {
+    const { DM_CHANNEL, PREFIX } = process.env;
     client.messagesLogged.inc();
 
     const attachments = message.attachments;
@@ -35,7 +35,7 @@ export default {
         }`
       );
       client.sendToChannel(
-        config.dmChannel,
+        DM_CHANNEL!,
         `${message.author.username} (${message.author.id}): ${message.content} ${
           message.attachments.size > 0 ? `|| File: ${message.attachments.map((c) => c.url)}` : ""
         }`
@@ -49,7 +49,7 @@ export default {
       );
     }
 
-    if (!message.content.startsWith(config.prefix)) return;
+    if (!message.content.startsWith(PREFIX!)) return;
     client.commandManager.runMessageCommand(message);
   },
 };

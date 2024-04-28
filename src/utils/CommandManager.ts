@@ -6,7 +6,6 @@ import {
   PermissionsBitField,
 } from "discord.js";
 import fs from "node:fs";
-import config from "../config.json";
 
 import { DateTime } from "luxon";
 import path from "path";
@@ -141,7 +140,8 @@ export default class CommandManager {
   }
 
   runMessageCommand(message: Message) {
-    const command = message.content.split(" ")[0].slice(config.prefix.length).toLowerCase();
+    const { PREFIX } = process.env;
+    const command = message.content.split(" ")[0].slice(PREFIX!.length).toLowerCase();
     const args = message.content.split(" ").slice(1);
     const perms = this.#elevation(message);
 

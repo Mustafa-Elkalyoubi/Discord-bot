@@ -1,14 +1,20 @@
-import { Partials, GatewayIntentBits, Routes } from "discord.js";
-import ExtendedClient from "./utils/Client";
-import fsPromise from "node:fs/promises";
+import { GatewayIntentBits, Partials, Routes } from "discord.js";
+import env from "dotenv";
 import fs from "node:fs";
+import fsPromise from "node:fs/promises";
 import path from "node:path";
+import ExtendedClient from "./utils/Client";
+import { saveLastMessageID } from "./utils/FineHelper";
 import { registerCommands, registerContextCommands, registerSubCommands } from "./utils/Registry";
 import { dynamicImport } from "./utils/general";
 
 env.config({ path: path.join(__dirname, "..", ".env") });
-const { DISCORD_TOKEN: token } = process.env;
-if (!token) throw "Missing token";
+const { DISCORD_TOKEN, OWNER_ID, CLIENT_ID, TEST_GUILD, PREFIX } = process.env;
+if (!DISCORD_TOKEN) throw Error("Missing token");
+if (!OWNER_ID) throw Error("Missing owner id");
+if (!CLIENT_ID) throw Error("Missing client id");
+if (!TEST_GUILD) throw Error("Missing test guild id");
+if (!PREFIX) throw Error("Missing prefix");
 
 const client = new ExtendedClient(
   {
@@ -25,8 +31,8 @@ const client = new ExtendedClient(
     partials: [Partials.Channel],
     rest: { version: "10" },
   },
-  config.ownerID,
-  token
+  OWNER_ID,
+  DISCORD_TOKEN
 );
 
 const eventsPath = path.join(__dirname, "events");
@@ -56,14 +62,14 @@ async function registerJSONs(client: ExtendedClient) {
 
     const { publicCommands, privateCommands } = client.commandManager.getCommandJSON();
 
-    await client.rest.put(Routes.applicationCommands(config.clientID), {
+    await client.rest.put(Routes.applicationCommands(CLIENT_ID!), {
       body: publicCommands,
     });
 
-    await client.rest.put(Routes.applicationGuildCommands(config.clientID, config.testGuild), {
+    await client.rest.put(Routes.applicationGuildCommands(CLIENT_ID!, TEST_GUILD!), {
       body: privateCommands,
     });
-    // const registeredCommands = await client.rest.get(Routes.applicationCommands(config.clientID));
+    // const registeredCommands = await client.rest.get(Routes.applicationCommands(CLIENT_ID));
   } catch (error) {
     console.error(error);
   }
