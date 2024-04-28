@@ -43,7 +43,7 @@ const UserDataSchema = new Schema<IUserData>(
         },
         timeToRemind: {
           type: Date,
-          required: true,
+          required: false,
         },
         channel: {
           type: String,
@@ -56,7 +56,7 @@ const UserDataSchema = new Schema<IUserData>(
         details: {
           required: false,
           type: {
-            day: { type: String, required: true },
+            day: { type: Number, required: true },
             hour: { type: Number, required: true },
             minute: { type: Number, required: true },
           },

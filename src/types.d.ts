@@ -27,7 +27,6 @@ type messageCommandProps = {
 interface BaseReminder {
   _id: Types.ObjectId;
   message: string;
-  timeToRemind: Date;
   channel: Snowflake;
   recurring: boolean;
 }
@@ -35,13 +34,14 @@ interface BaseReminder {
 interface RecurringReminder extends BaseReminder {
   recurring: true;
   details: {
-    day: string;
+    day: number;
     hour: number;
     minute: number;
   };
 }
 
 interface RegularReminder extends BaseReminder {
+  timeToRemind: Date;
   recurring: false;
 }
 

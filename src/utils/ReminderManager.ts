@@ -16,7 +16,7 @@ export default class ReminderManager {
   }
 
   async #loadJobs() {
-    const reminders = await UserData.aggregate([
+    const reminders = (await UserData.aggregate([
       {
         $unwind: "$reminders",
       },
@@ -31,30 +31,15 @@ export default class ReminderManager {
           details: "$reminders.details",
         },
       },
-    ]);
+    ])) as (ReminderDetails & { userID: string })[];
 
     if (!reminders) throw "Failed to load reminders";
 
     reminders.forEach((reminder) => {
-      if (DateTime.now() >= reminder.timeToRemind) return this.execute(reminder, reminder.userID);
+      if (!reminder.recurring && DateTime.now() >= DateTime.fromJSDate(reminder.timeToRemind))
+        return this.execute(reminder, reminder.userID);
 
-      if (!reminder.recurring)
-        scheduleJob(reminder._id.toString(), reminder.timeToRemind, () => {
-          this.execute(reminder, reminder.userID);
-        });
-      else {
-        const rule = new RecurrenceRule(
-          undefined,
-          undefined,
-          undefined,
-          reminder.details.day,
-          reminder.details.hour,
-          reminder.details.minute
-        );
-        scheduleJob(reminder._id.toString(), rule, () => {
-          this.execute(reminder, reminder.userID);
-        });
-      }
+      this.#scheduleJob(reminder, reminder.userID);
     });
   }
 
@@ -99,27 +84,16 @@ export default class ReminderManager {
   async save(
     interaction: ChatInputCommandInteraction,
     message: string,
-    timeToRemind: DateTime
-  ): Promise<void>;
-  async save(
-    interaction: ChatInputCommandInteraction,
-    message: string,
-    timeToRemind: DateTime,
-    recurring: true,
-    day: string,
-    hour: number,
-    minute: number
-  ): Promise<void>;
-  async save(
-    interaction: ChatInputCommandInteraction,
-    message: string,
-    timeToRemind: DateTime,
-    recurring = false,
-    day?: string,
-    hour?: number,
-    minute?: number
+    details:
+      | DateTime
+      | {
+          day: number;
+          hour: number;
+          minute: number;
+        }
   ): Promise<void> {
     const userID = interaction.user.id;
+    const recurring = !(details instanceof DateTime);
 
     if (!interaction.channel) throw "No idea how this error occurred";
 
@@ -130,15 +104,12 @@ export default class ReminderManager {
       _id: new mongoose.Types.ObjectId(),
       channel: interaction.channel.id,
       message,
-      timeToRemind: timeToRemind.toJSDate()!,
-      recurring: recurring,
-      ...(recurring && {
-        details: {
-          day,
-          hour,
-          minute,
-        },
-      }),
+      recurring,
+      ...(recurring
+        ? {
+            details,
+          }
+        : { timeToRemind: details.toJSDate()! }),
     } as ReminderDetails;
 
     user.reminders.push(saveDetails);
@@ -146,27 +117,46 @@ export default class ReminderManager {
     try {
       user.save();
 
-      if (saveDetails.recurring) {
+      if (recurring) {
         interaction.reply({
-          content: `\`RECURRING\` Reminder [${saveDetails._id}] set! Reminding you <t:${Math.floor(
-            timeToRemind.toSeconds()
-          )}:R> (Every ${DateTime.fromFormat(`${day} ${hour} ${minute}`, "ccc H m").toFormat(
-            "EEEE 'at' H':'mm"
-          )})`,
+          content: `\`RECURRING\` Reminder [${
+            saveDetails._id
+          }] set! Reminding you every ${DateTime.fromFormat(
+            `${details.day} ${details.hour} ${details.minute}`,
+            "ccc H m"
+          ).toFormat("EEEE 'at' H':'mm")})`,
         });
-        return;
+      } else {
+        interaction.reply({
+          content: `Reminder \`${saveDetails._id}\` set! Reminding you <t:${Math.floor(
+            details.toSeconds()
+          )}:R>`,
+        });
       }
-      interaction.reply({
-        content: `Reminder \`${saveDetails._id}\` set! Reminding you <t:${Math.floor(
-          timeToRemind.toSeconds()
-        )}:R>`,
-      });
 
-      scheduleJob(saveDetails._id.toString(), timeToRemind.toJSDate()!, () => {
-        this.execute(saveDetails, userID);
-      });
+      this.#scheduleJob(saveDetails, userID);
     } catch (err) {
       interaction.reply({ content: "Sorry, something went wrong", ephemeral: true });
+    }
+  }
+
+  #scheduleJob(reminder: ReminderDetails, userID: string) {
+    if (reminder.recurring) {
+      const rule = new RecurrenceRule(
+        undefined,
+        undefined,
+        undefined,
+        reminder.details.day,
+        reminder.details.hour,
+        reminder.details.minute
+      );
+      scheduleJob(reminder._id.toString(), rule, () => {
+        this.execute(reminder, userID);
+      });
+    } else {
+      scheduleJob(reminder._id.toString(), reminder.timeToRemind, () => {
+        this.execute(reminder, userID);
+      });
     }
   }
 }

@@ -76,7 +76,6 @@ async function registerJSONs(client: ExtendedClient) {
 }
 
 registerJSONs(client);
-client.login(token);
 
 ["SIGINT", "SIGTERM", "SIGQUIT"].forEach((signal) =>
   process.on(signal, async () => {
@@ -85,3 +84,5 @@ client.login(token);
     process.exit();
   })
 );
+
+client.login(DISCORD_TOKEN);
