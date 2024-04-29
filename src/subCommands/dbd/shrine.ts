@@ -1,7 +1,7 @@
 import axios from "axios";
 import { APIEmbedField, ChatInputCommandInteraction, EmbedBuilder, RestOrArray } from "discord.js";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
-import ExtendedClient from "../../utils/Client";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
+import ExtendedClient from "../../utils/Client.js";
 
 const apiURL = "https://dbd.tricky.lol/api/shrine";
 interface apiData {

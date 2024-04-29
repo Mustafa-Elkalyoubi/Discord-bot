@@ -4,8 +4,8 @@ import {
   RESTJSONErrorCodes,
   MessageContextMenuCommandInteraction,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
-import { steal7TV } from "../utils/steal7tv";
+import { BaseCommand } from "../utils/BaseCommand.js";
+import { steal7TV } from "../utils/steal7tv.js";
 
 export default class Command extends BaseCommand {
   constructor() {

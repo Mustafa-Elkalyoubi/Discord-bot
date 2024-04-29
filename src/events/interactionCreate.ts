@@ -3,7 +3,7 @@ import {
   MessageContextMenuCommandInteraction,
   ChatInputCommandInteraction,
 } from "discord.js";
-import ExtendedClient from "../utils/Client";
+import ExtendedClient from "../utils/Client.js";
 
 export default {
   name: Events.InteractionCreate,

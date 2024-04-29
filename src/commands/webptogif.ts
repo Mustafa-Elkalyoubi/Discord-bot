@@ -1,5 +1,5 @@
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
+import { BaseCommand } from "../utils/BaseCommand.js";
 import axios from "axios";
 import sharp from "sharp";
 import { randomUUID } from "node:crypto";

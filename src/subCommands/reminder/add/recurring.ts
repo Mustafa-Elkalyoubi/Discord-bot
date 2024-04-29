@@ -1,6 +1,6 @@
-import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner";
+import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner.js";
 import { ChatInputCommandInteraction } from "discord.js";
-import ExtendedClient from "../../../utils/Client";
+import ExtendedClient from "../../../utils/Client.js";
 
 enum Recurring {
   sun = 0,

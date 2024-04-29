@@ -3,18 +3,27 @@ import env from "dotenv";
 import fs from "node:fs";
 import fsPromise from "node:fs/promises";
 import path from "node:path";
-import ExtendedClient from "./utils/Client";
-import { saveLastMessageID } from "./utils/FineHelper";
-import { registerCommands, registerContextCommands, registerSubCommands } from "./utils/Registry";
-import { dynamicImport } from "./utils/general";
+import ExtendedClient from "./utils/Client.js";
+import { saveLastMessageID } from "./utils/FineHelper.js";
+import {
+  registerCommands,
+  registerContextCommands,
+  registerSubCommands,
+} from "./utils/Registry.js";
+import { dynamicImport } from "./utils/general.js";
 
-env.config({ path: path.join(__dirname, "..", ".env") });
+env.config();
 const { DISCORD_TOKEN, OWNER_ID, CLIENT_ID, TEST_GUILD, PREFIX } = process.env;
 if (!DISCORD_TOKEN) throw Error("Missing token");
 if (!OWNER_ID) throw Error("Missing owner id");
 if (!CLIENT_ID) throw Error("Missing client id");
 if (!TEST_GUILD) throw Error("Missing test guild id");
 if (!PREFIX) throw Error("Missing prefix");
+
+const __dirname = (() => {
+  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
+  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
+})();
 
 const client = new ExtendedClient(
   {

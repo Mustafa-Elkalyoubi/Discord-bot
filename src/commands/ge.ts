@@ -8,9 +8,9 @@ import {
 } from "discord.js";
 import { DateTime } from "luxon";
 import sharp from "sharp";
-import OsrsItem from "../models/OsrsItem";
-import { BaseCommand } from "../utils/BaseCommand";
-import ExtendedClient from "../utils/Client";
+import OsrsItem from "../models/OsrsItem.js";
+import { BaseCommand } from "../utils/BaseCommand.js";
+import ExtendedClient from "../utils/Client.js";
 
 type GETimeseriesResponse = {
   data: {

@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import { SubCommand } from "../types";
+import { SubCommand } from "../types.js";
 
 type SubCommandGroup = {
   name: string;

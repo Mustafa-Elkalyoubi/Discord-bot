@@ -1,6 +1,6 @@
 import { Role } from "discord.js";
-import ExtendedClient from "./Client";
-import { pathToFileURL } from "url";
+import { pathToFileURL } from "node:url";
+import ExtendedClient from "./Client.js";
 
 export async function getRole(
   name: string,
@@ -17,10 +17,13 @@ export function capitalizeFirstLetter(str: string) {
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export function dynamicImport(path: string) {
+export async function dynamicImport(path: string) {
   return import(pathToFileURL(path).toString())
     .then((m) => m.default)
     .catch((e) => {
+      console.log(path);
+      console.log(pathToFileURL(path));
+      console.log(pathToFileURL(path).toString());
       throw Error(e);
     });
 }

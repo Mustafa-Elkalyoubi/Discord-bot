@@ -4,8 +4,8 @@ import {
   SlashCommandBuilder,
   codeBlock,
 } from "discord.js";
-import OsrsSlayer from "../models/OsrsSlayer";
-import { BaseCommand } from "../utils/BaseCommand";
+import OsrsSlayer from "../models/OsrsSlayer.js";
+import { BaseCommand } from "../utils/BaseCommand.js";
 
 export default class Command extends BaseCommand {
   constructor() {

@@ -5,7 +5,7 @@ import {
   RESTJSONErrorCodes,
 } from "discord.js";
 import axios, { AxiosResponse } from "axios";
-import { StepPrinter } from "./StepPrinter";
+import { StepPrinter } from "./StepPrinter.js";
 import sharp from "sharp";
 import ufs from "url-file-size";
 

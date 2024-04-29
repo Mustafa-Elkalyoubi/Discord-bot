@@ -1,11 +1,11 @@
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { ActivityType, Events, Snowflake, TextChannel, codeBlock } from "discord.js";
 import { Document } from "mongoose";
-import Misc, { IMisc } from "../models/Misc";
-import UserData from "../models/UserData";
-import ExtendedClient from "../utils/Client";
-import { DEFAULT, LIGHT_BLUE } from "../utils/ConsoleText";
-import { beautifyNumber, calcFine, getFineChannel } from "../utils/FineHelper";
+import Misc, { IMisc } from "../models/Misc.js";
+import UserData from "../models/UserData.js";
+import ExtendedClient from "../utils/Client.js";
+import Modifiers from "../utils/ConsoleText.js";
+import { beautifyNumber, calcFine, getFineChannel } from "../utils/FineHelper.js";
 
 export default {
   name: Events.ClientReady,
@@ -17,7 +17,9 @@ export default {
       { type: ActivityType.Playing }
     );
 
-    console.log(`${LIGHT_BLUE}Ready, logged in as ${client.user.tag + DEFAULT}`);
+    console.log(
+      `${Modifiers.LIGHT_BLUE}Ready, logged in as ${client.user.tag + Modifiers.DEFAULT}`
+    );
 
     const misc = await Misc.findOne();
     if (!misc) {
@@ -135,7 +137,7 @@ async function handleFines(client: ExtendedClient, lastMessageID: Snowflake) {
       }`
     );
   } else {
-    const msgs = [];
+    const msgs: string[] = [];
     for (const [userID, userFine] of Object.entries(finesToAddUp.fines)) {
       const user = users.find((u) => u.id === userID)!;
       const amount = beautifyNumber(BigNumber(userFine.amount, 35));

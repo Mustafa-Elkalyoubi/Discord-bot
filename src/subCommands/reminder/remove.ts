@@ -1,7 +1,7 @@
-import ExtendedClient from "../../utils/Client";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
+import ExtendedClient from "../../utils/Client.js";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import { AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js";
-import UserData from "../../models/UserData";
+import UserData from "../../models/UserData.js";
 import { Types } from "mongoose";
 
 export default class SubCommand extends BaseSubCommandRunner {

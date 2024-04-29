@@ -15,10 +15,15 @@ import type {
   ContextCommand,
   SubCommand,
   messageCommandProps,
-} from "../types";
-import ExtendedClient from "./Client";
-import Modifiers from "./ConsoleText";
-import { dynamicImport } from "./general";
+} from "../types.js";
+import ExtendedClient from "./Client.js";
+import Modifiers from "./ConsoleText.js";
+import { dynamicImport } from "./general.js";
+
+const __dirname = (() => {
+  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
+  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
+})();
 
 export default class CommandManager {
   #client: ExtendedClient;
@@ -199,14 +204,14 @@ export default class CommandManager {
         if (!runner.autocomplete) throw "No autocomplete function found";
         return runner.autocomplete(interaction, client);
       }
-      client.commandsUsed.inc();
-      client.activeCommands.inc();
+      client.commandsUsed.inc(1);
+      client.activeCommands.inc(1);
       await runner.run(interaction, client);
-      client.activeCommands.dec();
+      client.activeCommands.dec(1);
     } catch (err) {
       console.error(err);
-      client.activeCommands.dec();
-      client.erroredCommands.inc();
+      client.activeCommands.dec(1);
+      client.erroredCommands.inc(1);
       if (interaction && !interaction.replied && !interaction.deferred)
         interaction.reply({ content: "There was an error running this command", ephemeral: true });
     }
@@ -221,14 +226,14 @@ export default class CommandManager {
     if (!command) throw `No command matching ${commandName} was found`;
 
     try {
-      client.commandsUsed.inc();
-      client.activeCommands.inc();
+      client.commandsUsed.inc(1);
+      client.activeCommands.inc(1);
       await command.run(interaction, client);
-      client.activeCommands.dec();
+      client.activeCommands.dec(1);
     } catch (err) {
       console.error(err);
-      client.activeCommands.dec();
-      client.erroredCommands.inc();
+      client.activeCommands.dec(1);
+      client.erroredCommands.inc(1);
       return interaction.reply({
         content: "There was an error while executing this command",
         ephemeral: true,
@@ -255,14 +260,14 @@ export default class CommandManager {
         return runner.autocomplete(interaction, client);
       }
 
-      client.commandsUsed.inc();
-      client.activeCommands.inc();
+      client.commandsUsed.inc(1);
+      client.activeCommands.inc(1);
       await runner.run(interaction, client);
-      client.activeCommands.dec();
+      client.activeCommands.dec(1);
     } catch (err) {
       console.error(err);
-      client.activeCommands.dec();
-      client.erroredCommands.inc();
+      client.activeCommands.dec(1);
+      client.erroredCommands.inc(1);
     }
   }
 }

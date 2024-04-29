@@ -2,10 +2,15 @@ import path from "path";
 import fs from "node:fs";
 import fsPromise from "node:fs/promises";
 import { Collection } from "discord.js";
-import Modifiers from "./ConsoleText";
+import Modifiers from "./ConsoleText.js";
 import { DateTime } from "luxon";
-import ExtendedClient from "./Client";
-import { dynamicImport } from "./general";
+import ExtendedClient from "./Client.js";
+import { dynamicImport } from "./general.js";
+
+const __dirname = (() => {
+  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
+  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
+})();
 
 const log = (message: string) => {
   console.log(
@@ -63,7 +68,10 @@ async function registerSubCommands(client: ExtendedClient, dir = "../subcommands
 
         for (const group of subCommand.groups) {
           for (const command of group.subCommands) {
-            const SubCommand = await dynamicImport(path.join(folderPath, group.name, command));
+            const subFile = path.join(folderPath, group.name, command + ".js");
+            const SubCommand = await dynamicImport(
+              fs.existsSync(subFile) ? subFile : path.join(folderPath, group.name, command + ".ts")
+            );
             let subCommandGroupMap = subCommand.groupCommands.get(group.name);
             if (subCommandGroupMap)
               subCommandGroupMap.set(command, new SubCommand(file, group.name, command));

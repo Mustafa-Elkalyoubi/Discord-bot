@@ -1,12 +1,18 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, codeBlock } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
+import { BaseCommand } from "../utils/BaseCommand.js";
 import ytdl from "ytdl-core";
 import { DateTime, Duration } from "luxon";
 import ffmpeg from "fluent-ffmpeg";
 import type internal from "stream";
 import fs from "node:fs";
+import path from "node:path";
 
 const FORMATS = ["mp4", "mp3"] as const;
+
+const __dirname = (() => {
+  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
+  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
+})();
 
 export default class Command extends BaseCommand {
   constructor() {

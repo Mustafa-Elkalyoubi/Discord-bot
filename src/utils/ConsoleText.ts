@@ -28,4 +28,4 @@ Object.keys(Modifiers).forEach((key) => {
   Modifiers[key as keyof typeof Modifiers] = ESC + Modifiers[key as keyof typeof Modifiers];
 });
 
-export = Modifiers;
+export default Modifiers;

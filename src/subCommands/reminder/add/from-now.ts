@@ -1,7 +1,7 @@
-import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner";
+import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner.js";
 import { DateTime } from "luxon";
 import { ChatInputCommandInteraction } from "discord.js";
-import ExtendedClient from "../../../utils/Client";
+import ExtendedClient from "../../../utils/Client.js";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {

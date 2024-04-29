@@ -1,5 +1,5 @@
 import { Events, MessageReaction, User } from "discord.js";
-import ExtendedClient from "../../utils/Client";
+import ExtendedClient from "../../utils/Client.js";
 
 export default {
   name: Events.MessageReactionAdd,

@@ -3,8 +3,8 @@ import {
   ChatInputCommandInteraction,
   AutocompleteInteraction,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
-import ExtendedClient from "../utils/Client";
+import { BaseCommand } from "../utils/BaseCommand.js";
+import ExtendedClient from "../utils/Client.js";
 
 export default class Command extends BaseCommand {
   constructor() {
@@ -210,7 +210,7 @@ export default class Command extends BaseCommand {
     if (queue.idle) await interaction.reply("Waiting for your turn");
     else await interaction.deferReply();
 
-    client.activeCommands.inc();
+    client.activeCommands.inc(1);
     queue.add({
       interaction,
       addDetailLora,

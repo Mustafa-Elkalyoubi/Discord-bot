@@ -1,5 +1,4 @@
 import { EventEmitter } from "events";
-import TypedEventEmitter from "typed-emitter";
 import { nanoid } from "nanoid";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

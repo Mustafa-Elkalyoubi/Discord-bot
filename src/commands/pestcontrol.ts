@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
+import { BaseCommand } from "../utils/BaseCommand.js";
 
 enum multipliers {
   melee = 35,

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { ChatInputCommandInteraction } from "discord.js";
-import ExtendedClient from "./Client";
+import ExtendedClient from "./Client.js";
 
 const apiURL = "http://127.0.0.1:7861/sdapi/v1/";
 
@@ -207,7 +207,7 @@ async function generateAIImage({
     });
 
   clearInterval(updater);
-  client.activeCommands.dec();
+  client.activeCommands.dec(1);
 
   if (!res) return;
 

@@ -6,8 +6,13 @@ import {
   RestOrArray,
 } from "discord.js";
 import path from "node:path";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
-import ExtendedClient from "../../utils/Client";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
+import ExtendedClient from "../../utils/Client.js";
+
+const __dirname = (() => {
+  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
+  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
+})();
 
 function capitalizeFirstLetter(str: string) {
   return str[0].toUpperCase() + str.slice(1);
@@ -62,7 +67,14 @@ export default class SubCommand extends BaseSubCommandRunner {
 
     embedFields.push(charField, ...dlcField);
 
-    const perkImagePath = path.join(__dirname, "..", "..", "assets", selectedPerk.image);
+    const perkImagePath = path.join(
+      import.meta.url,
+      "..",
+      "..",
+      "..",
+      "assets",
+      selectedPerk.image
+    );
     const perkImgName = path.basename(perkImagePath);
 
     const embed = new EmbedBuilder()

@@ -8,7 +8,7 @@ import {
   EmbedBuilder,
   ComponentType,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
+import { BaseCommand } from "../utils/BaseCommand.js";
 import { DateTime } from "luxon";
 
 interface pollOptionsObj {

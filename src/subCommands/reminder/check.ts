@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { DateTime } from "luxon";
-import UserData from "../../models/UserData";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
+import UserData from "../../models/UserData.js";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import cronstrue from "cronstrue";
 
 export default class SubCommand extends BaseSubCommandRunner {

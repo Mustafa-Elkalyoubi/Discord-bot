@@ -1,5 +1,5 @@
 import io from "@pm2/io";
-import Counter from "@pm2/io/build/main/utils/metrics/counter";
+import tx2 from "tx2";
 import axios, { AxiosRequestConfig } from "axios";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
@@ -7,15 +7,15 @@ import { DateTime } from "luxon";
 import mongoose from "mongoose";
 import { ChildProcess, spawn } from "node:child_process";
 import psTree from "ps-tree";
-import OsrsItem from "../models/OsrsItem";
-import { OSRSWikiData } from "../types";
-import CommandManager from "./CommandManager";
-import Modifiers from "./ConsoleText";
-import DBDManager from "./DBDManager";
-import generateAIImage from "./GenerateAIImage";
-import "./LuxonAdapter";
-import Queue from "./Queue";
-import ReminderManager from "./ReminderManager";
+import OsrsItem from "../models/OsrsItem.js";
+import { OSRSWikiData } from "../types.js";
+import CommandManager from "./CommandManager.js";
+import Modifiers from "./ConsoleText.js";
+import DBDManager from "./DBDManager.js";
+import generateAIImage from "./GenerateAIImage.js";
+import "chartjs-adapter-luxon";
+import Queue from "./Queue.js";
+import ReminderManager from "./ReminderManager.js";
 
 export default class ExtendedClient extends Client {
   private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
@@ -36,10 +36,10 @@ export default class ExtendedClient extends Client {
   public aiQueue = new Queue(generateAIImage);
   public ownerID: string;
 
-  public messagesLogged: Counter;
-  public commandsUsed: Counter;
-  public activeCommands: Counter;
-  public erroredCommands: Counter;
+  public messagesLogged = tx2.counter("Messages Logged");
+  public commandsUsed = tx2.counter("Commands Used");
+  public activeCommands = tx2.counter("Active Commands");
+  public erroredCommands = tx2.counter("Errored Commands");
 
   constructor(options: ClientOptions, ownerID: string, token: string) {
     super(options);
@@ -65,22 +65,6 @@ export default class ExtendedClient extends Client {
     this.rest.setToken(token);
 
     io.init();
-
-    this.messagesLogged = io.counter({
-      name: "Messages Logged",
-    });
-
-    this.commandsUsed = io.counter({
-      name: "Commands Used",
-    });
-
-    this.activeCommands = io.counter({
-      name: "Active Commands",
-    });
-
-    this.erroredCommands = io.counter({
-      name: "Errored Commands",
-    });
   }
 
   public log(location: string, message: string, color: string = Modifiers.DEFAULT) {

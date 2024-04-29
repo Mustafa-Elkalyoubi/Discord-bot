@@ -1,5 +1,5 @@
-import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner";
+import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand.js";
+import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
 
 type SubCommandGroup = {

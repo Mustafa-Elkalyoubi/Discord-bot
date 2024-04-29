@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import ExtendedClient from "../utils/Client";
+import ExtendedClient from "../utils/Client.js";
 
 const run = (message: Message, args: string[], client: ExtendedClient) => {
   const command = client.commandManager.getMessageCommand(args[0]);

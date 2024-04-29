@@ -1,8 +1,7 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand";
 import axios from "axios";
-import path from "node:path";
-import fs from "node:fs";
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import worlds from "../data/osrsWorlds.js";
+import { BaseCommand } from "../utils/BaseCommand.js";
 
 interface TOGData {
   world_number: number;
@@ -26,10 +25,6 @@ export default class Command extends BaseCommand {
 
   async run(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const worldPath = path.join(__dirname, "..", "data", "osrsWorlds.json");
-    const worlds: { [k: string]: "UK" | "US" | "DE" | "AU" } = await JSON.parse(
-      fs.readFileSync(worldPath, "utf-8")
-    );
     const res = await axios.get<TOGData[]>(apiUrl, {
       headers: { "User-Agent": "Discord Bot - birbkiwi" },
     });
@@ -60,7 +55,9 @@ export default class Command extends BaseCommand {
       .setImage("https://oldschool.runescape.wiki/images/Tears_of_Guthix_%28minigame%29.png")
       .addFields(
         bestWorlds.flatMap((data) => ({
-          name: `W${data.world_number.toString()} ${worlds[data.world_number.toString()]}`,
+          name: `W${data.world_number.toString()} ${
+            worlds[data.world_number.toString() as keyof typeof worlds]
+          }`,
           value: `• Order: **${data.stream_order}**\n• Hits: \`${data.hits}\``,
           inline: true,
         }))

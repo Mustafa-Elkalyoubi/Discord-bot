@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { GuildTextBasedChannel } from "discord.js";
-import Misc from "../models/Misc";
-import ExtendedClient from "./Client";
+import Misc from "../models/Misc.js";
+import ExtendedClient from "./Client.js";
 
 export const fineChannel = "852270452142899213"; // kiwi
 // export const fineChannel = "515209238566404116"; // dev

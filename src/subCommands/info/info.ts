@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand";
+import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand.js";
 
 export default class BaseSubCommand extends BaseSlashSubCommand {
   constructor() {

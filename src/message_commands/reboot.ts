@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import ExtendedClient from "../utils/Client";
-import { saveLastMessageID } from "../utils/FineHelper";
+import ExtendedClient from "../utils/Client.js";
+import { saveLastMessageID } from "../utils/FineHelper.js";
 
 const run = async (message: Message, client: ExtendedClient) => {
   const msg = await message.channel.send("Rebooting...");

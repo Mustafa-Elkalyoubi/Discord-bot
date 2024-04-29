@@ -1,15 +1,15 @@
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { Events, Message } from "discord.js";
-import UserData from "../models/UserData";
-import ExtendedClient from "../utils/Client";
-import Modifiers from "../utils/ConsoleText";
-import { beautifyNumber, calcFine, fineChannel, fineReaction } from "../utils/FineHelper";
+import UserData from "../models/UserData.js";
+import ExtendedClient from "../utils/Client.js";
+import Modifiers from "../utils/ConsoleText.js";
+import { beautifyNumber, calcFine, fineChannel, fineReaction } from "../utils/FineHelper.js";
 
 export default {
   name: Events.MessageCreate,
   async run(message: Message, client: ExtendedClient) {
     const { DM_CHANNEL, PREFIX } = process.env;
-    client.messagesLogged.inc();
+    client.messagesLogged.inc(1);
 
     const attachments = message.attachments;
 

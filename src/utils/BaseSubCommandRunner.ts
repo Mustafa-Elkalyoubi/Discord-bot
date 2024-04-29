@@ -1,4 +1,4 @@
-import BaseSlashSubCommand from "./BaseSlashSubCommand";
+import BaseSlashSubCommand from "./BaseSlashSubCommand.js";
 type SubCommandGroup = {
   name: string;
   subcommands: Array<string>;
