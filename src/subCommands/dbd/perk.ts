@@ -67,14 +67,7 @@ export default class SubCommand extends BaseSubCommandRunner {
 
     embedFields.push(charField, ...dlcField);
 
-    const perkImagePath = path.join(
-      import.meta.url,
-      "..",
-      "..",
-      "..",
-      "assets",
-      selectedPerk.image
-    );
+    const perkImagePath = path.join(__dirname, "..", "..", "assets", selectedPerk.image);
     const perkImgName = path.basename(perkImagePath);
 
     const embed = new EmbedBuilder()
