@@ -4,7 +4,6 @@ import fs from "node:fs";
 import fsPromise from "node:fs/promises";
 import path from "node:path";
 import ExtendedClient from "./utils/Client.js";
-import { saveLastMessageID } from "./utils/FineHelper.js";
 import {
   registerCommands,
   registerContextCommands,
@@ -85,13 +84,5 @@ async function registerJSONs(client: ExtendedClient) {
 }
 
 registerJSONs(client);
-
-["SIGINT", "SIGTERM", "SIGQUIT"].forEach((signal) =>
-  process.on(signal, async () => {
-    await saveLastMessageID(client);
-
-    process.exit();
-  })
-);
 
 client.login(DISCORD_TOKEN);

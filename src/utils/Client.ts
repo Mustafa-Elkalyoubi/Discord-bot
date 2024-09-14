@@ -8,14 +8,14 @@ import mongoose from "mongoose";
 import { ChildProcess, spawn } from "node:child_process";
 import psTree from "ps-tree";
 import OsrsItem from "../models/OsrsItem.js";
-import { OSRSWikiData } from "../types.js";
-import CommandManager from "./CommandManager.js";
+import CommandManager from "./managers/CommandManager.js";
 import Modifiers from "./ConsoleText.js";
-import DBDManager from "./DBDManager.js";
+import DBDManager from "./managers/DBDManager.js";
 import generateAIImage from "./GenerateAIImage.js";
 import "chartjs-adapter-luxon";
 import Queue from "./Queue.js";
-import ReminderManager from "./ReminderManager.js";
+import ReminderManager from "./managers/ReminderManager.js";
+import SteamManager from "./managers/SteamManager.js";
 
 export default class ExtendedClient extends Client {
   private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
@@ -31,6 +31,7 @@ export default class ExtendedClient extends Client {
   public dbd: DBDManager;
   public reminders: ReminderManager;
   public commandManager: CommandManager;
+  public steam: SteamManager;
 
   public aiProcess: ChildProcess | null = null;
   public aiQueue = new Queue(generateAIImage);
@@ -61,6 +62,7 @@ export default class ExtendedClient extends Client {
     this.dbd = new DBDManager();
     this.reminders = new ReminderManager(this);
     this.commandManager = new CommandManager(this, ownerID);
+    this.steam = new SteamManager();
 
     this.rest.setToken(token);
 

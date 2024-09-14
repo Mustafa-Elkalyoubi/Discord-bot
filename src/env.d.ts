@@ -10,6 +10,7 @@ declare global {
       PREFIX: string;
       DM_CHANNEL: string;
       TEST_GUILD: string;
+      STEAM_KEY: string;
     }
   }
 }

@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import { GuildTextBasedChannel } from "discord.js";
-import Misc from "../models/Misc.js";
+import { GuildTextBasedChannel, Message } from "discord.js";
+import fs from "node:fs/promises";
 import ExtendedClient from "./Client.js";
+import path from "node:path";
 
 export const fineChannel = "852270452142899213"; // kiwi
 // export const fineChannel = "515209238566404116"; // dev
@@ -37,23 +38,20 @@ export const calcFine = (current: BigNumber, cap: BigNumber) => {
   return randomAmount.plus(current).isGreaterThanOrEqualTo(cap) ? cap.minus(current) : randomAmount;
 };
 
-export const saveLastMessageID = async (
-  client: ExtendedClient,
-  reboot?: { time: number; channelID: string; messageID: string; shouldMessage: boolean }
-) => {
-  console.log("Saving last message...");
-  const fineChannel = getFineChannel(client);
-  const lastMessageID = (await fineChannel).lastMessageId!;
+const __dirname = (() => {
+  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
+  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
+})();
+const lastMessageFilePath = path.join(__dirname, "..", "data", "lastMessage.txt");
 
-  let misc = await Misc.findOne();
+export const saveMessage = async (message: Message) => {
+  return fs
+    .writeFile(lastMessageFilePath, message.id, { encoding: "utf-8", flag: "w" })
+    .catch((e) => console.error(`Failed to save message\n`, e));
+};
 
-  if (!misc) misc = new Misc();
-
-  misc.lastMessageID = lastMessageID;
-  misc.shouldUpdateItems = false;
-  if (reboot) misc.reboot = reboot;
-
-  await misc.save();
+export const getLastMessageID = async () => {
+  return fs.readFile(lastMessageFilePath, { encoding: "utf-8" }).catch(() => null);
 };
 
 export const getFineChannel = (client: ExtendedClient) =>
