@@ -9,16 +9,9 @@ import fs from "node:fs";
 
 import { DateTime } from "luxon";
 import path from "path";
-import type {
-  BaseSubCommand,
-  Command,
-  ContextCommand,
-  SubCommand,
-  messageCommandProps,
-} from "../types.js";
-import ExtendedClient from "./Client.js";
-import Modifiers from "./ConsoleText.js";
-import { dynamicImport } from "./general.js";
+import ExtendedClient from "../Client.js";
+import Modifiers from "../ConsoleText.js";
+import { dynamicImport } from "../general.js";
 
 const __dirname = (() => {
   const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
@@ -43,7 +36,7 @@ export default class CommandManager {
     this.#ownerID = ownerID;
     this.#client = client;
 
-    const messagesPath = path.join(__dirname, "..", "message_commands");
+    const messagesPath = path.join(__dirname, "..", "..", "message_commands");
     const messagesFiles = fs.readdirSync(messagesPath);
     messagesFiles.forEach(async (file, index) => {
       const props = await dynamicImport(path.join(messagesPath, file));
@@ -108,7 +101,7 @@ export default class CommandManager {
   }
 
   async reload(command: string) {
-    const messagesPath = path.join(__dirname, "..", "message_commands");
+    const messagesPath = path.join(__dirname, "..", "..", "message_commands");
 
     const cmdPath = path.join(messagesPath, command);
     const cmd = await dynamicImport(cmdPath);

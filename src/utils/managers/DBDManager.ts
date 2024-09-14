@@ -1,8 +1,7 @@
 import axios from "axios";
 
-import DbdCharacter, { IDbdCharacter } from "../models/DbdCharacter.js";
-import DbdPerk, { IDbdPerk } from "../models/DbdPerk.js";
-import type { DBDCharacter, DBDDLC, DBDPerk, DBDPower, DbdRole } from "../types.js";
+import DbdCharacter, { IDbdCharacter } from "../../models/DbdCharacter.js";
+import DbdPerk, { IDbdPerk } from "../../models/DbdPerk.js";
 import { Types } from "mongoose";
 
 interface ObjTunables {

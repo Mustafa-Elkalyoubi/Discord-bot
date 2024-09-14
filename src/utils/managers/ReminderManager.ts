@@ -4,9 +4,8 @@ import { RecurrenceRule, scheduleJob, scheduledJobs } from "node-schedule";
 import cronstrue from "cronstrue";
 import mongoose, { Types } from "mongoose";
 
-import UserData from "../models/UserData.js";
-import type { ReminderDetails } from "../types.js";
-import ExtendedClient from "./Client.js";
+import UserData from "../../models/UserData.js";
+import ExtendedClient from "../Client.js";
 
 export default class ReminderManager {
   #client: ExtendedClient;
