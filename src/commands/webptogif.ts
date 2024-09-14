@@ -4,7 +4,7 @@ import axios from "axios";
 import sharp from "sharp";
 import { randomUUID } from "node:crypto";
 
-export default class Command extends BaseCommand {
+export default class WEBPToGIF extends BaseCommand implements Command {
   constructor() {
     super("webptogif");
   }

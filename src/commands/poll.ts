@@ -16,7 +16,7 @@ interface pollOptionsObj {
   value: number;
 }
 
-export default class Command extends BaseCommand {
+export default class Poll extends BaseCommand implements Command {
   constructor() {
     super("poll");
   }

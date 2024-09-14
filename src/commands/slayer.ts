@@ -7,7 +7,7 @@ import {
 import OsrsSlayer from "../models/OsrsSlayer.js";
 import { BaseCommand } from "../utils/BaseCommand.js";
 
-export default class Command extends BaseCommand {
+export default class Slayer extends BaseCommand implements Command {
   constructor() {
     super("slayer");
   }

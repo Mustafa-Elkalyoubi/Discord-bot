@@ -5,7 +5,13 @@ import Misc, { IMisc } from "../models/Misc.js";
 import UserData from "../models/UserData.js";
 import ExtendedClient from "../utils/Client.js";
 import Modifiers from "../utils/ConsoleText.js";
-import { beautifyNumber, calcFine, getFineChannel } from "../utils/FineHelper.js";
+import {
+  beautifyNumber,
+  calcFine,
+  getFineChannel,
+  getLastMessageID,
+  saveMessage as saveMessageID,
+} from "../utils/FineHelper.js";
 
 export default {
   name: Events.ClientReady,
@@ -31,7 +37,6 @@ export default {
           messageID: "",
           shouldMessage: false,
         },
-        lastMessageID: "",
       }).save();
 
       return;
@@ -39,7 +44,9 @@ export default {
 
     if (misc.reboot && misc.reboot.shouldMessage) await editRebootMessage(misc, client);
 
-    handleFines(client, misc.lastMessageID);
+    const lastMessageID = await getLastMessageID();
+
+    handleFines(client, lastMessageID);
   },
 };
 
@@ -61,7 +68,7 @@ async function editRebootMessage(
   misc.save();
 }
 
-async function handleFines(client: ExtendedClient, lastMessageID: Snowflake) {
+async function handleFines(client: ExtendedClient, lastMessageID: Snowflake | null) {
   if (!lastMessageID) return;
 
   const fineChannel = await getFineChannel(client);
@@ -118,6 +125,8 @@ async function handleFines(client: ExtendedClient, lastMessageID: Snowflake) {
 
   if (finesToAddUp.length < 1) return;
 
+  let reply;
+
   if (finesToAddUp.length === 1) {
     const [onlyGuyID, onlyGuyFine] = Object.entries(finesToAddUp.fines)[0];
 
@@ -127,7 +136,7 @@ async function handleFines(client: ExtendedClient, lastMessageID: Snowflake) {
     const capReached = onlyGuy.fines.capReached;
     const fineAmount = beautifyNumber(BigNumber(onlyGuy.fines.fineAmount, 35));
 
-    fineChannel.send(
+    reply = await fineChannel.send(
       `You shouldnt be sending 🥹 even while I'm gone, ${
         Object.values(finesToAddUp.fines)[0].username
       }\nYou've earned ${amount} fines${
@@ -150,8 +159,10 @@ async function handleFines(client: ExtendedClient, lastMessageID: Snowflake) {
       );
     }
 
-    fineChannel.send(codeBlock(msgs.join("\n")));
+    reply = await fineChannel.send(codeBlock(msgs.join("\n")));
   }
+
+  saveMessageID(reply);
 
   await UserData.bulkWrite(
     users.map((u) => ({

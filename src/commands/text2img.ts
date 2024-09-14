@@ -6,7 +6,7 @@ import {
 import { BaseCommand } from "../utils/BaseCommand.js";
 import ExtendedClient from "../utils/Client.js";
 
-export default class Command extends BaseCommand {
+export default class Text2Img extends BaseCommand implements Command {
   constructor() {
     super("text2img", true);
   }

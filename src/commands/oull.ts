@@ -10,7 +10,7 @@ import {
 } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand.js";
 
-export default class Command extends BaseCommand {
+export default class Oull extends BaseCommand implements Command {
   constructor() {
     super("oull");
   }

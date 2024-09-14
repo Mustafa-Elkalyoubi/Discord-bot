@@ -33,7 +33,7 @@ const calcPointsUntilMax = (level: number, type: keyof typeof multipliers, multi
   return pointsNeeded;
 };
 
-export default class Command extends BaseCommand {
+export default class PestControl extends BaseCommand implements Command {
   constructor() {
     super("pestcontrol", false);
   }

@@ -1,16 +1,21 @@
 import { Message } from "discord.js";
-import ExtendedClient from "../utils/Client.js";
-import { saveLastMessageID } from "../utils/FineHelper.js";
+import Misc from "../models/Misc.js";
 
-const run = async (message: Message, client: ExtendedClient) => {
+const run = async (message: Message) => {
   const msg = await message.channel.send("Rebooting...");
 
-  await saveLastMessageID(client, {
-    time: Date.now(),
-    channelID: msg.channel.id,
-    messageID: msg.id,
-    shouldMessage: true,
-  });
+  let misc = await Misc.findOne();
+
+  if (!misc)
+    misc = new Misc({
+      reboot: {
+        time: Date.now(),
+        channelID: msg.channel.id,
+        messageID: msg.id,
+        shouldMessage: true,
+      },
+      shouldUpdateItems: false,
+    });
 
   process.exit(1);
 };

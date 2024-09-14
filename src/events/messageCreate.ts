@@ -3,7 +3,13 @@ import { Events, Message } from "discord.js";
 import UserData from "../models/UserData.js";
 import ExtendedClient from "../utils/Client.js";
 import Modifiers from "../utils/ConsoleText.js";
-import { beautifyNumber, calcFine, fineChannel, fineReaction } from "../utils/FineHelper.js";
+import {
+  beautifyNumber,
+  calcFine,
+  fineChannel,
+  fineReaction,
+  saveMessage,
+} from "../utils/FineHelper.js";
 
 export default {
   name: Events.MessageCreate,
@@ -57,6 +63,11 @@ export default {
 async function forFun(message: Message) {
   if (message.channel.id !== fineChannel) return;
 
+  saveMessage(message);
+
+  if (!message.content.includes("🥹") && !message.content.includes("<:waaah:1016423553320628284>"))
+    return;
+
   const authorID = message.author.id;
 
   let user = await UserData.findOne({ userID: authorID });
@@ -101,6 +112,8 @@ async function forFun(message: Message) {
     user.username = message.author.username;
     const prevFine = fines.fineAmount;
 
+    const capReachedCopy = fines.capReached;
+
     if (fines.capReached)
       fines.fineCap = BigNumber(fines.fineCap, 35).multipliedBy(2, 10).toString(35);
     fines.fineAmount = "0";
@@ -110,7 +123,7 @@ async function forFun(message: Message) {
 
     return message.reply(
       `Your fines have all been paid (**${beautifyNumber(BigNumber(prevFine, 35))}**)${
-        fines.capReached
+        capReachedCopy
           ? `, fine cap has increased to ${beautifyNumber(BigNumber(user.fines.fineCap, 35))}`
           : ``
       }`

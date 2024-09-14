@@ -10,7 +10,6 @@ export interface IMisc {
     shouldMessage: boolean;
   };
   shouldUpdateItems: boolean;
-  lastMessageID: string;
 }
 
 const MiscSchema = new Schema<IMisc>(
@@ -22,7 +21,6 @@ const MiscSchema = new Schema<IMisc>(
       shouldMessage: Boolean,
     },
     shouldUpdateItems: Boolean,
-    lastMessageID: String,
   },
   { timestamps: false, collection: "misc" }
 );

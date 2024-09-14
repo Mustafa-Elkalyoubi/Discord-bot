@@ -89,13 +89,14 @@ export default class Command extends BaseCommand {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
+    const _itemName = interaction.options.getString("item", true);
     const item = await OsrsItem.findOne({
-      name: interaction.options.getString("item")!,
+      name: _itemName,
     });
 
     if (!item)
       return interaction.reply({
-        content: `Item [${item}] was not found (make sure you select the item from the list)`,
+        content: `Item [${_itemName}] was not found (make sure you select the item from the list)`,
         ephemeral: true,
       });
 

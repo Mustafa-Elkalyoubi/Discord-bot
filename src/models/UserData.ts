@@ -1,6 +1,5 @@
 import type { Snowflake } from "discord.js";
 import mongoose from "mongoose";
-import type { ReminderDetails } from "../types.js";
 
 const Schema = mongoose.Schema;
 

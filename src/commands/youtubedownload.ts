@@ -14,7 +14,7 @@ const __dirname = (() => {
   return path.resolve(process.platform == "win32" ? x.substr(1) : x);
 })();
 
-export default class Command extends BaseCommand {
+export default class YTDownloader extends BaseCommand implements Command {
   constructor() {
     super("youtubedownloader");
   }
@@ -174,32 +174,22 @@ export default class Command extends BaseCommand {
               .audioCodec("copy")
               .seek(startSeconds)
               .setDuration(endSeconds - startSeconds)
-              .on(
-                "progress",
-                (progress: {
-                  frames: number;
-                  currentFps: number;
-                  currentKbps: number;
-                  targetSize: number;
-                  timemark: string;
-                  percent: number;
-                }) => {
-                  const [hours, minutes, seconds] = progress.timemark.split(":");
-                  tracker.merged = {
-                    frame: progress.frames,
-                    fps: progress.currentFps,
-                    percentage:
-                      parseFloat(
-                        Duration.fromObject({
-                          hours: parseInt(hours),
-                          minutes: parseInt(minutes),
-                          seconds: parseFloat(seconds),
-                        }).toFormat("s")
-                      ) /
-                      (endSeconds - startSeconds),
-                  };
-                }
-              )
+              .on("progress", ({ frames, currentFps, timemark }) => {
+                const [hours, minutes, seconds] = timemark.split(":");
+                tracker.merged = {
+                  frame: frames,
+                  fps: currentFps,
+                  percentage:
+                    parseFloat(
+                      Duration.fromObject({
+                        hours: parseInt(hours),
+                        minutes: parseInt(minutes),
+                        seconds: parseFloat(seconds),
+                      }).toFormat("s")
+                    ) /
+                    (endSeconds - startSeconds),
+                };
+              })
               .on("end", async () => {
                 fs.unlinkSync(`${tempFileName}.mp3`);
                 fs.unlinkSync(`${tempFileName}.mp4`);

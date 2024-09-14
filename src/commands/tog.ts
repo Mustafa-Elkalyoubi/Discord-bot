@@ -11,7 +11,7 @@ interface TOGData {
 
 const apiUrl = "https://www.togcrowdsourcing.com/worldinfo";
 
-export default class Command extends BaseCommand {
+export default class TearsOfGuthix extends BaseCommand implements Command {
   constructor() {
     super("tog");
   }

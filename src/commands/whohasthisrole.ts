@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { BaseCommand } from "../utils/BaseCommand.js";
 
-export default class Command extends BaseCommand {
+export default class WHTR extends BaseCommand implements Command {
   constructor() {
     super("whohasthisrole", false);
   }
