@@ -1,9 +1,5 @@
-Archive
-dist
+node_modules/
+build/
+coverage/
+.local/
 .env
-Open Blitz dumbass
-node_modules
-src/config.json
-src/assets
-src/data/dbd*
-tmp
