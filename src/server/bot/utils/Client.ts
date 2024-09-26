@@ -10,11 +10,12 @@ import CommandManager from "./managers/CommandManager.js";
 import Modifiers from "./ConsoleText.js";
 import DBDManager from "./managers/DBDManager.js";
 import generateAIImage from "./GenerateAIImage.js";
-import "chartjs-adapter-luxon";
 import Queue from "./Queue.js";
 import ReminderManager from "./managers/ReminderManager.js";
 import SteamManager from "./managers/SteamManager.js";
 import DataCollector from "@/server/DataCollector/DataCollector.js";
+
+import "@/server/bot/utils/DateAdapter.js";
 
 class ExtendedClient extends Client {
   private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
@@ -53,8 +54,9 @@ class ExtendedClient extends Client {
     });
     this.db = mongoose.connection;
 
-    // this.db.once("open", async () => {
-    // });
+    this.db.once("open", async () => {
+      console.log("connected yippeeeee");
+    });
 
     this.db.on("error", (err) => {
       console.error(err);

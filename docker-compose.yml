@@ -21,6 +21,20 @@ services:
       target: prod
     networks:
       - boilerplate-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    networks:
+      - boilerplate-network
+    ports:
+      - 27017:27017
+    volumes:
+      - dbdata6:/data/db
+
+volumes:
+  dbdata6:
 
 networks:
   boilerplate-network:

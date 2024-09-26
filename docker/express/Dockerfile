@@ -1,52 +1,50 @@
-# Base image optionally from arg
 ARG EXPRESS_BASE_IMAGE=node:20.11.0-alpine
 
-# # # # # # # #
-# BASE image  #
-# # # # # # # #
-FROM $EXPRESS_BASE_IMAGE as base
+FROM $EXPRESS_BASE_IMAGE AS base
 
-RUN mkdir /serversrc
+COPY . /serversrc
 WORKDIR /serversrc
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-# # # # # # # # #
-# BUILDER image #
-# # # # # # # # #
-FROM base AS builder
+RUN apk add --update --no-cache \
+    make \
+    g++ \
+    jpeg-dev \
+    cairo-dev \
+    giflib-dev \
+    pango-dev \
+    libtool \
+    autoconf \
+    automake
 
-COPY package*.json .
-RUN npm install
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run api:build
 
-COPY . /serversrc
-RUN npm run api:build
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-# # # # # # # #
-# PROD image  #
-# # # # # # # #
-FROM $EXPRESS_BASE_IMAGE AS prod
+FROM base AS prod
 
-# Copy build file
-COPY --from=builder /serversrc/.local/express/dist/api.js /
+COPY --from=build /serversrc/.local/express/dist/api.js /serversrc/.local/express/dist/api.js
+COPY --from=prod-deps /serversrc/node_modules /serversrc/node_modules
 
-# This image is intended to be run with docker-compose. See docker-compose.dev.yml for necessary
-# environment variables
-CMD "node" "/api.js"
+CMD ["pnpm", "start"]
+
+# CMD "node" "/serversrc/.local/express/dist/api.js"
 
 
-# # # # # # #
-# DEV image #
-# # # # # # #
-FROM base AS dev
+# FROM base AS dev
 
-COPY . /serversrc
+# COPY . /serversrc
 
-COPY /docker/express/docker-dev-entrypoint.sh /docker-entrypoint.sh
-RUN dos2unix /docker-entrypoint.sh && \
-  chmod +x /docker-entrypoint.sh
+# COPY /docker/express/docker-dev-entrypoint.sh /docker-entrypoint.sh
+# RUN dos2unix /docker-entrypoint.sh && \
+#   chmod +x /docker-entrypoint.sh
   
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+# ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
-# This image is intended to be run with docker-compose. See docker-compose.dev.yml for necessary
-# environment variables
-CMD ["npm", "run", "start"]
+# CMD ["npm", "run", "start"]

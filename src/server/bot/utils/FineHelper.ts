@@ -3,6 +3,11 @@ import { GuildTextBasedChannel, Message } from "discord.js";
 import fs from "node:fs/promises";
 import ExtendedClient from "./Client.js";
 import path from "node:path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const fineChannel = "852270452142899213"; // kiwi
 // export const fineChannel = "515209238566404116"; // dev

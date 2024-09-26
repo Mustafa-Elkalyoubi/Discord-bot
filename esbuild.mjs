@@ -1,5 +1,6 @@
 import { context } from "esbuild";
 import { rmSync } from "fs";
+import { nodeExternalsPlugin } from "esbuild-node-externals";
 
 const args = process.argv.slice(2);
 const isWatch = args.includes("--watch");
@@ -12,12 +13,14 @@ const ctx = await context({
   entryPoints: ["src/server/express/server.ts"],
   bundle: true,
   sourcemap: true,
-  format: "cjs",
+  minify: true,
+  format: "esm",
   platform: "node",
   target: "node20",
-  external: ["chart.js"],
+  external: [],
   outfile: "./.local/express/dist/api.js",
   tsconfig: "./tsconfig.json",
+  plugins: [nodeExternalsPlugin()],
 }).catch(() => process.exit(1));
 
 if (isWatch) {

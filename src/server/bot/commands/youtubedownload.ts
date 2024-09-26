@@ -5,6 +5,11 @@ import { DateTime, Duration } from "luxon";
 import ffmpeg from "fluent-ffmpeg";
 import type internal from "stream";
 import fs from "node:fs";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const FORMATS = ["mp4", "mp3"] as const;
 

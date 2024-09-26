@@ -1,12 +1,20 @@
 import { InteractionContextType, SlashCommandBuilder } from "discord.js";
 import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand.js";
-import PerkSubCommand from "./perk.js";
-import KillerSubCommand from "./killer.js";
 import ShrineSubCommand from "./shrine.js";
+// import PerkSubCommand from "./perk.js";
+// import KillerSubCommand from "./killer.js";
 
 export default class DBDMainCommand extends BaseSlashSubCommand implements BaseSubCommand {
   constructor() {
-    super("dbd", [], [PerkSubCommand, KillerSubCommand, ShrineSubCommand]);
+    super(
+      "dbd",
+      [],
+      [
+        // PerkSubCommand,
+        // KillerSubCommand,
+        ShrineSubCommand,
+      ]
+    );
   }
 
   getSlashCommandJSON() {
