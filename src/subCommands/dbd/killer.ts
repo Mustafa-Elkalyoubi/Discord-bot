@@ -1,12 +1,7 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import path from "node:path";
 import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import ExtendedClient from "../../utils/Client.js";
-
-const __dirname = (() => {
-  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
-  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
-})();
+import path from "path";
 
 export default class SubCommand extends BaseSubCommandRunner {
   constructor(baseCommand: string, group: string, name: string) {
@@ -21,27 +16,27 @@ export default class SubCommand extends BaseSubCommandRunner {
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {
-    const killer = await client.dbd.findCharacterByName(interaction.options.getString("killer")!);
+    const killer = await client.dbd.findCharacterByName(
+      interaction.options.getString("killer", true)
+    );
 
     if (!killer || !killer.item)
       return interaction.reply({ content: "Killer not found in db", ephemeral: true });
 
-    const assetPath = path.join(__dirname, "..", "..", "assets");
-    const killerImgPath = path.join(assetPath, killer.image);
-    const killerImgName = path.basename(killerImgPath);
+    const killerIMGURL = `${client.dbd.assetURL}${killer.image}`;
+    const powerIMGURL = `${client.dbd.assetURL}${killer.item.image}`;
 
-    const powerImgPath = path.join(assetPath, killer.item.image);
-    const powerImgName = path.basename(powerImgPath);
+    console.log(killerIMGURL);
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
       .setColor("Random")
       .setTitle(killer.name)
       .setDescription(`__**${killer.item.name}**__\n\n${killer.item.description}`)
-      .setImage(`attachment://${powerImgName}`)
-      .setThumbnail(`attachment://${killerImgName}`)
+      .setImage(killerIMGURL)
+      .setThumbnail(powerIMGURL)
       .setTimestamp();
 
-    interaction.reply({ embeds: [embed], files: [killerImgPath, powerImgPath] });
+    interaction.reply({ embeds: [embed] });
   }
 }

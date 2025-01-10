@@ -45,7 +45,7 @@ export default class ExtendedClient extends Client {
   constructor(options: ClientOptions, ownerID: string, token: string) {
     super(options);
 
-    mongoose.connect("mongodb://localhost:27017", {
+    mongoose.connect("mongodb://127.0.0.1:27017", {
       appName: "discord-bot",
       dbName: "discord-bot",
     });

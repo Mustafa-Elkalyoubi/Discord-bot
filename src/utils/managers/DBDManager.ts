@@ -45,6 +45,8 @@ type TCharacterObject = IDbdCharacter & {
 const dbdApiUrl = "https://dbd.tricky.lol/api/";
 
 export default class DBDManager {
+  assetURL = "https://cdn.bloodygang.com/botfiles/DBDStats/";
+
   #sanitizeHTML = (str: string) =>
     str
       .replace(/<b>(.*?)<\/b>/g, "**$1**")
@@ -190,7 +192,7 @@ export default class DBDManager {
         return (
           await DbdCharacter.find({
             name: { $regex: name, $options: "i" },
-            role,
+            ...(role && { role }),
           })
             .sort({ name: "asc" })
             .limit(limit)
@@ -200,7 +202,7 @@ export default class DBDManager {
           (
             await DbdCharacter.findOne({
               name: { $regex: name, $options: "i" },
-              role,
+              ...(role && { role }),
             })
           )?.toObject() ?? null
         );

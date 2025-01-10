@@ -21,7 +21,7 @@ const __dirname = (() => {
 export default class CommandManager {
   #client: ExtendedClient;
   #commands: Collection<string, Command>;
-  #subCommands: Collection<string, BaseSubCommand>;
+  subCommands: Collection<string, BaseSubCommand>;
   #contextCommands: Collection<string, ContextCommand>;
   #messageCommands: Collection<string, messageCommandProps>;
   #aliases: Collection<string, string>;
@@ -29,7 +29,7 @@ export default class CommandManager {
 
   constructor(client: ExtendedClient, ownerID: string) {
     this.#commands = new Collection();
-    this.#subCommands = new Collection();
+    this.subCommands = new Collection();
     this.#contextCommands = new Collection();
     this.#messageCommands = new Collection();
     this.#aliases = new Collection();
@@ -57,11 +57,11 @@ export default class CommandManager {
   }
 
   addSubcommand(name: string, cmd: BaseSubCommand) {
-    this.#subCommands.set(name, cmd);
+    this.subCommands.set(name, cmd);
   }
 
   addGroupcommand(groupName: string, commandName: string, cmd: SubCommand) {
-    const subCommandInstance = this.#subCommands.get(groupName);
+    const subCommandInstance = this.subCommands.get(groupName);
     subCommandInstance?.groupCommands.set(commandName, cmd);
   }
 
@@ -73,7 +73,7 @@ export default class CommandManager {
     const allServersCommandJSONs = this.#commands
       .filter((cmd) => cmd.all)
       .map((cmd) => cmd.getSlashCommandJSON());
-    const allServersSubCommandJSONs = this.#subCommands
+    const allServersSubCommandJSONs = this.subCommands
       .filter((cmd) => cmd.all)
       .map((cmd) => cmd.getSlashCommandJSON());
     const allServersContextJSONs = this.#contextCommands
@@ -83,7 +83,7 @@ export default class CommandManager {
     const privateCommandJSONs = this.#commands
       .filter((cmd) => !cmd.all)
       .map((cmd) => cmd.getSlashCommandJSON());
-    const privateSubCommandJSONs = this.#subCommands
+    const privateSubCommandJSONs = this.subCommands
       .filter((cmd) => !cmd.all)
       .map((cmd) => cmd.getSlashCommandJSON());
     const privateContextJSONs = this.#contextCommands
@@ -170,7 +170,7 @@ export default class CommandManager {
     client: ExtendedClient
   ) {
     try {
-      const subCommandInstance = this.#subCommands.get(commandName);
+      const subCommandInstance = this.subCommands.get(commandName);
       if (subCommandInstance == undefined) throw "Could not find main subcommand file somehow";
       const runner = subCommandInstance.groupCommands.get(subCommandName);
       if (runner == undefined) throw "Runner not found";
@@ -242,7 +242,7 @@ export default class CommandManager {
     client: ExtendedClient
   ) {
     try {
-      const subCommandInstance = this.#subCommands.get(commandName);
+      const subCommandInstance = this.subCommands.get(commandName);
       const subCommandGroupInstance = subCommandInstance?.groupCommands.get(subCommandGroup);
       if (subCommandGroupInstance == undefined) throw "Error: SubCommand group not found";
       if (!(subCommandGroupInstance instanceof Collection)) return;
