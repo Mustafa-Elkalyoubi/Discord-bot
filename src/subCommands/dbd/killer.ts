@@ -1,11 +1,26 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import ExtendedClient from "../../utils/Client.js";
-import path from "path";
+import SubCommand from "../../utils/command/SubCommand.js";
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class KillerSubCommand extends SubCommand {
+  constructor() {
+    super("killer");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand
+        .setName("killer")
+        .setDescription("Search for a killer and their power")
+        .addStringOption((option) =>
+          option
+            .setName("killer")
+            .setDescription("the killer whomst've'd power you want to search bozo")
+            .setChoices()
+            .setAutocomplete(true)
+            .setRequired(true)
+        )
+    );
   }
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {

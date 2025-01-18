@@ -1,19 +1,21 @@
-import { SlashCommandBuilder } from "discord.js";
-import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand.js";
+import { InteractionContextType, SlashCommandBuilder } from "discord.js";
+import SubCommandHandler from "../../utils/command/SubCommandHandler.js";
+import UpdateDBD from "./dbd.js";
+import UpdateOSRS from "./osrs.js";
 
-export default class BaseSubCommand extends BaseSlashSubCommand {
+export default class UpdateBaseCommand extends SubCommandHandler {
   constructor() {
-    super("update", [], ["osrs", "dbd"], true);
+    super("update", [], [UpdateDBD, UpdateOSRS], true);
   }
 
   getSlashCommandJSON() {
-    return new SlashCommandBuilder()
+    const builder = new SlashCommandBuilder()
       .setName(this.name)
       .setDescription("dbd commands")
-      .setDMPermission(false)
-      .addSubcommand((subcommand) => subcommand.setName("dbd").setDescription("update dbd perks"))
-      .addSubcommand((subcommand) =>
-        subcommand.setName("osrs").setDescription("update osrs items")
-      );
+      .setContexts([InteractionContextType.Guild]);
+
+    this.addSubCommandJSON(builder);
+
+    return builder.toJSON();
   }
 }

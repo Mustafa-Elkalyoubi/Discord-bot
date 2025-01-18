@@ -25,6 +25,6 @@ const MiscSchema = new Schema<IMisc>(
   { timestamps: false, collection: "misc" }
 );
 
-const Misc = mongoose.model("misc", MiscSchema);
+const Misc = mongoose.models.misc || mongoose.model("misc", MiscSchema);
 
 export default Misc;

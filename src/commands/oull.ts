@@ -1,16 +1,16 @@
 import {
-  ChatInputCommandInteraction,
-  ButtonBuilder,
   ActionRowBuilder,
+  ButtonBuilder,
+  ButtonInteraction,
   ButtonStyle,
+  ChatInputCommandInteraction,
+  ComponentType,
   SlashCommandBuilder,
   codeBlock,
-  ButtonInteraction,
-  ComponentType,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class Oull extends BaseCommand implements Command {
+export default class Oull extends TextCommand {
   constructor() {
     super("oull");
   }
@@ -80,7 +80,7 @@ export default class Oull extends BaseCommand implements Command {
       );
     }
 
-    await interaction.reply({
+    const response = await interaction.reply({
       content: `Was **${this.requiems[a]}** correct in position 2?`,
       components: [
         // @ts-expect-error works but not allowed for some reason
@@ -95,7 +95,7 @@ export default class Oull extends BaseCommand implements Command {
       return interaction.user.id === btnInteraction.user.id;
     };
 
-    const collector = interaction.channel!.createMessageComponentCollector({
+    const collector = response.createMessageComponentCollector({
       componentType: ComponentType.Button,
       filter: filter,
       max: 20,

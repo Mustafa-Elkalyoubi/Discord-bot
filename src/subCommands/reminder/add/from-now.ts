@@ -1,11 +1,28 @@
-import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner.js";
-import { DateTime } from "luxon";
 import { ChatInputCommandInteraction } from "discord.js";
+import { DateTime } from "luxon";
 import ExtendedClient from "../../../utils/Client.js";
+import GroupCommand from "../../../utils/command/GroupCommand.js";
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class AddFromNow extends GroupCommand {
+  constructor() {
+    super("from-now");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandGroupBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand
+        .setName("from-now")
+        .setDescription("Set a reminder in a from-now format (e.g. 5 hours from now)")
+        .addStringOption((option) =>
+          option
+            .setName("message")
+            .setDescription("Set the message that will send at the specified time")
+            .setRequired(true)
+        )
+        .addIntegerOption((option) => option.setName("days").setDescription("Day count"))
+        .addIntegerOption((option) => option.setName("hours").setDescription("Hour count"))
+        .addIntegerOption((option) => option.setName("minutes").setDescription("Minute count"))
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {

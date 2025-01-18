@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class Roll extends BaseCommand implements Command {
+export default class Roll extends TextCommand {
   constructor() {
     super("roll");
   }

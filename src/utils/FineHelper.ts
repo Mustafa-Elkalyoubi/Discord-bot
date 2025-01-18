@@ -38,10 +38,6 @@ export const calcFine = (current: BigNumber, cap: BigNumber) => {
   return randomAmount.plus(current).isGreaterThanOrEqualTo(cap) ? cap.minus(current) : randomAmount;
 };
 
-const __dirname = (() => {
-  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
-  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
-})();
 const lastMessageFilePath = path.join(__dirname, "..", "data", "lastMessage.txt");
 
 export const saveMessage = async (message: Message) => {

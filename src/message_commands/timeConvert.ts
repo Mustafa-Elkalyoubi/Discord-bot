@@ -31,4 +31,6 @@ const help = {
   usage: "~tc h m s",
 };
 
-export default { run, conf, help };
+const TimeConvert: MessageCommand = { run, conf, help };
+
+export default TimeConvert;

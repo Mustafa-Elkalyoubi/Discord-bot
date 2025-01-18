@@ -22,6 +22,6 @@ const SteamAppSchema = new Schema<SteamApp>(
   { timestamps: true, collection: "steamApps" }
 );
 
-const SteamApps = mongoose.model("steamApps", SteamAppSchema);
+const SteamApps = mongoose.models.steamApps || mongoose.model("steamApps", SteamAppSchema);
 
 export default SteamApps;

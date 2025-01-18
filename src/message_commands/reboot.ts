@@ -31,4 +31,6 @@ const help = {
   usage: "reboot",
 };
 
-export default { run, conf, help };
+const Reboot: MessageCommand = { run, conf, help };
+
+export default Reboot;

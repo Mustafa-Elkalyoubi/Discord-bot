@@ -44,6 +44,6 @@ OsrsSlayerSchema.virtual("total").get(function () {
   return sum;
 });
 
-const OsrsSlayer = mongoose.model("osrsSlayer", OsrsSlayerSchema);
+const OsrsSlayer = mongoose.models.osrsSlayer || mongoose.model("osrsSlayer", OsrsSlayerSchema);
 
 export default OsrsSlayer;

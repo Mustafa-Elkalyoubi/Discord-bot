@@ -1,18 +1,18 @@
 import {
-  ContextMenuCommandBuilder,
   ApplicationCommandType,
-  RESTJSONErrorCodes,
+  ContextMenuCommandBuilder,
   MessageContextMenuCommandInteraction,
+  RESTJSONErrorCodes,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import ContextCommand from "../utils/command/ContextCommand.js";
 import { steal7TV } from "../utils/steal7tv.js";
 
-export default class Command extends BaseCommand {
+export default class EmoteSteal extends ContextCommand {
   constructor() {
     super("Emoji Steal");
   }
 
-  getContextCommandJSON() {
+  getSlashCommandJSON() {
     return new ContextMenuCommandBuilder()
       .setName(this.name)
       .setType(ApplicationCommandType.Message)

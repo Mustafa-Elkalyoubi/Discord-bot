@@ -23,6 +23,6 @@ const DbdPerkSchema = new Schema<IDbdPerk>(
   { timestamps: false, collection: "dbdPerks" }
 );
 
-const DbdPerk = mongoose.model("dbdPerks", DbdPerkSchema);
+const DbdPerk = mongoose.models.dbdPerks || mongoose.model("dbdPerks", DbdPerkSchema);
 
 export default DbdPerk;

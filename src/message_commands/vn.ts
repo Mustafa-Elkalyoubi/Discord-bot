@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from "axios";
 import { Message } from "discord.js";
 import fs from "node:fs";
@@ -6,11 +7,6 @@ import path from "node:path";
 const channelID = "622767050359701516";
 const iDontCare =
   "acU6Va9UcSVZzsVw7IU/80s0Kh/pbrTcwmpR9da4mvQejIMykkgo9F2FfeCd235K/atHZtSAmxKeTUgKxAdNVO8PAoZq1cHNQXT/PHthL2sfPZGSdxNgLH0AuJwVeI7QZJ02ke40+HkUcBoDdqGDZeUvPqoIRbE23Kr+sexYYe4dVq+zyCe3ci/6zkMWbVBpCjq8D8ZZEFo/lmPJTkgjwqnqHuf6XT4mJyLNphQjvFH9aRqIZpPoQz1sGwAY2vssQ5mTy5J5muGo+n82b0xFROZwsJpumDsFi4Da/85uWS/YzjY5BdxGac8rgUqm9IKh7E6GHzOGOy0LQIz3O4ntTg==";
-
-const __dirname = (() => {
-  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
-  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
-})();
 
 const run = async (message: Message, args: string[]) => {
   const filePath = path.join(__dirname, "input.ogg");
@@ -103,4 +99,6 @@ const help = {
   usage: "vn",
 };
 
-export default { run, conf, help };
+const VoiceNote: MessageCommand = { run, conf, help };
+
+export default VoiceNote;

@@ -1,12 +1,18 @@
+import cronstrue from "cronstrue";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { DateTime } from "luxon";
 import UserData from "../../models/UserData.js";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
-import cronstrue from "cronstrue";
+import SubCommand from "../../utils/command/SubCommand.js";
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class CheckReminder extends SubCommand {
+  constructor() {
+    super("check");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand.setName("check").setDescription("Check your current reminders")
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction) {

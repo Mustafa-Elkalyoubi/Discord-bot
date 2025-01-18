@@ -1,29 +1,21 @@
 import { SlashCommandBuilder } from "discord.js";
-import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand.js";
+import SubCommandHandler from "../../utils/command/SubCommandHandler.js";
+import ServerInfo from "./server.js";
+import UserInfo from "./user.js";
 
-export default class BaseSubCommand extends BaseSlashSubCommand {
+export default class InfoBaseCommand extends SubCommandHandler {
   constructor() {
-    super("info", [], ["server"]);
+    super("info", [], [ServerInfo, UserInfo]);
   }
 
   getSlashCommandJSON() {
-    return new SlashCommandBuilder()
+    const builder = new SlashCommandBuilder()
       .setName(this.name)
       .setDescription("info commands")
-      .setDMPermission(false)
-      .addSubcommand((subcommand) =>
-        subcommand
-          .setName("user")
-          .setDescription("Get a user's information")
-          .addUserOption((option) =>
-            option
-              .setName("user")
-              .setDescription("Select a user (empty for yourself)")
-              .setRequired(false)
-          )
-      )
-      .addSubcommand((subcommand) =>
-        subcommand.setName("server").setDescription("Get the server's information")
-      );
+      .setDMPermission(false);
+
+    this.addSubCommandJSON(builder);
+
+    return builder.toJSON();
   }
 }

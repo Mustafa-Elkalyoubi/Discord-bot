@@ -5,64 +5,54 @@ import {
   MessageContextMenuCommandInteraction,
   PermissionsBitField,
 } from "discord.js";
-import fs from "node:fs";
-
 import { DateTime } from "luxon";
 import path from "path";
+
+import MessageCommands from "../../message_commands/index.js";
+
 import ExtendedClient from "../Client.js";
 import Modifiers from "../ConsoleText.js";
-import { dynamicImport } from "../general.js";
-
-const __dirname = (() => {
-  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
-  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
-})();
+import TextCommand from "../command/TextCommand.js";
+import SubCommandHandler from "../command/SubCommandHandler.js";
+import ContextCommand from "../command/ContextCommand.js";
 
 export default class CommandManager {
   #client: ExtendedClient;
-  #commands: Collection<string, Command>;
-  subCommands: Collection<string, BaseSubCommand>;
+  #commands: Collection<string, TextCommand>;
+  #subCommands: Collection<string, SubCommandHandler>;
   #contextCommands: Collection<string, ContextCommand>;
-  #messageCommands: Collection<string, messageCommandProps>;
+  #messageCommands: Collection<string, MessageCommand>;
   #aliases: Collection<string, string>;
   #ownerID: string;
 
   constructor(client: ExtendedClient, ownerID: string) {
     this.#commands = new Collection();
-    this.subCommands = new Collection();
+    this.#subCommands = new Collection();
     this.#contextCommands = new Collection();
     this.#messageCommands = new Collection();
     this.#aliases = new Collection();
     this.#ownerID = ownerID;
     this.#client = client;
 
-    const messagesPath = path.join(__dirname, "..", "..", "message_commands");
-    const messagesFiles = fs.readdirSync(messagesPath);
-    messagesFiles.forEach(async (file, index) => {
-      const props = await dynamicImport(path.join(messagesPath, file));
+    MessageCommands.forEach(async (command, index) => {
       console.log(
         `${Modifiers.GREEN}[${DateTime.now().toFormat("yyyy-MM-DD HH:mm:ss")}]: ${
           Modifiers.DEFAULT
-        }Loading command #${index + 1}: ${props.help.name}`
+        }Loading command #${index + 1}: ${command.help.name}`
       );
-      this.#messageCommands.set(props.help.name, props);
-      props.conf.aliases.forEach((alias: string) => {
-        this.#aliases.set(alias, props.help.name);
+      this.#messageCommands.set(command.help.name, command);
+      command.conf.aliases.forEach((alias: string) => {
+        this.#aliases.set(alias, command.help.name);
       });
     });
   }
 
-  addCommand(name: string, cmd: Command) {
+  addCommand(name: string, cmd: TextCommand) {
     this.#commands.set(name, cmd);
   }
 
-  addSubcommand(name: string, cmd: BaseSubCommand) {
-    this.subCommands.set(name, cmd);
-  }
-
-  addGroupcommand(groupName: string, commandName: string, cmd: SubCommand) {
-    const subCommandInstance = this.subCommands.get(groupName);
-    subCommandInstance?.groupCommands.set(commandName, cmd);
+  addSubcommand(name: string, cmd: SubCommandHandler) {
+    this.#subCommands.set(name, cmd);
   }
 
   addContextcommand(name: string, cmd: ContextCommand) {
@@ -71,24 +61,24 @@ export default class CommandManager {
 
   getCommandJSON() {
     const allServersCommandJSONs = this.#commands
-      .filter((cmd) => cmd.all)
+      .filter((cmd) => cmd.private)
       .map((cmd) => cmd.getSlashCommandJSON());
-    const allServersSubCommandJSONs = this.subCommands
-      .filter((cmd) => cmd.all)
+    const allServersSubCommandJSONs = this.#subCommands
+      .filter((cmd) => cmd.private)
       .map((cmd) => cmd.getSlashCommandJSON());
     const allServersContextJSONs = this.#contextCommands
-      .filter((cmd) => cmd.all)
-      .map((cmd) => cmd.getContextCommandJSON());
+      .filter((cmd) => cmd.private)
+      .map((cmd) => cmd.getSlashCommandJSON());
 
     const privateCommandJSONs = this.#commands
-      .filter((cmd) => !cmd.all)
+      .filter((cmd) => !cmd.private)
       .map((cmd) => cmd.getSlashCommandJSON());
-    const privateSubCommandJSONs = this.subCommands
-      .filter((cmd) => !cmd.all)
+    const privateSubCommandJSONs = this.#subCommands
+      .filter((cmd) => !cmd.private)
       .map((cmd) => cmd.getSlashCommandJSON());
     const privateContextJSONs = this.#contextCommands
-      .filter((cmd) => !cmd.all)
-      .map((cmd) => cmd.getContextCommandJSON());
+      .filter((cmd) => !cmd.private)
+      .map((cmd) => cmd.getSlashCommandJSON());
 
     return {
       publicCommands: [
@@ -104,7 +94,7 @@ export default class CommandManager {
     const messagesPath = path.join(__dirname, "..", "..", "message_commands");
 
     const cmdPath = path.join(messagesPath, command);
-    const cmd = await dynamicImport(cmdPath);
+    const cmd = await import(cmdPath);
     return new Promise((resolve) => {
       delete require.cache[require.resolve(cmdPath)];
       this.#aliases.forEach((cmd, alias) => {
@@ -170,9 +160,10 @@ export default class CommandManager {
     client: ExtendedClient
   ) {
     try {
-      const subCommandInstance = this.subCommands.get(commandName);
-      if (subCommandInstance == undefined) throw "Could not find main subcommand file somehow";
-      const runner = subCommandInstance.groupCommands.get(subCommandName);
+      const subCommandHandler = this.#subCommands.get(commandName);
+      if (subCommandHandler == undefined) throw "Could not find main subcommand file somehow";
+
+      const runner = subCommandHandler.getSubCommand(subCommandName);
       if (runner == undefined) throw "Runner not found";
       if (runner instanceof Collection) throw "Runner not a collection";
       if (interaction.isAutocomplete()) {
@@ -242,8 +233,8 @@ export default class CommandManager {
     client: ExtendedClient
   ) {
     try {
-      const subCommandInstance = this.subCommands.get(commandName);
-      const subCommandGroupInstance = subCommandInstance?.groupCommands.get(subCommandGroup);
+      const subCommandInstance = this.#subCommands.get(commandName);
+      const subCommandGroupInstance = subCommandInstance?.getSubCommand(subCommandGroup);
       if (subCommandGroupInstance == undefined) throw "Error: SubCommand group not found";
       if (!(subCommandGroupInstance instanceof Collection)) return;
       const runner = subCommandGroupInstance.get(subCommandName);

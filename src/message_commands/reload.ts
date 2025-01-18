@@ -27,4 +27,6 @@ const help = {
   usage: "reload <commandname>",
 };
 
-export default { run, conf, help };
+const Reload: MessageCommand = { run, conf, help };
+
+export default Reload;

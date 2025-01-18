@@ -23,4 +23,6 @@ const help = {
   usage: "~ping [world number]",
 };
 
-export default { run, conf, help };
+const Ping: MessageCommand = { run, conf, help };
+
+export default Ping;

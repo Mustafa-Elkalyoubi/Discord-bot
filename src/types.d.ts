@@ -1,7 +1,3 @@
-import type { BaseCommand } from "./utils/BaseCommand.js";
-import type BaseSlashSubCommand from "./utils/BaseSlashSubCommand.js";
-import type ExtendedClient from "./utils/Client.js";
-
 declare global {
   class Stringified<T> extends String {
     private ___stringified: T;
@@ -43,19 +39,6 @@ declare global {
     [key: string]: (...args: never[]) => void;
   };
 
-  type messageCommandProps = {
-    run(message: import("discord.js").Message, args: string[], client?: ExtendedClient): void;
-    conf: {
-      aliases: Array<string>;
-      permLevel: number;
-    };
-    help: {
-      name: string;
-      description: string;
-      usage: string;
-    };
-  };
-
   interface BaseReminder {
     _id: import("mongoose").Types.ObjectId;
     message: string;
@@ -79,44 +62,6 @@ declare global {
 
   export type ReminderDetails = RegularReminder | RecurringReminder;
   export type ReminderSaveType = Array<[import("discord.js").Snowflake, Array<ReminderDetails>]>;
-
-  interface Command extends BaseCommand {
-    getSlashCommandJSON(): import("discord.js").RESTPostAPIChatInputApplicationCommandsJSONBody;
-    run(
-      interaction: import("discord.js").ChatInputCommandInteraction,
-      client?: ExtendedClient
-    ): Promise<unknown> | unknown;
-    autocomplete?(
-      interaction: import("discord.js").AutocompleteInteraction,
-      client?: ExtendedClient
-    ): Promise<unknown> | unknown;
-  }
-
-  export interface BaseSubCommand extends BaseSlashSubCommand {
-    getSlashCommandJSON(): import("discord.js").RESTPostAPIChatInputApplicationCommandsJSONBody;
-  }
-
-  export interface SubCommand {
-    server: import("discord.js").Snowflake;
-    run(
-      interaction: import("discord.js").ChatInputCommandInteraction,
-      client?: ExtendedClient
-    ): Promise<void>;
-    autocomplete?(
-      interaction: import("discord.js").AutocompleteInteraction,
-      client?: ExtendedClient
-    ): Promise<void>;
-  }
-
-  export interface ContextCommand {
-    all: boolean;
-    constructor: void;
-    getContextCommandJSON(): import("discord.js").RESTPostAPIChatInputApplicationCommandsJSONBody;
-    run(
-      interaction: import("discord.js").MessageContextMenuCommandInteraction,
-      client?: ExtendedClient
-    ): Promise<void>;
-  }
 
   type UserFineData = {
     username: string;
@@ -189,4 +134,6 @@ declare global {
     icon: string;
     name: string;
   }>;
+
+  type Constructable<T> = new (...args: unknown[]) => T;
 }

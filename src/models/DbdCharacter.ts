@@ -83,6 +83,7 @@ const DbdCharacterSchema = new Schema<IDbdCharacter>(
   { timestamps: false, collection: "dbdCharacters" }
 );
 
-const DbdCharacter = mongoose.model("dbdCharacters", DbdCharacterSchema);
+const DbdCharacter =
+  mongoose.models.dbdCharacters || mongoose.model("dbdCharacters", DbdCharacterSchema);
 
 export default DbdCharacter;

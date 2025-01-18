@@ -1,7 +1,7 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class Ping extends BaseCommand implements Command {
+export default class Ping extends TextCommand {
   constructor() {
     super("ping");
   }

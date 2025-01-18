@@ -17,4 +17,6 @@ const help = {
   usage: "invite",
 };
 
-export default { run, conf, help };
+const Invite: MessageCommand = { run, conf, help };
+
+export default Invite;

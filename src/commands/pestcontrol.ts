@@ -1,5 +1,5 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
 enum multipliers {
   melee = 35,
@@ -33,7 +33,7 @@ const calcPointsUntilMax = (level: number, type: keyof typeof multipliers, multi
   return pointsNeeded;
 };
 
-export default class PestControl extends BaseCommand implements Command {
+export default class PestControl extends TextCommand {
   constructor() {
     super("pestcontrol", false);
   }

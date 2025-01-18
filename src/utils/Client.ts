@@ -1,4 +1,3 @@
-import io from "@pm2/io";
 import tx2 from "tx2";
 import axios, { AxiosRequestConfig } from "axios";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
@@ -65,8 +64,6 @@ export default class ExtendedClient extends Client {
     this.steam = new SteamManager();
 
     this.rest.setToken(token);
-
-    io.init();
   }
 
   public log(location: string, message: string, color: string = Modifiers.DEFAULT) {

@@ -5,9 +5,9 @@ import {
   codeBlock,
 } from "discord.js";
 import OsrsSlayer from "../models/OsrsSlayer.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class Slayer extends BaseCommand implements Command {
+export default class Slayer extends TextCommand {
   constructor() {
     super("slayer");
   }

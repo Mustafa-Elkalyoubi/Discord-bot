@@ -3,10 +3,10 @@ import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
 import ExtendedClient from "../utils/Client.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class FindSteamGame extends BaseCommand implements Command {
+export default class FindSteamGame extends TextCommand {
   constructor() {
     super("findsteamgame", true);
   }

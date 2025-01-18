@@ -1,12 +1,12 @@
 import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
 import ExtendedClient from "../utils/Client.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class Text2Img extends BaseCommand implements Command {
+export default class Text2Img extends TextCommand {
   constructor() {
     super("text2img", true);
   }

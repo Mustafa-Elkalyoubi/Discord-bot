@@ -9,8 +9,8 @@ import {
 import { DateTime } from "luxon";
 import sharp from "sharp";
 import OsrsItem from "../models/OsrsItem.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
 import ExtendedClient from "../utils/Client.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
 type GETimeseriesResponse = {
   data: {
@@ -40,7 +40,7 @@ enum TimeFrame {
   "1 year" = "24h",
 }
 
-export default class Command extends BaseCommand {
+export default class GECommand extends TextCommand {
   constructor() {
     super("ge");
   }

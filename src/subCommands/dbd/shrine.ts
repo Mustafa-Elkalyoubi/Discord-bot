@@ -1,7 +1,7 @@
 import axios from "axios";
 import { APIEmbedField, ChatInputCommandInteraction, EmbedBuilder, RestOrArray } from "discord.js";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import ExtendedClient from "../../utils/Client.js";
+import SubCommand from "../../utils/command/SubCommand.js";
 
 const apiURL = "https://dbd.tricky.lol/api/shrine";
 interface apiData {
@@ -11,9 +11,15 @@ interface apiData {
   end: number;
 }
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class ShrineSubCommand extends SubCommand {
+  constructor() {
+    super("shrine");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand.setName("shrine").setDescription("Get the current shrine")
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {

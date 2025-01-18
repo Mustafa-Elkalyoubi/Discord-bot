@@ -1,12 +1,27 @@
-import ExtendedClient from "../../utils/Client.js";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import { AutocompleteInteraction, ChatInputCommandInteraction } from "discord.js";
-import UserData from "../../models/UserData.js";
 import { Types } from "mongoose";
+import UserData from "../../models/UserData.js";
+import ExtendedClient from "../../utils/Client.js";
+import SubCommand from "../../utils/command/SubCommand.js";
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class RemoveReminder extends SubCommand {
+  constructor() {
+    super("remove");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand
+        .setName("remove")
+        .setDescription(`Remove a reminder that you set`)
+        .addStringOption((option) =>
+          option
+            .setName("id")
+            .setDescription("The reminder's ID you want to delete")
+            .setRequired(true)
+            .setAutocomplete(true)
+        )
+    );
   }
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {

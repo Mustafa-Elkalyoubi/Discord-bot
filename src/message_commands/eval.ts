@@ -35,4 +35,6 @@ const help = {
   usage: "eval **command**",
 };
 
-export default { run, conf, help };
+const Eval: MessageCommand = { run, conf, help };
+
+export default Eval;

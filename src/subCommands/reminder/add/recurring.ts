@@ -1,6 +1,6 @@
-import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner.js";
 import { ChatInputCommandInteraction } from "discord.js";
 import ExtendedClient from "../../../utils/Client.js";
+import GroupCommand from "../../../utils/command/GroupCommand.js";
 
 enum Recurring {
   sun = 0,
@@ -12,9 +12,55 @@ enum Recurring {
   sat = 6,
 }
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class AddRecurring extends GroupCommand {
+  constructor() {
+    super("recurring");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandGroupBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand
+        .setName("recurring")
+        .setDescription(
+          "Set a recurring reminder on a specific day of the week at a specific time ( eg Monday 2:00 )"
+        )
+        .addStringOption((option) =>
+          option
+            .setName("message")
+            .setDescription("What message do you want to be reminded about?")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("day")
+            .setDescription("The day of the week lol")
+            .addChoices(
+              { name: "Sunday", value: "sun" },
+              { name: "Monday", value: "mon" },
+              { name: "Tuesday", value: "tue" },
+              { name: "Wednesday", value: "wed" },
+              { name: "Thursday", value: "thur" },
+              { name: "Friday", value: "fri" },
+              { name: "Saturday", value: "sat" }
+            )
+            .setRequired(true)
+        )
+        .addIntegerOption((option) =>
+          option
+            .setName("hour")
+            .setDescription("At what hour do you want to be reminded? (24 hour system default)")
+            .setRequired(true)
+        )
+        .addIntegerOption((option) =>
+          option.setName("minute").setDescription("At what minute do you want to be reminded?")
+        )
+        .addStringOption((option) =>
+          option
+            .setName("meridiem")
+            .setDescription("AM or PM? (optional)")
+            .addChoices({ name: "AM", value: "AM" }, { name: "PM", value: "PM" })
+        )
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {

@@ -22,6 +22,6 @@ const OsrsItemSchema = new Schema<IOsrsItem>(
   { timestamps: true, collection: "osrsItems" }
 );
 
-const OsrsItem = mongoose.model("osrsItems", OsrsItemSchema);
+const OsrsItem = mongoose.models.osrsItems || mongoose.model("osrsItems", OsrsItemSchema);
 
 export default OsrsItem;

@@ -18,4 +18,6 @@ const help = {
   usage: "~toggleAi",
 };
 
-export default { run, conf, help };
+const ToggleAI: MessageCommand = { run, conf, help };
+
+export default ToggleAI;

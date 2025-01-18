@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Message } from "discord.js";
 import ExtendedClient from "../utils/Client.js";
 
 const run = async (message: Message, args: string[], client: ExtendedClient) => {
   // console.log(client.commandManager.subCommands.get("reminder")?._groupCommands);
+  console.log("did it work");
 };
 
 const conf = {
@@ -16,4 +18,6 @@ const help = {
   usage: "ya ok",
 };
 
-export default { run, conf, help };
+const Test: MessageCommand = { run, conf, help };
+
+export default Test;

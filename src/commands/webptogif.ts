@@ -1,10 +1,10 @@
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
 import axios from "axios";
-import sharp from "sharp";
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { randomUUID } from "node:crypto";
+import sharp from "sharp";
+import TextCommand from "../utils/command/TextCommand.js";
 
-export default class WEBPToGIF extends BaseCommand implements Command {
+export default class WEBPToGIF extends TextCommand {
   constructor() {
     super("webptogif");
   }

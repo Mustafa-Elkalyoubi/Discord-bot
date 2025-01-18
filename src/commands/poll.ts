@@ -1,22 +1,22 @@
 import {
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  ButtonBuilder,
   ActionRowBuilder,
-  ButtonStyle,
+  ButtonBuilder,
   ButtonInteraction,
-  EmbedBuilder,
+  ButtonStyle,
+  ChatInputCommandInteraction,
   ComponentType,
+  EmbedBuilder,
+  SlashCommandBuilder,
 } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
 import { DateTime } from "luxon";
+import TextCommand from "../utils/command/TextCommand.js";
 
 interface pollOptionsObj {
   name: string;
   value: number;
 }
 
-export default class Poll extends BaseCommand implements Command {
+export default class Poll extends TextCommand {
   constructor() {
     super("poll");
   }
@@ -82,19 +82,19 @@ export default class Poll extends BaseCommand implements Command {
       return !alreadyVoted.includes(btn.user.id);
     };
 
-    const collector = interaction.channel?.createMessageComponentCollector({
+    const actionRow = new ActionRowBuilder().setComponents(...buttons);
+
+    const response = await interaction.reply({
+      embeds: [createNewEmbedObj()],
+      // @ts-expect-error not happy with actionrow for whatever reason
+      components: [actionRow],
+    });
+
+    const collector = response.createMessageComponentCollector({
       componentType: ComponentType.Button,
       filter: filter,
       max: 20,
       time: 1000 * 60 * length,
-    });
-
-    const actionRow = new ActionRowBuilder().setComponents(...buttons);
-
-    await interaction.reply({
-      embeds: [createNewEmbedObj()],
-      // @ts-expect-error not happy with actionrow for whatever reason
-      components: [actionRow],
     });
 
     collector?.on("collect", async (btn: ButtonInteraction) => {

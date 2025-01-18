@@ -1,11 +1,11 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, codeBlock } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
-import ytdl from "ytdl-core";
-import { DateTime, Duration } from "luxon";
+import { ChatInputCommandInteraction, codeBlock, SlashCommandBuilder } from "discord.js";
 import ffmpeg from "fluent-ffmpeg";
-import type internal from "stream";
+import { DateTime, Duration } from "luxon";
 import fs from "node:fs";
 import path from "node:path";
+import type internal from "stream";
+import ytdl from "ytdl-core";
+import TextCommand from "../utils/command/TextCommand.js";
 
 const FORMATS = ["mp4", "mp3"] as const;
 
@@ -14,7 +14,7 @@ const __dirname = (() => {
   return path.resolve(process.platform == "win32" ? x.substr(1) : x);
 })();
 
-export default class YTDownloader extends BaseCommand implements Command {
+export default class YTDownloader extends TextCommand {
   constructor() {
     super("youtubedownloader");
   }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import worlds from "../data/osrsWorlds.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import TextCommand from "../utils/command/TextCommand.js";
 
 interface TOGData {
   world_number: number;
@@ -11,7 +11,7 @@ interface TOGData {
 
 const apiUrl = "https://www.togcrowdsourcing.com/worldinfo";
 
-export default class TearsOfGuthix extends BaseCommand implements Command {
+export default class TearsOfGuthix extends TextCommand {
   constructor() {
     super("tog");
   }

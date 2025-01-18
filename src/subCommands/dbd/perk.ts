@@ -6,21 +6,32 @@ import {
   RestOrArray,
 } from "discord.js";
 import path from "node:path";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
 import ExtendedClient from "../../utils/Client.js";
-
-const __dirname = (() => {
-  const x = path.dirname(decodeURI(new URL(import.meta.url).pathname));
-  return path.resolve(process.platform == "win32" ? x.substr(1) : x);
-})();
+import SubCommand from "../../utils/command/SubCommand.js";
 
 function capitalizeFirstLetter(str: string) {
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class PerkSubCommand extends SubCommand {
+  constructor() {
+    super("perk");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand
+        .setName("perk")
+        .setDescription("Search for a specific perk")
+        .addStringOption((option) =>
+          option
+            .setName("perk")
+            .setDescription("The name of the perk ya bonobo")
+            .setChoices()
+            .setAutocomplete(true)
+            .setRequired(true)
+        )
+    );
   }
 
   async autocomplete(interaction: AutocompleteInteraction, client: ExtendedClient) {

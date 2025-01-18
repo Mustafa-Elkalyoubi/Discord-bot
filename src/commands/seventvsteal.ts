@@ -1,8 +1,8 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
-import { BaseCommand } from "../utils/BaseCommand.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import TextCommand from "../utils/command/TextCommand.js";
 import { steal7TV } from "../utils/steal7tv.js";
 
-export default class SevenTVSteal extends BaseCommand implements Command {
+export default class SevenTVSteal extends TextCommand {
   constructor() {
     super("seventvsteal");
   }

@@ -1,11 +1,44 @@
+import { ChatInputCommandInteraction } from "discord.js";
 import { DateTime } from "luxon";
 import ExtendedClient from "../../../utils/Client.js";
-import BaseSubCommandRunner from "../../../utils/BaseSubCommandRunner.js";
-import { ChatInputCommandInteraction } from "discord.js";
+import GroupCommand from "../../../utils/command/GroupCommand.js";
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(baseCommand: string, group: string, name: string) {
-    super(baseCommand, group, name);
+export default class AddAt extends GroupCommand {
+  constructor() {
+    super("at");
+  }
+
+  getSlashCommandJSON(prev: SlashCommandGroupBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand
+        .setName("at")
+        .setDescription("Set a reminder at a specific date and/or time (e.g. 2:00 pm on 20/2/2012")
+        .addStringOption((option) =>
+          option
+            .setName("message")
+            .setDescription("Set the message that will send at the specified time")
+            .setRequired(true)
+        )
+        .addIntegerOption((option) =>
+          option.setName("day").setDescription("Day (default is today)")
+        )
+        .addIntegerOption((option) =>
+          option.setName("month").setDescription("Month (default is this month)")
+        )
+        .addIntegerOption((option) =>
+          option.setName("year").setDescription("Year (default is this year)")
+        )
+        .addIntegerOption((option) =>
+          option.setName("hour").setDescription("Hour (default is 00:00)")
+        )
+        .addIntegerOption((option) => option.setName("minute").setDescription("Minute"))
+        .addStringOption((option) =>
+          option
+            .setName("meridiem")
+            .setDescription("AM or PM")
+            .addChoices({ name: "AM", value: "AM" }, { name: "PM", value: "PM" })
+        )
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction, client: ExtendedClient) {

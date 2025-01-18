@@ -1,19 +1,15 @@
-import BaseSlashSubCommand from "../../utils/BaseSlashSubCommand.js";
-import BaseSubCommandRunner from "../../utils/BaseSubCommandRunner.js";
-import { EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import SubCommand from "../../utils/command/SubCommand.js";
 
-type SubCommandGroup = {
-  name: string;
-  subcommands: Array<string>;
-};
+export default class ServerInfo extends SubCommand {
+  constructor() {
+    super("server");
+  }
 
-export default class SubCommand extends BaseSubCommandRunner {
-  constructor(
-    baseCommand: BaseSlashSubCommand,
-    group: Array<SubCommandGroup | null>,
-    name: string
-  ) {
-    super(baseCommand, group, name);
+  getSlashCommandJSON(prev: SlashCommandBuilder): void {
+    prev.addSubcommand((subcommand) =>
+      subcommand.setName("server").setDescription("Get the server's information")
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction) {
