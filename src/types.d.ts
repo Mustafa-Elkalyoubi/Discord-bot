@@ -1,3 +1,5 @@
+export {};
+
 declare global {
   class Stringified<T> extends String {
     private ___stringified: T;

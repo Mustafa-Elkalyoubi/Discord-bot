@@ -55,7 +55,7 @@ export default {
       );
     }
 
-    if (!message.content.startsWith(PREFIX!)) return;
+    if (!message.content.startsWith(PREFIX)) return;
     client.commandManager.runMessageCommand(message);
   },
 };

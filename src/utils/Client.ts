@@ -1,25 +1,24 @@
-import tx2 from "tx2";
 import axios, { AxiosRequestConfig } from "axios";
+import "chartjs-adapter-luxon";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "discord.js";
 import { DateTime } from "luxon";
-import mongoose from "mongoose";
 import { ChildProcess, spawn } from "node:child_process";
 import psTree from "ps-tree";
+import tx2 from "tx2";
+import events from "../events/index.js";
 import OsrsItem from "../models/OsrsItem.js";
-import CommandManager from "./managers/CommandManager.js";
 import Modifiers from "./ConsoleText.js";
-import DBDManager from "./managers/DBDManager.js";
 import generateAIImage from "./GenerateAIImage.js";
-import "chartjs-adapter-luxon";
 import Queue from "./Queue.js";
+import CommandManager from "./managers/CommandManager.js";
+import DBDManager from "./managers/DBDManager.js";
 import ReminderManager from "./managers/ReminderManager.js";
 import SteamManager from "./managers/SteamManager.js";
 
 export default class ExtendedClient extends Client {
   private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
   private aiFile = `${this.aiDIR}\\webui.bat`;
-  private db: mongoose.Connection;
 
   public GECanvas = new ChartJSNodeCanvas({
     height: 600,
@@ -44,19 +43,6 @@ export default class ExtendedClient extends Client {
   constructor(options: ClientOptions, ownerID: string, token: string) {
     super(options);
 
-    mongoose.connect("mongodb://127.0.0.1:27017", {
-      appName: "discord-bot",
-      dbName: "discord-bot",
-    });
-    this.db = mongoose.connection;
-
-    // this.db.once("open", async () => {
-    // });
-
-    this.db.on("error", (err) => {
-      console.error(err);
-    });
-
     this.ownerID = ownerID;
     this.dbd = new DBDManager();
     this.reminders = new ReminderManager(this);
@@ -64,6 +50,18 @@ export default class ExtendedClient extends Client {
     this.steam = new SteamManager();
 
     this.rest.setToken(token);
+
+    events.forEach((e) => {
+      this.log("", `Loading Event: ${e.name}`);
+      // @ts-ignore
+      if (e.once) this.once(e.name, (...args) => e.run(...args, this));
+      // @ts-ignore
+      else this.on(e.name, (...args) => e.run(...args, this));
+    });
+  }
+
+  cleanup() {
+    return this.destroy();
   }
 
   public log(location: string, message: string, color: string = Modifiers.DEFAULT) {

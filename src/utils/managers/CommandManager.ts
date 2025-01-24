@@ -4,17 +4,22 @@ import {
   Message,
   MessageContextMenuCommandInteraction,
   PermissionsBitField,
+  Routes,
 } from "discord.js";
 import { DateTime } from "luxon";
 import path from "path";
 
-import MessageCommands from "../../message_commands/index.js";
+import type ExtendedClient from "../Client.js";
+import type ContextCommand from "../command/ContextCommand.js";
+import type SubCommandHandler from "../command/SubCommandHandler.js";
+import type TextCommand from "../command/TextCommand.js";
 
-import ExtendedClient from "../Client.js";
 import Modifiers from "../ConsoleText.js";
-import TextCommand from "../command/TextCommand.js";
-import SubCommandHandler from "../command/SubCommandHandler.js";
-import ContextCommand from "../command/ContextCommand.js";
+
+import Commands from "../../commands/index.js";
+import ContextCommands from "../../contextCommands/index.js";
+import MessageCommands from "../../message_commands/index.js";
+import SubCommands from "../../subCommands/index.js";
 
 export default class CommandManager {
   #client: ExtendedClient;
@@ -33,9 +38,33 @@ export default class CommandManager {
     this.#aliases = new Collection();
     this.#ownerID = ownerID;
     this.#client = client;
+  }
 
+  async registerCommands() {
+    this.#initializeCommands();
+    const { CLIENT_ID, TEST_GUILD } = process.env;
+
+    try {
+      const { publicCommands, privateCommands } = this.#getCommandJSON();
+
+      await Promise.all([
+        this.#client.rest.put(Routes.applicationCommands(CLIENT_ID!), {
+          body: publicCommands,
+        }),
+
+        this.#client.rest.put(Routes.applicationGuildCommands(CLIENT_ID!, TEST_GUILD!), {
+          body: privateCommands,
+        }),
+      ]);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  #initializeCommands() {
     MessageCommands.forEach(async (command, index) => {
-      console.log(
+      this.#client.log(
+        "Command Manager",
         `${Modifiers.GREEN}[${DateTime.now().toFormat("yyyy-MM-DD HH:mm:ss")}]: ${
           Modifiers.DEFAULT
         }Loading command #${index + 1}: ${command.help.name}`
@@ -45,21 +74,37 @@ export default class CommandManager {
         this.#aliases.set(alias, command.help.name);
       });
     });
+
+    Commands.forEach((Command) => {
+      const cmd = new Command();
+      this.#commands.set(cmd.name, cmd);
+      this.#client.log(
+        "Command Manager",
+        `${Modifiers.GREEN}Registering command: ${Modifiers.DEFAULT}${cmd.name}`
+      );
+    });
+
+    SubCommands.forEach((BaseSubCommand) => {
+      const subCommand = new BaseSubCommand();
+      this.#client.log(
+        "Command Manager",
+        `${Modifiers.GREEN}Registering Subcommand: ${Modifiers.DEFAULT}${subCommand.name}`
+      );
+      this.#subCommands.set(subCommand.name, subCommand);
+    });
+
+    ContextCommands.forEach((ContextCommand) => {
+      const cmd = new ContextCommand();
+
+      this.#contextCommands.set(cmd.name, cmd);
+      this.#client.log(
+        "Command Manager",
+        `${Modifiers.GREEN}Registering context command: ${Modifiers.DEFAULT}${cmd.name}`
+      );
+    });
   }
 
-  addCommand(name: string, cmd: TextCommand) {
-    this.#commands.set(name, cmd);
-  }
-
-  addSubcommand(name: string, cmd: SubCommandHandler) {
-    this.#subCommands.set(name, cmd);
-  }
-
-  addContextcommand(name: string, cmd: ContextCommand) {
-    this.#contextCommands.set(name, cmd);
-  }
-
-  getCommandJSON() {
+  #getCommandJSON() {
     const allServersCommandJSONs = this.#commands
       .filter((cmd) => cmd.private)
       .map((cmd) => cmd.getSlashCommandJSON());
