@@ -14,7 +14,7 @@ const run = async (message: Message, args: string[]) => {
 
   try {
     const code = args.join(" ");
-    let evaled = eval(code);
+    let evaled = (0, eval)(code);
 
     if (typeof evaled !== "string") evaled = (await import("util")).inspect(evaled);
     await message.channel.send(codeBlock("xl", clean(evaled)));

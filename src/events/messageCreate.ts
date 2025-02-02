@@ -79,16 +79,18 @@ async function forFun(message: Message) {
   const { fines } = user;
   user.username = message.author.username;
 
-  const currentFine = BigNumber(fines.fineAmount, 35);
+  let currentFine = BigNumber(fines.fineAmount, 35);
   const cap = BigNumber(fines.fineCap, 35);
 
   if (isBadMessage(message)) {
     const thisFine = calcFine(currentFine, cap);
     if (!thisFine) return message.react(fineReaction);
 
-    if (thisFine.plus(currentFine).isGreaterThanOrEqualTo(cap)) user.fines.capReached = true;
+    currentFine = currentFine.plus(thisFine);
 
-    fines.fineAmount = currentFine.plus(thisFine).toString(35);
+    if (currentFine.isGreaterThanOrEqualTo(cap)) user.fines.capReached = true;
+
+    fines.fineAmount = currentFine.toString(35);
 
     user.save();
 

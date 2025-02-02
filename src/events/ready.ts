@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { ActivityType, Events, Message, Snowflake, TextChannel, codeBlock } from "discord.js";
+import { ActivityType, Events, Message, TextChannel, codeBlock } from "discord.js";
 import { Document } from "mongoose";
 import Misc, { IMisc } from "../models/Misc.js";
 import UserData from "../models/UserData.js";
@@ -48,9 +48,7 @@ export default {
 
     if (misc.reboot && misc.reboot.shouldMessage) await editRebootMessage(misc, client);
 
-    const lastMessageID = await getLastMessageID();
-
-    handleFines(client, lastMessageID);
+    handleFines(client);
   },
 };
 
@@ -72,7 +70,18 @@ async function editRebootMessage(
   misc.save();
 }
 
-async function handleFines(client: ExtendedClient, lastMessageID: Snowflake | null) {
+async function handleFines(client: ExtendedClient) {
+  let lastMessageID = await getLastMessageID();
+
+  if (!lastMessageID) {
+    const fineChannel = await getFineChannel(client);
+    const lastMessage = fineChannel.lastMessage;
+
+    if (!lastMessage) return;
+    lastMessageID = lastMessage.id;
+    saveMessageID(lastMessage);
+  }
+
   if (!lastMessageID) return;
 
   const fineChannel = await getFineChannel(client);

@@ -64,11 +64,3 @@ async function main() {
 }
 
 main();
-
-if (import.meta.hot) {
-  import.meta.hot.accept(async () => {
-    if (client) {
-      await client.cleanup();
-    }
-  });
-}

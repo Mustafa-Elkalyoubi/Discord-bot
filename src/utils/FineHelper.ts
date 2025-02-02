@@ -48,7 +48,7 @@ export function isGoodMessage(message: Message) {
   return message.content.includes("<:waaah:1016423553320628284>");
 }
 
-const lastMessageFilePath = path.join(__dirname, "..", "data", "lastMessage.txt");
+const lastMessageFilePath = path.join(__dirname, "lastMessage.txt");
 
 export const saveMessage = async (message: Message) => {
   return fs
