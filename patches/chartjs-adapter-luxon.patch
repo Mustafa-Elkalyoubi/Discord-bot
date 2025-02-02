@@ -1,0 +1,17 @@
+diff --git a/dist/chartjs-adapter-luxon.esm.js b/dist/chartjs-adapter-luxon.esm.js
+index 461c9d5b0c6c95b8848f4cfab7a4b7d996f66adc..08d5c8972f9845ddd7ac377e6a30687fa7994a2d 100644
+--- a/dist/chartjs-adapter-luxon.esm.js
++++ b/dist/chartjs-adapter-luxon.esm.js
+@@ -4,9 +4,11 @@
+  * (c) 2023 chartjs-adapter-luxon Contributors
+  * Released under the MIT license
+  */
+-import { _adapters } from 'chart.js';
++import chart from 'chart.js';
+ import { DateTime } from 'luxon';
+ 
++const {_adapters} = chart;
++
+ const FORMATS = {
+   datetime: DateTime.DATETIME_MED_WITH_SECONDS,
+   millisecond: 'h:mm:ss.SSS a',

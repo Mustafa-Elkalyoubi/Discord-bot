@@ -20,6 +20,10 @@ async function initializeDatabase() {
     dbName: "discord-bot",
   });
 
+  connection.on("connected", () => {
+    console.log("Connected to the database");
+  });
+
   connection.on("error", (err) => {
     console.error(err);
   });
@@ -49,7 +53,8 @@ async function initializeClient() {
     DISCORD_TOKEN
   );
 
-  client.login(DISCORD_TOKEN);
+  await client.login(DISCORD_TOKEN);
+  console.log("Client logged in");
   client.commandManager.registerCommands();
 }
 

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { ActivityType, Events, Snowflake, TextChannel, codeBlock } from "discord.js";
+import { ActivityType, Events, Message, Snowflake, TextChannel, codeBlock } from "discord.js";
 import { Document } from "mongoose";
 import Misc, { IMisc } from "../models/Misc.js";
 import UserData from "../models/UserData.js";
@@ -8,8 +8,12 @@ import Modifiers from "../utils/ConsoleText.js";
 import {
   beautifyNumber,
   calcFine,
+  calcNewCap,
+  fineReaction,
   getFineChannel,
   getLastMessageID,
+  isBadMessage,
+  isGoodMessage,
   saveMessage as saveMessageID,
 } from "../utils/FineHelper.js";
 
@@ -73,94 +77,84 @@ async function handleFines(client: ExtendedClient, lastMessageID: Snowflake | nu
 
   const fineChannel = await getFineChannel(client);
   const missedMessages = (await fineChannel.messages.fetch({ after: lastMessageID }))
-    .filter((message) => message.content.includes("🥹") && !message.author.bot)
-    .reverse();
+    .filter((message) => (isGoodMessage(message) || isBadMessage(message)) && !message.author.bot)
+    .sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 
   if (missedMessages.size < 1) return;
 
-  const users = await UserData.find({ userID: { $in: missedMessages.map((m) => m.author.id) } });
+  const groupedMessages = missedMessages.reduce<[string, Message<true>[]][]>((acc, curr) => {
+    const added = acc.find(([key]) => key === curr.author.id);
+    if (added) added[1].push(curr);
+    else acc.push([curr.author.id, [curr]]);
 
-  const finesToAddUp: {
-    length: number;
-    fines: { [k: string]: { amount: string; username: string } };
-  } = { length: 0, fines: {} };
+    return acc;
+  }, []);
 
-  missedMessages.forEach(async (message) => {
-    const authorID = message.author.id;
-
-    let user = users.find((user) => user.userID === authorID);
-
-    if (!user) {
-      user = new UserData({ userID: authorID, username: message.author.username });
-      users.push(user);
-    } else user.username = message.author.username;
-
-    const thisFine = calcFine(
-      BigNumber(user.fines.fineAmount, 35),
-      BigNumber(user.fines.fineCap, 35)
-    );
-
-    if (!thisFine) return message.react(`855089585919098911`);
-
-    if (
-      thisFine
-        .plus(BigNumber(user.fines.fineAmount, 35))
-        .isGreaterThanOrEqualTo(BigNumber(user.fines.fineCap, 35))
-    )
-      user.fines.capReached = true;
-    user.fines.fineAmount = BigNumber(user.fines.fineAmount, 35).plus(thisFine).toString(35);
-
-    if (authorID in finesToAddUp.fines) {
-      finesToAddUp.fines[authorID].amount = BigNumber(finesToAddUp.fines[authorID].amount, 35)
-        .plus(thisFine)
-        .toString(35);
-    } else {
-      finesToAddUp.fines[authorID] = {
-        amount: thisFine.toString(35),
-        username: message.author.username,
-      };
-      finesToAddUp.length++;
-    }
+  const users = await UserData.find({
+    userID: { $in: missedMessages.map((msg) => msg.author.id) },
   });
 
-  if (finesToAddUp.length < 1) return;
+  type Tracked = { accumulatedFines: BigNumber; capIncreases: number };
+  const tracker = new Map<string, Tracked>(
+    users.map((u) => [u.userID, { accumulatedFines: BigNumber(0), capIncreases: 0 }])
+  );
 
-  let reply;
+  groupedMessages.forEach(async ([userID, messages]) => {
+    let user = users.find((user) => user.userID === userID);
 
-  if (finesToAddUp.length === 1) {
-    const [onlyGuyID, onlyGuyFine] = Object.entries(finesToAddUp.fines)[0];
+    if (!user) {
+      user = new UserData({ userID, username: messages[0].author.username });
+      users.push(user);
+    } else user.username = messages[0].author.username;
 
-    const onlyGuy = users.find((u) => u.userID === onlyGuyID)!;
+    let currentFine = BigNumber(user.fines.fineAmount, 35);
+    let capReached = user.fines.capReached;
+    let cap = BigNumber(user.fines.fineCap, 35);
 
-    const amount = beautifyNumber(BigNumber(onlyGuyFine.amount, 35));
-    const capReached = onlyGuy.fines.capReached;
-    const fineAmount = beautifyNumber(BigNumber(onlyGuy.fines.fineAmount, 35));
+    messages.forEach((message) => {
+      if (isGoodMessage(message)) {
+        if (currentFine.isLessThanOrEqualTo(0, 10)) return;
 
-    reply = await fineChannel.send(
-      `You shouldnt be sending 🥹 even while I'm gone, ${
-        Object.values(finesToAddUp.fines)[0].username
-      }\nYou've earned ${amount} fines${
-        capReached
-          ? " and you've hit the cap: send <:waaah:1016423553320628284> to pay for your crimes"
-          : `, your total is ${fineAmount}`
+        if (capReached) {
+          cap = calcNewCap(cap);
+          tracker.get(userID)!.capIncreases++;
+        }
+
+        currentFine = BigNumber(0, 35);
+        capReached = false;
+      } else if (isBadMessage(message)) {
+        const thisFine = calcFine(currentFine, cap);
+
+        if (!thisFine) return message.react(fineReaction);
+        tracker.get(userID)!.accumulatedFines = tracker
+          .get(userID)!
+          .accumulatedFines.plus(thisFine);
+
+        currentFine = thisFine.plus(currentFine);
+        if (currentFine.isGreaterThanOrEqualTo(cap)) capReached = true;
+      }
+    });
+
+    user.fines.fineAmount = currentFine.toString(35);
+    user.fines.capReached = capReached;
+    user.fines.fineCap = cap.toString(35);
+  });
+
+  const msgs: string[] = [];
+  for (const [userID, trackedData] of tracker.entries()) {
+    if (trackedData.accumulatedFines.isEqualTo(0) || trackedData.capIncreases === 0) continue;
+
+    const user = users.find((u) => u.userID === userID)!;
+    const amount = beautifyNumber(trackedData.accumulatedFines);
+
+    msgs.push(
+      `• ${user.username} has gotten ${amount} fines${
+        trackedData.capIncreases > 1 ? ` and ${trackedData.capIncreases} cap increases` : ""
       }`
     );
-  } else {
-    const msgs: string[] = [];
-    for (const [userID, userFine] of Object.entries(finesToAddUp.fines)) {
-      const user = users.find((u) => u.id === userID)!;
-      const amount = beautifyNumber(BigNumber(userFine.amount, 35));
-      const capReached = user.fines.capReached;
-      const fineAmount = beautifyNumber(BigNumber(user.fines.fineAmount, 35));
-      msgs.push(
-        `• ${userFine.username} has gotten ${amount} fines${
-          capReached ? ` and has hit the cap` : `, with total ${fineAmount}`
-        }`
-      );
-    }
-
-    reply = await fineChannel.send(codeBlock(msgs.join("\n")));
   }
+
+  const reply = await fineChannel.send(codeBlock(msgs.join("\n")));
 
   saveMessageID(reply);
 

@@ -84,6 +84,8 @@ const UserDataSchema = new Schema<IUserData>(
   { timestamps: true, collection: "users" }
 );
 
-const UserData = mongoose.models.users || mongoose.model("users", UserDataSchema);
+type TUserData = mongoose.Model<IUserData>;
+
+const UserData: TUserData = mongoose.models.users || mongoose.model("users", UserDataSchema);
 
 export default UserData;

@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { GuildTextBasedChannel, Message } from "discord.js";
 import fs from "node:fs/promises";
-import ExtendedClient from "./Client.js";
 import path from "node:path";
+import ExtendedClient from "./Client.js";
 
 export const fineChannel = "852270452142899213"; // kiwi
 // export const fineChannel = "515209238566404116"; // dev
@@ -17,8 +17,6 @@ export const calcFine = (current: BigNumber, cap: BigNumber) => {
     // message.react(`855089585919098911`);
     return null;
   }
-
-  console.log(current, cap);
 
   let percentageOfCap = cap
     .minus(1_000_000_000, 10)
@@ -37,6 +35,18 @@ export const calcFine = (current: BigNumber, cap: BigNumber) => {
 
   return randomAmount.plus(current).isGreaterThanOrEqualTo(cap) ? cap.minus(current) : randomAmount;
 };
+
+export function calcNewCap(currentCap: BigNumber) {
+  return currentCap.multipliedBy(2, 10);
+}
+
+export function isBadMessage(message: Message) {
+  return message.content.includes("🥹");
+}
+
+export function isGoodMessage(message: Message) {
+  return message.content.includes("<:waaah:1016423553320628284>");
+}
 
 const lastMessageFilePath = path.join(__dirname, "..", "data", "lastMessage.txt");
 

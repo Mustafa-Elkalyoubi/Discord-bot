@@ -6,8 +6,11 @@ import Modifiers from "../utils/ConsoleText.js";
 import {
   beautifyNumber,
   calcFine,
+  calcNewCap,
   fineChannel,
   fineReaction,
+  isBadMessage,
+  isGoodMessage,
   saveMessage,
 } from "../utils/FineHelper.js";
 
@@ -73,19 +76,19 @@ async function forFun(message: Message) {
   let user = await UserData.findOne({ userID: authorID });
   if (!user) user = new UserData({ userID: authorID });
 
+  const { fines } = user;
   user.username = message.author.username;
 
-  if (message.content.includes("🥹")) {
-    const { fines } = user;
-    const cap = BigNumber(fines.fineCap, 35);
+  const currentFine = BigNumber(fines.fineAmount, 35);
+  const cap = BigNumber(fines.fineCap, 35);
 
-    const thisFine = calcFine(BigNumber(fines.fineAmount, 35), cap);
+  if (isBadMessage(message)) {
+    const thisFine = calcFine(currentFine, cap);
     if (!thisFine) return message.react(fineReaction);
 
-    if (thisFine.plus(BigNumber(fines.fineAmount, 35)).isGreaterThanOrEqualTo(cap))
-      user.fines.capReached = true;
+    if (thisFine.plus(currentFine).isGreaterThanOrEqualTo(cap)) user.fines.capReached = true;
 
-    fines.fineAmount = BigNumber(fines.fineAmount, 35).plus(thisFine).toString(35);
+    fines.fineAmount = currentFine.plus(thisFine).toString(35);
 
     user.save();
 
@@ -95,15 +98,12 @@ async function forFun(message: Message) {
             BigNumber(fines.fineCap, 35)
           )}*** ), you must post <:waaah:1016423553320628284> to pay for your crimes`
         : `Do not 🥹 (${beautifyNumber(thisFine)} fine). Your total is **${beautifyNumber(
-            BigNumber(fines.fineAmount, 35)
+            currentFine
           )}**`
     );
   }
 
-  if (message.content.includes("<:waaah:1016423553320628284>")) {
-    const user = await UserData.findOne({ userID: authorID });
-
-    if (!user) return;
+  if (isGoodMessage(message)) {
     const { fines } = user;
 
     if (BigNumber(fines.fineAmount).isLessThanOrEqualTo(0, 10)) return;
@@ -111,11 +111,9 @@ async function forFun(message: Message) {
     // in case user changed username
     user.username = message.author.username;
     const prevFine = fines.fineAmount;
-
     const capReachedCopy = fines.capReached;
 
-    if (fines.capReached)
-      fines.fineCap = BigNumber(fines.fineCap, 35).multipliedBy(2, 10).toString(35);
+    if (fines.capReached) fines.fineCap = calcNewCap(cap).toString(35);
     fines.fineAmount = "0";
     fines.capReached = false;
 

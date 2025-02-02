@@ -12,7 +12,7 @@ import Text2Img from "./text2img.js";
 import TearsOfGuthix from "./tog.js";
 import WEBPToGIF from "./webptogif.js";
 import WHTR from "./whohasthisrole.js";
-import YTDownloader from "./youtubedownload.js";
+// import YTDownloader from "./youtubedownload.js";
 
 const Commands: Constructable<TextCommand>[] = [
   FindSteamGame,
@@ -28,7 +28,7 @@ const Commands: Constructable<TextCommand>[] = [
   TearsOfGuthix,
   WEBPToGIF,
   WHTR,
-  YTDownloader,
+  // YTDownloader,
 ];
 
 export default Commands;

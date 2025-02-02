@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { Chart } from "chart.js";
 import "chartjs-adapter-luxon";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "discord.js";

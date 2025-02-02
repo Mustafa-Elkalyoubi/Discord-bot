@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  chartjs-adapter-luxon@1.3.1:
-    hash: kzh65u24igwkmjlhmznmn46olm
-    path: patches/chartjs-adapter-luxon@1.3.1.patch
+  chartjs-adapter-luxon:
+    hash: yxnpf3w6bma5nuxbwuuwcs3hmy
+    path: patches/chartjs-adapter-luxon.patch
 
 importers:
 
@@ -27,7 +27,7 @@ importers:
         version: 3.9.1
       chartjs-adapter-luxon:
         specifier: ^1.3.1
-        version: 1.3.1(patch_hash=kzh65u24igwkmjlhmznmn46olm)(chart.js@3.9.1)(luxon@3.4.4)
+        version: 1.3.1(patch_hash=yxnpf3w6bma5nuxbwuuwcs3hmy)(chart.js@3.9.1)(luxon@3.4.4)
       chartjs-node-canvas:
         specifier: ^4.1.6
         version: 4.1.6(chart.js@3.9.1)
@@ -85,6 +85,9 @@ importers:
       ytdl-core:
         specifier: ^4.11.5
         version: 4.11.5
+      zlib-sync:
+        specifier: ^0.1.9
+        version: 0.1.9
     devDependencies:
       '@types/ffmpeg':
         specifier: ^1.0.7
@@ -2054,6 +2057,9 @@ packages:
     resolution: {integrity: sha512-27LwsW4n4nyNviRCO1hmr8Wr5J1wLLMawHCQvH8Fk0hiRqrxuIu028WzbJetiYH28K8XDbeinYW4/wcHQD1EXA==}
     engines: {node: '>=12'}
 
+  zlib-sync@0.1.9:
+    resolution: {integrity: sha512-DinB43xCjVwIBDpaIvQqHbmDsnYnSt6HJ/yiB2MZQGTqgPcwBSZqLkimXwK8BvdjQ/MaZysb5uEenImncqvCqQ==}
+
 snapshots:
 
   '@cspotcode/source-map-support@0.8.1':
@@ -2776,7 +2782,7 @@ snapshots:
 
   chart.js@3.9.1: {}
 
-  chartjs-adapter-luxon@1.3.1(patch_hash=kzh65u24igwkmjlhmznmn46olm)(chart.js@3.9.1)(luxon@3.4.4):
+  chartjs-adapter-luxon@1.3.1(patch_hash=yxnpf3w6bma5nuxbwuuwcs3hmy)(chart.js@3.9.1)(luxon@3.4.4):
     dependencies:
       chart.js: 3.9.1
       luxon: 3.4.4
@@ -3754,3 +3760,7 @@ snapshots:
       m3u8stream: 0.8.6
       miniget: 4.2.3
       sax: 1.3.0
+
+  zlib-sync@0.1.9:
+    dependencies:
+      nan: 2.19.0
