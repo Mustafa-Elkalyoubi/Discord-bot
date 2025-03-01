@@ -24,19 +24,26 @@ abstract class SubCommandHandler extends BaseCommand {
 
     this.#collection = new Collection();
 
-    this.groups.forEach((group) => {
-      group.groupCommands.forEach((cmd) => {
-        this.#collection.set(cmd.name, cmd);
-      });
-    });
-
     this.subCommands.forEach((cmd) => {
       this.#collection.set(cmd.name, cmd);
     });
   }
 
+  getGroup(name: string) {
+    return this.groups.find((g) => g.name === name);
+  }
+
   getSubCommand(name: string): SubCommand | GroupCommand | undefined {
-    return this.#collection.get(name);
+    const immediate = this.#collection.get(name);
+
+    if (immediate) return immediate;
+
+    for (const group of this.groups) {
+      const groupcmd = group.getCommand(name);
+      if (groupcmd) return groupcmd;
+    }
+
+    return undefined;
   }
 
   protected addSubCommandJSON = (builder: SlashCommandBuilder): void => {

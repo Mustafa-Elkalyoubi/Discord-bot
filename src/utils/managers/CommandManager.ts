@@ -278,14 +278,16 @@ export default class CommandManager {
     client: ExtendedClient
   ) {
     try {
-      const subCommandInstance = this.#subCommands.get(commandName);
-      const subCommandGroupInstance = subCommandInstance?.getSubCommand(subCommandGroup);
-      if (subCommandGroupInstance == undefined) throw "Error: SubCommand group not found";
-      if (!(subCommandGroupInstance instanceof Collection)) return;
-      const runner = subCommandGroupInstance.get(subCommandName);
-      if (runner == undefined) throw "Error: SubCommand in group not found";
+      const subcommandHandler = this.#subCommands.get(commandName);
+
+      const subCommandGroupInstance = subcommandHandler?.getGroup(subCommandGroup);
+      if (subCommandGroupInstance == undefined) throw new Error("SubCommand group not found");
+
+      const runner = subCommandGroupInstance.getCommand(subCommandName);
+      if (runner == undefined) throw new Error("SubCommand in group not found");
+
       if (interaction.isAutocomplete()) {
-        if (!runner.autocomplete) throw "Missing autocomplete function";
+        if (!runner.autocomplete) throw new Error("Missing autocomplete function");
         return runner.autocomplete(interaction, client);
       }
 
