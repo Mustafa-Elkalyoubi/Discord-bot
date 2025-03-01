@@ -1,5 +1,6 @@
 import TextCommand from "../utils/command/TextCommand.js";
 import FindSteamGame from "./findsteamgame.js";
+import FixBankLayout from "./fixbanklayout.js";
 import GECommand from "./ge.js";
 import Oull from "./oull.js";
 import PestControl from "./pestcontrol.js";
@@ -28,6 +29,7 @@ const Commands: Constructable<TextCommand>[] = [
   TearsOfGuthix,
   WEBPToGIF,
   WHTR,
+  FixBankLayout,
   // YTDownloader,
 ];
 
