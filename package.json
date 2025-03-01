@@ -35,7 +35,6 @@
     "esbuild-node-externals": "^1.16.0",
     "eslint": "^8.48.0",
     "ts-node": "^10.9.1",
-    "tsx": "^4.7.3",
     "typescript": "^5.4.2"
   },
   "dependencies": {
@@ -57,7 +56,6 @@
     "ping": "^0.4.4",
     "ps-tree": "^1.2.0",
     "sharp": "^0.33.3",
-    "tx2": "^1.0.5",
     "typed-emitter": "^2.1.0",
     "url-file-size": "^1.0.5-1",
     "ytdl-core": "^4.11.5",

@@ -5,12 +5,12 @@ import { ActivityType, ChannelType, Client, ClientOptions, TextChannel } from "d
 import { DateTime } from "luxon";
 import { ChildProcess, spawn } from "node:child_process";
 import psTree from "ps-tree";
-import tx2 from "tx2";
 import events from "../events/index.js";
 import OsrsItem from "../models/OsrsItem.js";
 import Modifiers from "./ConsoleText.js";
 import generateAIImage from "./GenerateAIImage.js";
 import Queue from "./Queue.js";
+import counter from "./counter.js";
 import CommandManager from "./managers/CommandManager.js";
 import DBDManager from "./managers/DBDManager.js";
 import ReminderManager from "./managers/ReminderManager.js";
@@ -35,10 +35,10 @@ export default class ExtendedClient extends Client {
   public aiQueue = new Queue(generateAIImage);
   public ownerID: string;
 
-  public messagesLogged = tx2.counter("Messages Logged");
-  public commandsUsed = tx2.counter("Commands Used");
-  public activeCommands = tx2.counter("Active Commands");
-  public erroredCommands = tx2.counter("Errored Commands");
+  public messagesLogged = counter();
+  public commandsUsed = counter();
+  public activeCommands = counter();
+  public erroredCommands = counter();
 
   constructor(options: ClientOptions, ownerID: string, token: string) {
     super(options);
