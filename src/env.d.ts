@@ -11,6 +11,7 @@ declare global {
       DM_CHANNEL: string;
       TEST_GUILD: string;
       STEAM_KEY: string;
+      AI_DIR: string;
     }
   }
 }

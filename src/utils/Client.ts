@@ -17,7 +17,7 @@ import ReminderManager from "./managers/ReminderManager.js";
 import SteamManager from "./managers/SteamManager.js";
 
 export default class ExtendedClient extends Client {
-  private aiDIR = "C:\\Users\\Mustafa\\Desktop\\Files\\hackin\\gen\\stable-diffusion-webui";
+  private aiDIR = process.env.AI_DIR;
   private aiFile = `${this.aiDIR}\\webui.bat`;
 
   public GECanvas = new ChartJSNodeCanvas({
